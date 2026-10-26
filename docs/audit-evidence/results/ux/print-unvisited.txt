@@ -1,0 +1,12 @@
+CINEMA DNA · IDENTITY REPORT
+
+The TimeTravelling
+Omnivore
+
+A genre-agnostic viewer whose ratings follow craft more than labels.
+A C I N E M AT I C I D E N T I T Y R E P O R T F O R S Y N T H E T I C A U D I T ( @ S Y N T H E T I C - A U D I T ) ·
+B U I LT F R O M T H E L E T T E R B O X D E X P O R T O F 2 0 2 6 - 0 9 - 0 1
+
+Ratings, dates and reviews come from your Letterboxd export (synthetic-audit-fixture.zip); film metadata from syntheticfixture. Patterns describe your own history; none is a causal claim. Generated 2026-10-26.
+
+

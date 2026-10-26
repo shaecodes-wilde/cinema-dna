@@ -1,0 +1,120 @@
+// Synthetic audit harness; application source remains unchanged.
+import { writeFileSync } from 'node:fs'
+import { resolve, join } from 'node:path'
+import { pathToFileURL } from 'node:url'
+
+if (!process.argv[2] || !process.argv[3]) throw new Error('Usage: node --import tsx probes.mts REPOSITORY_ROOT TEMP_RESULT_PATH')
+const repoDir = resolve(process.argv[2])
+const resultPath = resolve(process.argv[3])
+const moduleAt = (name: string) => import(pathToFileURL(join(repoDir, name)).href)
+globalThis.fetch = async () => { throw new Error('Network disabled in synthetic intelligence audit') }
+
+const { analyze } = await moduleAt('pipeline/analyze/index.ts')
+const { baseline, affinity, genrePairs } = await moduleAt('pipeline/analyze/affinity.ts')
+const { buildRecords } = await moduleAt('pipeline/analyze/features.ts')
+const { trainModel, predict } = await moduleAt('pipeline/analyze/model.ts')
+const { scoreCandidate, exposureOf } = await moduleAt('pipeline/analyze/recommend.ts')
+const { sentiment } = await moduleAt('pipeline/analyze/language.ts')
+const { logOddsZ } = await moduleAt('pipeline/analyze/stats.ts')
+const { silhouette } = await moduleAt('pipeline/analyze/constellation.ts')
+const { emptyMetadata } = await moduleAt('pipeline/enrich/index.ts')
+const { normalize } = await moduleAt('pipeline/ingest/normalize.ts')
+const { fixtureArchive } = await moduleAt('pipeline/test/fixtures.ts')
+type Dataset = ReturnType<typeof normalize>
+type FilmMetadata = ReturnType<typeof emptyMetadata>
+type MetadataFile = NonNullable<Parameters<typeof buildRecords>[1]>
+type Viewing = Dataset['viewings'][number]
+
+function dataset(ratings: (number|null)[]) : Dataset {
+  const ds = normalize(fixtureArchive({
+    'watched.csv': 'Date,Name,Year,Letterboxd URI\n' + ratings.map((_,i)=>`2023-01-01,Synthetic ${i},2020,https://boxd.it/X${i}`).join('\n')+'\n',
+    'ratings.csv': 'Date,Name,Year,Letterboxd URI,Rating\n' + ratings.flatMap((r,i)=>r===null?[]:[`2023-01-01,Synthetic ${i},2020,https://boxd.it/X${i},${r}`]).join('\n')+'\n',
+    'diary.csv':'Date,Name,Year,Letterboxd URI,Rating,Rewatch,Tags,Watched Date\n',
+    'reviews.csv':'Date,Name,Year,Letterboxd URI,Rating,Rewatch,Review,Tags,Watched Date\n',
+    'likes/films.csv':'Date,Name,Year,Letterboxd URI\n',
+    'watchlist.csv':'Date,Name,Year,Letterboxd URI\n',
+    'lists/best.csv':'',
+    'profile.csv':'Date Joined,Username,Given Name,Family Name,Email Address,Location,Website,Bio,Pronoun,Favorite Films\n2020-01-01,synthetic,Synthetic,,,,,,,\n',
+  }))
+  return ds
+}
+function metadata(ds: Dataset, choose: (i:number)=>Partial<FilmMetadata>|null): MetadataFile {
+  const films:Record<string,FilmMetadata>={}
+  ds.films.forEach((f,i)=>{const numericId=f.id.match(/^lb:X(\d+)$/);const extra=choose(numericId?Number(numericId[1]):i);if(extra)films[f.id]={...emptyMetadata(f,{method:'manual-override',confidence:'high',notes:['synthetic audit fixture']}),...extra}})
+  return {films,sources:[],unmatched:[],schemaVersion:1,generatedAt:new Date().toISOString()} as MetadataFile
+}
+function viewing(filmId:string,id:string,date:string,rating:number,rewatch:boolean):Viewing{
+  return {filmId,id,watchedDate:date,loggedDate:date,rating,rewatch,tags:[],reviewId:null,dateQuality:'live',provenance:[]}
+}
+const results:any={fixtureNotice:'All records, ratings and results below are synthetic adversarial probes, not the user profile.'}
+
+const harsh=await analyze(dataset(Array.from({length:20},(_,i)=>i%2?1:2)),null,{discover:false})
+results.harshGrader={mean:harsh.totals.meanRating,identity:harsh.identity,reportIdentity:harsh.report.sections.find(s=>s.heading==='The identity'),closing:harsh.report.sections.find(s=>s.heading==='A closing reading')}
+
+const fallingDs=dataset([...Array(4).fill(1),...Array(16).fill(4)])
+fallingDs.viewings=fallingDs.films.filter(f=>f.rating===1).flatMap((f,i)=>[viewing(f.id,`view-${i}-a`,'2023-01-01',5,false),viewing(f.id,`view-${i}-b`,'2024-01-01',1,true)])
+const falling=await analyze(fallingDs,null,{discover:false})
+results.fallingRewatches={baseline:falling.totals.meanRating,insights:falling.insights.filter(i=>i.id.startsWith('rewatch-')),intro:falling.identity.intro}
+
+const crashDs=dataset([...Array(5).fill(5),...Array(15).fill(1)])
+try {await analyze(crashDs,metadata(crashDs,i=>i<5?{runtime:160}:null),{discover:false});results.singleRuntimeBucket={crashed:false}}
+catch(err) {results.singleRuntimeBucket={crashed:true,message:String(err),stack:(err as Error).stack}}
+
+const modelDs=dataset([...Array(10).fill(1),...Array(30).fill(5)])
+const modelMeta=metadata(modelDs,i=>({genres:[i<10?'Horror':'Drama'],runtime:100,countries:['United States'],languages:['English'],sitelinks:20}))
+const modelRecs=buildRecords(modelDs,modelMeta), base=baseline(modelRecs), model=trainModel(modelRecs,base)
+const candidateDs=dataset([null])
+candidateDs.films[0]={...candidateDs.films[0],id:'lb:Candidate',title:'Synthetic candidate',watched:false,inWatchlist:true}
+const candidateMeta=metadata(candidateDs,()=>({genres:['Drama'],runtime:100,countries:['United States'],languages:['English'],sitelinks:20}))
+const candidate=buildRecords(candidateDs,candidateMeta)[0]
+const missing=buildRecords(candidateDs,null)[0]
+const ctx={model,rated:modelRecs,exposure:exposureOf(modelRecs),genreRows:affinity('genre',modelRecs,r=>r.genres,base)}
+const rec=(c:any)=>scoreCandidate(c,ctx,'watchlist',[],id=>id,id=>modelDs.films.find(f=>f.id===id)?.rating??null)
+results.centeredExplanations={baseline:base,model:model.report,dramaCandidate:rec(candidate),missingMetadataCandidate:rec(missing),contributions:predict(model,candidate).contributions}
+
+const pairDs=dataset([...Array(5).fill(5),...Array(45).fill(0.5)])
+const pairMeta=metadata(pairDs,i=>({genres:i<5?['Comedy','Horror']:['Drama'],runtime:100,sitelinks:20}))
+const pairRecs=buildRecords(pairDs,pairMeta), pairBase=baseline(pairRecs), pairRows=affinity('genre',pairRecs,r=>r.genres,pairBase)
+const pairData=await analyze(pairDs,pairMeta,{discover:false})
+results.genreSynergy={baseline:pairBase,groups:pairRows,computed:genrePairs(pairRecs,pairRows,pairBase),insights:pairData.insights.filter(i=>i.category==='intersection'),singleGenreOnlyCount:0}
+
+const allHighDs=dataset(Array(6).fill(5)), allHigh=await analyze(allHighDs,metadata(allHighDs,()=>({genres:['Drama'],runtime:100})),{discover:false})
+results.emptyComparisonGroup={insight:allHigh.insights.find(i=>i.id==='five-star-formula'),formula:allHigh.fiveStar.traits}
+
+const countDs=dataset([...Array(3).fill(4),...Array(10).fill(null)])
+const countMeta=metadata(countDs,i=>({genres:['Drama'],directors:[{id:i<3?'Q1':'Q2',name:i<3?'Director Rated':'Director Unrated'}]}))
+const countData=await analyze(countDs,countMeta,{discover:false})
+results.mostWatchedDirector={actualWatched:{'Director Rated':3,'Director Unrated':10},insight:countData.insights.find(i=>i.id==='director-loyalty')}
+
+results.lexicon={notGood:sentiment('not good'),notBad:sentiment('not bad'),slowButLoved:sentiment('slow but loved it')}
+const a=9.5,b=1.5,oddsDifference=Math.log(a/b)-Math.log(b/a)
+results.binaryLogOdds={input:{countA:9,totalA:10,countB:1,totalB:10,prior:.5,priorTotal:1},appZ:logOddsZ(9,10,1,10,.5,1),fullBinaryApproximationZ:oddsDifference/Math.sqrt(1/a+1/b+1/b+1/a),note:'Standard independent binary log-odds variance includes successes AND failures; app omits both complement terms.'}
+const singletonVecs=[0,1,2].map(i=>({idx:Int32Array.of(i),val:Float64Array.of(1)}))
+results.silhouetteSingletons={appMeanScore:silhouette(singletonVecs,[0,1,1]),referenceMeanScore:0,note:'Three mutually orthogonal vectors, one singleton cluster and one size-two cluster: singleton should score0, other points both score0; app singleton scores1, inflating mean to1/3.'}
+
+const sparseDs=dataset(Array.from({length:60},(_,i)=>i%2?3:4))
+const sparseData=await analyze(sparseDs,metadata(sparseDs,()=>({})),{discover:false})
+results.sparseMetadataDNA={dimensions:sparseData.dna.filter(d=>['range','dark','offbeat','franchise','prestige','critic'].includes(d.id)),fieldCoverage:sparseData.quality.metadata.fieldCoverage}
+
+const absentDs=dataset([null]);absentDs.films[0]={...absentDs.films[0],id:'lb:Cold',watched:false,inWatchlist:true}
+const coldCandidate=buildRecords(absentDs,metadata(absentDs,()=>({genres:['Drama'],directors:[{id:'Q99',name:'Synthetic director'}],runtime:100,countries:['United States'],languages:['English'],sitelinks:20})))[0]
+const coldRecords=buildRecords(dataset(Array(6).fill(4)),null),coldBase=baseline(coldRecords),coldModel=trainModel(coldRecords,coldBase)
+results.coldStartCertainty={model:coldModel.report,recommendation:scoreCandidate(coldCandidate,{model:coldModel,rated:coldRecords,exposure:exposureOf(coldRecords),genreRows:[]},'watchlist',[],id=>id,()=>4)}
+
+const nullDs=dataset(Array.from({length:40},(_,i)=>i%2?2:4))
+const nullData=await analyze(nullDs,metadata(nullDs,()=>({genres:['Drama'],runtime:100,directors:[{id:'Q99',name:'Same director'}]})),{discover:false})
+const {renderTasteAnalysisMarkdown}=await moduleAt('pipeline/analyze/report.ts')
+const markdown=renderTasteAnalysisMarkdown(nullData),coldMarkdown=renderTasteAnalysisMarkdown(allHigh)
+results.modelProse={nullModel:nullData.model,paragraph:markdown.split('\n').find(l=>l.startsWith('Cross-validated RMSE')),constantModelParagraph:coldMarkdown.split('\n').find(l=>l.startsWith('Cross-validated RMSE'))}
+
+const duplicateDs=dataset([4,3,4,3,4,3,null])
+const duplicateFilm=duplicateDs.films.find(f=>f.id==='lb:X6')!
+duplicateFilm.watched=false;duplicateFilm.inWatchlist=true;duplicateFilm.title='Synthetic alternate title'
+const duplicateMeta=metadata(duplicateDs,()=>({genres:['Drama'],runtime:100}))
+duplicateMeta.films['lb:X0'].match.wikidataId='Q123456'
+duplicateMeta.films['lb:X6'].match.wikidataId='Q123456'
+const duplicateData=await analyze(duplicateDs,duplicateMeta,{discover:false})
+results.watchlistIdentityExclusion={watchedQid:'Q123456',recommended:duplicateData.recommendations.map(r=>({key:r.key,qid:r.wikidataId,title:r.title}))}
+
+writeFileSync(resultPath,JSON.stringify(results,null,2))
+console.log(JSON.stringify(results,null,2))

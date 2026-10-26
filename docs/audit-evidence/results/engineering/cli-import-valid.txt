@@ -1,0 +1,14 @@
+▸ import  copied letterboxd-synthetic-valid-2026-10-26-12-00-utc.zip → data/raw/
+▸ ingest  /workspace/scratch/a3dcaaa33ee6/audit-work/engineering/cli-fixture/data/raw/letterboxd-synthetic-valid-2026-10-26-12-00-utc.zip
+  7 films · 5 watched · 5 rated · 5 diary viewings (1 rewatches) · 2 reviews · 2 watchlist · 2 detached
+  1 identity/rating conflicts logged · 1 notes
+▸ enrich  7 films via Wikidata (offline: cache only)
+  0 matched by Letterboxd ID
+  0 matched after exact-title lookup
+  0/7 matched after fuzzy search
+  TMDB disabled (set TMDB_API_KEY or TMDB_READ_ACCESS_TOKEN to add posters & keywords)
+  wrote 0 records ({}) · 7 unmatched · 0 requests, 0 cache hits
+▸ analyze 7 films
+  wrote public/data/cinema-dna.json and reports/ (2 insights, 1 recommendations)
+
+✓ Done. Open the dashboard with `npm run dev`; the written analysis is in reports/taste-analysis.md

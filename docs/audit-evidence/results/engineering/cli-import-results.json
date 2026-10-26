@@ -1,0 +1,81 @@
+{
+  "validExit": 0,
+  "networkCalls": 0,
+  "datasetCounts": {
+    "films": 7,
+    "watchedFilms": 5,
+    "ratedFilms": 5,
+    "diaryViewings": 5,
+    "rewatchViewings": 1,
+    "reviews": 2,
+    "watchedWithoutDiary": 1,
+    "watchlistFilms": 2,
+    "likedFilms": 1,
+    "lists": 1,
+    "detachedEntries": 2,
+    "viewingsByDateQuality": {
+      "live": 2,
+      "delayed": 1,
+      "backfilled": 1,
+      "approximate": 1,
+      "missing": 0
+    },
+    "ratingRevisions": 1
+  },
+  "appTotals": {
+    "watchedFilms": 5,
+    "ratedFilms": 5,
+    "diaryViewings": 5,
+    "rewatchViewings": 1,
+    "reviewedFilms": 2,
+    "reviews": 2,
+    "likedFilms": 1,
+    "watchlist": 2,
+    "hoursWatched": null,
+    "hoursCoverage": 0,
+    "firstLog": "2023-05-15",
+    "lastLog": "2023-08-01",
+    "meanRating": 3.2,
+    "sdRating": 1.35,
+    "medianRating": 3
+  },
+  "outputs": {
+    "data/normalized/dataset.json": {
+      "bytes": 10920,
+      "sha256": "3af2e5bde7fac1c9b538563e495faeb03b3a332c43d5d207acb58ee87d4b5762"
+    },
+    "data/normalized/metadata.json": {
+      "bytes": 928,
+      "sha256": "7aa7460c2dcda571cde8f1253d846a82b354f53e36d6a890d51b5e838f77d6ac"
+    },
+    "public/data/cinema-dna.json": {
+      "bytes": 25669,
+      "sha256": "e5c48dfcfad83285e57ca56675b3736e5afd07d2480e66c4d7f91ba315bbcfad"
+    },
+    "public/data/cinema-dna-report.html": {
+      "bytes": 4829,
+      "sha256": "32e9bc119bd944a16bfe42b8e4cee750a09080fec60212404d0f013e0e162560"
+    },
+    "reports/cinema-dna-report.html": {
+      "bytes": 4829,
+      "sha256": "32e9bc119bd944a16bfe42b8e4cee750a09080fec60212404d0f013e0e162560"
+    },
+    "reports/cinema-dna-report.md": {
+      "bytes": 1553,
+      "sha256": "da1b2b655efe1cf918e4d30046dcf2bc8c1468cbc1e43d4df1acea667c6d32fe"
+    },
+    "reports/taste-analysis.md": {
+      "bytes": 7142,
+      "sha256": "e28abb827ee8d67cccb034c015386fb6d70b0ba809830010c824903e9f1babc3"
+    }
+  },
+  "sourceSha256": "71987324fc3fc92c60fcf4188bb5cfac94277ba5b8cbb78c564a507ae1d6953c",
+  "copySha256": "71987324fc3fc92c60fcf4188bb5cfac94277ba5b8cbb78c564a507ae1d6953c",
+  "invalidImport": {
+    "exit": 1,
+    "log": "\u25b8 import  copied letterboxd-synthetic-invalid-2026-10-26-12-01-utc.zip \u2192 data/raw/\n\u25b8 ingest  /workspace/scratch/a3dcaaa33ee6/audit-work/engineering/cli-fixture/data/raw/letterboxd-synthetic-invalid-2026-10-26-12-01-utc.zip\n(v ?? \"\").trim is not a function\n",
+    "networkCalls": 0,
+    "previousOutputsUnchanged": true,
+    "sourceSha256": "a3044b442aa29e71d07b8957138d007c2dffc9ff749a27dfe59c9b618cf383fb"
+  }
+}

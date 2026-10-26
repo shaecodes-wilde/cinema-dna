@@ -1,0 +1,56 @@
+// Documentation-only, synthetic audit reproduction. Never run against personal data.
+import { join as auditJoin, resolve as auditResolve } from 'node:path'
+import { mkdirSync as auditMkdir, existsSync as auditExists } from 'node:fs'
+import { pathToFileURL as auditFileUrl } from 'node:url'
+const auditRepoEnv=process.env.CINEMA_DNA_AUDIT_ROOT
+const auditOutputEnv=process.env.CINEMA_DNA_AUDIT_OUTPUT
+if(!auditRepoEnv || !auditOutputEnv) throw new Error('Set CINEMA_DNA_AUDIT_ROOT and CINEMA_DNA_AUDIT_OUTPUT as documented in README.md')
+const auditRepo=auditResolve(auditRepoEnv)
+const auditOutput=auditResolve(auditOutputEnv)
+if(!auditExists(auditJoin(auditRepo,'pipeline/ingest/normalize.ts'))) throw new Error('CINEMA_DNA_AUDIT_ROOT is not the isolated audit source copy')
+auditMkdir(auditOutput,{recursive:true})
+const auditImport=(path:string)=>import(auditFileUrl(auditJoin(auditRepo,path)).href)
+const auditFile=(name:string)=>auditJoin(auditOutput,name)
+import { mkdtempSync, writeFileSync, readFileSync, rmSync, readdirSync } from 'node:fs'
+import { join } from 'node:path'
+import { tmpdir } from 'node:os'
+const { normalize } = await auditImport('pipeline/ingest/normalize.ts')
+const { enrich } = await auditImport('pipeline/enrich/index.ts')
+const { PATHS } = await auditImport('pipeline/paths.ts')
+
+const dir=mkdtempSync(join(tmpdir(),'cinema-audit-cache-'))
+PATHS.cache=join(dir,'cache')
+PATHS.metadata=join(dir,'metadata.json')
+PATHS.overrides=join(dir,'overrides.json')
+const source=(beta=false)=>normalize({path:'synthetic.zip',sha256:'synthetic',files:new Map([
+ ['watched.csv','Date,Name,Year,Letterboxd URI\n2024-01-01,Alpha,2020,https://boxd.it/F1\n'+(beta?'2024-01-02,Beta,2021,https://boxd.it/F2\n':'')],
+])})
+const u=(value:string)=>({type:'uri',value})
+const l=(value:string)=>({type:'literal',value})
+const calls:string[]=[]
+let clock=Date.now()
+Date.now=()=>clock+=3000
+globalThis.fetch=async(_url,opts)=>{
+ const q=(opts?.body as URLSearchParams).get('query')??''
+ calls.push(q)
+ let rows:unknown[]=[]
+ if(q.includes('SELECT ?item ?slug')) rows=[{item:u('http://www.wikidata.org/entity/Q1'),slug:l('alpha')}]
+ if(q.includes('SELECT ?item ?itemLabel')) rows=[{item:u('http://www.wikidata.org/entity/Q1'),itemLabel:l('Alpha'),itemDescription:l('film'),sl:l('10'),secs:l('6000')}]
+ if(q.includes('SELECT ?item ?prop')) rows=[
+  {item:u('http://www.wikidata.org/entity/Q1'),prop:u('http://www.wikidata.org/prop/direct/P31'),val:u('http://www.wikidata.org/entity/Q11424'),valLabel:l('film')},
+  {item:u('http://www.wikidata.org/entity/Q1'),prop:u('http://www.wikidata.org/prop/direct/P577'),val:l('2020-01-01T00:00:00Z')},
+ ]
+ return new Response(JSON.stringify({results:{bindings:rows}}),{status:200})
+}
+try{
+ const first=await enrich(source(),{log:()=>{}})
+ const cachedEntities=readdirSync(join(PATHS.cache,'wikidata-entities'))
+ const networkCalls=calls.length
+ globalThis.fetch=async()=>{throw new Error('NETWORK FORBIDDEN IN OFFLINE PROBE')}
+ const expanded=await enrich(source(true),{offline:true,log:()=>{}})
+ const written=JSON.parse(readFileSync(PATHS.metadata,'utf8'))
+ const original=await enrich(source(),{offline:true,log:()=>{}})
+ const out={initialMatched:Object.keys(first.films),initialMockedCalls:networkCalls,cachedEntities,expandedOfflineMatched:Object.keys(expanded.films),expandedOfflineUnmatched:expanded.unmatched,writtenOfflineMatched:Object.keys(written.films),originalDatasetOfflineMatched:Object.keys(original.films)}
+ writeFileSync(auditFile('cache-results.json'),JSON.stringify(out,null,2)+'\n')
+ console.log(JSON.stringify(out,null,2))
+}finally{rmSync(dir,{recursive:true,force:true})}

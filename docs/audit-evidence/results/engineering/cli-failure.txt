@@ -1,0 +1,3 @@
+▸ enrich  1 films via Wikidata
+  ⚠ enrichment stopped: HTTP 401 for https://query.wikidata.org/sparql
+  continuing with cached/partial metadata — re-run `npm run enrich` later to fill gaps
