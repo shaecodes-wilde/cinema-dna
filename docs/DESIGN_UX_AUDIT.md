@@ -1,5 +1,7 @@
 # CINEMA DNA — Design and UX Audit
 
+> **Historical audit.** Synthetic evidence only. Application audited at `b7a732a`; file and line references are valid at that commit. Findings are not measurements of the owner's personal recommendation accuracy. This document ships no fixes. Current status and the adopted repair sequence: [AUDIT_STATUS.md](AUDIT_STATUS.md). Screenshots and PDFs are archived at tag [`audit-2026-10-26`](https://github.com/shaecodes-wilde/cinema-dna/tree/audit-2026-10-26/docs).
+
 Audit target: `main`, `b7a732a5b076858f5cee92da0c9408dded0823a0` (26 October 2026). Source inspection covers every file under `src/`, the frontend-facing data types, tests/configuration, README and agent instructions. This report contains **source-confirmed findings, independent calculations and actual Chromium browser observations**. Runtime testing used only a deliberately synthetic 240-watched-film fixture, at desktop 1440×1000, tablet 768×1000 and mobile 390×1000 viewports; external browser requests were blocked. No private export, real-user dashboard or poster-enabled production installation was inspected. No application source was changed. Full runtime details and a screenshot manifest appear below.
 
 ## Assessment
@@ -80,19 +82,19 @@ The successful scenario evidence is in [interaction-evidence.json](audit-evidenc
 
 **Desktop identity is a strength.** The opening, chapter headers and report use a distinctive editorial hierarchy: warm black, cream, restrained amber, fine borders and expressive serif titles. The title-only poster treatment is attractive enough to preserve as an intentional mode. The data-quality chapter is unusually well integrated into the visual system rather than appearing as a debugging afterthought. The Explorer is a legible, practical companion to the more expressive views. These judgments are based on actual rendered screenshots, not only CSS inspection.
 
-![Desktop opening, synthetic audit data](audit-evidence/screenshots/desktop-opening.png)
+![Desktop opening, synthetic audit data](https://github.com/shaecodes-wilde/cinema-dna/raw/audit-2026-10-26/docs/audit-evidence/screenshots/desktop-opening.png)
 
 **Taste DNA scales down visually more than it adapts conceptually.** At tablet width the radar remains coherent and the chapter has a clear hierarchy. At 390px the twelve axes, central values and affinity labels become dense miniature text, while the long explanatory paragraph consumes much of the first view. The image still looks like an identity object, but precise comparison requires a larger chart or a concise dimension list. Replace mobile radar detail with selected-dimension focus and a comparable table/forest plot; retain the small radar as a recognizable overview.
 
-![Taste DNA on mobile, synthetic audit data](audit-evidence/screenshots/mobile-dna.png)
+![Taste DNA on mobile, synthetic audit data](https://github.com/shaecodes-wilde/cinema-dna/raw/audit-2026-10-26/docs/audit-evidence/screenshots/mobile-dna.png)
 
 **The recommendation entry point asks for too much work before showing a film.** At 768px, the first recommendation cards begin near the bottom of the viewport. At 390px and 1,000px viewport height, the screen is still inside the filter form and no recommendation is visible. Collapse advanced filters, show three initial picks immediately, then let visitors refine. Preserve precise controls for deliberate exploration. There is no need to remove capability to improve the first decision.
 
-![Recommendations on mobile, synthetic audit data](audit-evidence/screenshots/mobile-next.png)
+![Recommendations on mobile, synthetic audit data](https://github.com/shaecodes-wilde/cinema-dna/raw/audit-2026-10-26/docs/audit-evidence/screenshots/mobile-next.png)
 
 **The constellation's atmosphere works better than its small-screen information density.** Desktop spatial clusters are visually inviting. Mobile headers, filters and legend consume much of the approach to the map, and cluster labels occupy substantial space among the plotted points. A deliberate expanded map workspace with one persistent selection panel and an accessible neighbor list would give the visualization room to function. Point clustering in this fixture reflects deliberately repeated synthetic metadata and cannot establish the shape of the real library.
 
-![Movie constellation on desktop, synthetic audit data](audit-evidence/screenshots/desktop-constellation.png)
+![Movie constellation on desktop, synthetic audit data](https://github.com/shaecodes-wilde/cinema-dna/raw/audit-2026-10-26/docs/audit-evidence/screenshots/desktop-constellation.png)
 
 **The page is a long exhibition.** After all visited sections mounted, the synthetic document measured 52,176px tall at 768px and 71,623px at 390px, with no document-level horizontal overflow at either size. Height is not a speed benchmark or an accessibility failure by itself; it does show why persistent navigation, progressive disclosure and three clear entry jobs matter. On the mobile opening, the first roughly half viewport is largely atmosphere/space before the identity title. That can work for a first visit but should not delay a returning user's route to discovery.
 
@@ -160,9 +162,9 @@ Primary reference: [W3C Contrast Minimum](https://www.w3.org/WAI/WCAG22/Understa
 
 **Reproduction and evidence:** In a fresh page, load `/#report`, wait for the chapter and print before scrolling the eight essay sections. The test invoked the actual Print button, replaced only the native `window.print()` call with a no-op, emulated print media and exported with Chromium `page.pdf()`. All eight essay Reveal wrappers remained at opacity 0. The resulting five-page unvisited-report PDF showed a title-only first page and a completely blank second page when rendered with `pdftoppm`. After scrolling all eight sections into view and waiting for their reveal animations, a second five-page visited-report PDF contained essay text on those same pages. Both first two pages were visually inspected, not merely text-extracted. The two rendered page-two images below show the difference; all content is synthetic. The native OS print dialog and generated HTML-download file were not tested.
 
-![Unvisited report page 2, synthetic audit data: blank](audit-evidence/screenshots/print-unvisited-2.png)
+![Unvisited report page 2, synthetic audit data: blank](https://github.com/shaecodes-wilde/cinema-dna/raw/audit-2026-10-26/docs/audit-evidence/screenshots/print-unvisited-2.png)
 
-![After scrolling the report, page 2 contains its text; synthetic audit data](audit-evidence/screenshots/print-visited-2.png)
+![After scrolling the report, page 2 contains its text; synthetic audit data](https://github.com/shaecodes-wilde/cinema-dna/raw/audit-2026-10-26/docs/audit-evidence/screenshots/print-visited-2.png)
 
 **Fix:** Render print content deterministically without reveal animations; `@media print` must force visible opacity/transform and remove temporary viewport constraints. Prefer the existing generated print HTML as the print source if it contains all report sections. Acceptance: before/after scrolling produce the same complete content and readable page breaks.
 

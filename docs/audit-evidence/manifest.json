@@ -81,322 +81,412 @@
     {
       "path": "DESIGN_UX_AUDIT.md",
       "bytes": 57094,
-      "sha256": "a7230218fade15fbba2c140363d3610f3018015b8b47ce13848e5f71877e9354"
+      "sha256": "a7230218fade15fbba2c140363d3610f3018015b8b47ce13848e5f71877e9354",
+      "availability": "retained"
     },
     {
       "path": "EXECUTIVE_AUDIT.md",
       "bytes": 25504,
-      "sha256": "bab0fbbf40c991e6c16bac271ebe817a89c71d40bacb6544cfb0f248bddcde52"
+      "sha256": "bab0fbbf40c991e6c16bac271ebe817a89c71d40bacb6544cfb0f248bddcde52",
+      "availability": "retained"
     },
     {
       "path": "IMPLEMENTATION_ROADMAP.md",
       "bytes": 43415,
-      "sha256": "c3e9aad9a0f70044913bed0332fd52a971b70c8807aacd1bae5b8a15ca268e9c"
+      "sha256": "c3e9aad9a0f70044913bed0332fd52a971b70c8807aacd1bae5b8a15ca268e9c",
+      "availability": "retained"
     },
     {
       "path": "TASTE_INTELLIGENCE_AUDIT.md",
       "bytes": 51634,
-      "sha256": "a3d9b7692635461a9e7476b586dd20f044a7eba8b1b55a0ba2130c7410d64d50"
+      "sha256": "a3d9b7692635461a9e7476b586dd20f044a7eba8b1b55a0ba2130c7410d64d50",
+      "availability": "retained"
     },
     {
       "path": "TECHNICAL_AUDIT.md",
       "bytes": 40945,
-      "sha256": "d3dd10bb49a5fcd9bebea7066cee57cc1d8fdb8dbaeb4b037e65af194dd3e86f"
+      "sha256": "d3dd10bb49a5fcd9bebea7066cee57cc1d8fdb8dbaeb4b037e65af194dd3e86f",
+      "availability": "retained"
     },
     {
       "path": "audit-evidence/reproduction/engineering/README.md",
       "bytes": 4569,
-      "sha256": "3fe35061074ce0aa438b4f1bb3fbf509df9620fcd908c7b3ebdc0cd8229987fa"
+      "sha256": "3fe35061074ce0aa438b4f1bb3fbf509df9620fcd908c7b3ebdc0cd8229987fa",
+      "availability": "retained"
     },
     {
       "path": "audit-evidence/reproduction/engineering/archive-probes.mts.txt",
       "bytes": 2604,
-      "sha256": "379a92c93a37eef0ca6f1eef2957a8e8bd799fc796449d9cc7d5b40e367b6571"
+      "sha256": "379a92c93a37eef0ca6f1eef2957a8e8bd799fc796449d9cc7d5b40e367b6571",
+      "availability": "retained"
     },
     {
       "path": "audit-evidence/reproduction/engineering/cache-probes.mts.txt",
       "bytes": 3641,
-      "sha256": "4038ab07b6944c34c623347f94654282806c3453bf77eb13b7b5afaa725891a2"
+      "sha256": "4038ab07b6944c34c623347f94654282806c3453bf77eb13b7b5afaa725891a2",
+      "availability": "retained"
     },
     {
       "path": "audit-evidence/reproduction/engineering/cli-probes.mts.txt",
       "bytes": 5621,
-      "sha256": "3fd84a65b2ea3be6558b7377a129484c47eaf8270cbf8d959258485c192bec67"
+      "sha256": "3fd84a65b2ea3be6558b7377a129484c47eaf8270cbf8d959258485c192bec67",
+      "availability": "retained"
     },
     {
       "path": "audit-evidence/reproduction/engineering/downstream-probes.mts.txt",
       "bytes": 2799,
-      "sha256": "7a4b5bd7f48a32ec47241393a3e57fd18b802ef87db3e860bf905952383b1a26"
+      "sha256": "7a4b5bd7f48a32ec47241393a3e57fd18b802ef87db3e860bf905952383b1a26",
+      "availability": "retained"
     },
     {
       "path": "audit-evidence/reproduction/engineering/ingest-probes.mts.txt",
       "bytes": 4909,
-      "sha256": "1b8e123428e74dc857888c35fbd728f96f05119f2b662862969f3e335883aac5"
+      "sha256": "1b8e123428e74dc857888c35fbd728f96f05119f2b662862969f3e335883aac5",
+      "availability": "retained"
     },
     {
       "path": "audit-evidence/reproduction/intelligence/README.md",
       "bytes": 5400,
-      "sha256": "6cd1d05c873fa48e4bb5779b4866d6d9e1ab32e1a684b28a78ebb753eb651851"
+      "sha256": "6cd1d05c873fa48e4bb5779b4866d6d9e1ab32e1a684b28a78ebb753eb651851",
+      "availability": "retained"
     },
     {
       "path": "audit-evidence/reproduction/intelligence/probes.mts.txt",
       "bytes": 10103,
-      "sha256": "ea1ca2b7914bdd0c9703eded47e4b1b8b8e33417327f817e2232e1e9b2fa8627"
+      "sha256": "ea1ca2b7914bdd0c9703eded47e4b1b8b8e33417327f817e2232e1e9b2fa8627",
+      "availability": "retained"
     },
     {
       "path": "audit-evidence/reproduction/runtime/README.md",
       "bytes": 5314,
-      "sha256": "5a62236dbe59ececb5b1d86821991f136c31c0f7b1ea030759abe2614b374080"
+      "sha256": "5a62236dbe59ececb5b1d86821991f136c31c0f7b1ea030759abe2614b374080",
+      "availability": "retained"
     },
     {
       "path": "audit-evidence/reproduction/runtime/recompute.py.txt",
       "bytes": 3738,
-      "sha256": "0175853d40fdcae118f6d42fef450672f347a63246d41a37928db9a8e5063b52"
+      "sha256": "0175853d40fdcae118f6d42fef450672f347a63246d41a37928db9a8e5063b52",
+      "availability": "retained"
     },
     {
       "path": "audit-evidence/results/engineering/archive-results.json",
       "bytes": 350,
-      "sha256": "46247769d3abe2c197a5d551c53d8d4357b9e1658fbc0d48a8c354588077b250"
+      "sha256": "46247769d3abe2c197a5d551c53d8d4357b9e1658fbc0d48a8c354588077b250",
+      "availability": "retained"
     },
     {
       "path": "audit-evidence/results/engineering/cache-results.json",
       "bytes": 518,
-      "sha256": "ce1017ecba99f5fbf0331b91d4f5dafecc11f78552a67065394164ec4349dc80"
+      "sha256": "ce1017ecba99f5fbf0331b91d4f5dafecc11f78552a67065394164ec4349dc80",
+      "availability": "retained"
     },
     {
       "path": "audit-evidence/results/engineering/cli-failure.txt",
       "bytes": 195,
-      "sha256": "e98b17c22b960b5e771a27eddf1a7b1122f4091b065fa463c79595312404335c"
+      "sha256": "e98b17c22b960b5e771a27eddf1a7b1122f4091b065fa463c79595312404335c",
+      "availability": "retained"
     },
     {
       "path": "audit-evidence/results/engineering/cli-import-invalid.txt",
       "bytes": 262,
-      "sha256": "2c8493f06261f03a080ce909a679fd035fd3e44a2d6fce1d0efc25b76015f10f"
+      "sha256": "2c8493f06261f03a080ce909a679fd035fd3e44a2d6fce1d0efc25b76015f10f",
+      "availability": "retained"
     },
     {
       "path": "audit-evidence/results/engineering/cli-import-results.json",
       "bytes": 2573,
-      "sha256": "9c4d103f37260a7fbaff30e6d06c644ef260866932677739186244603f893817"
+      "sha256": "9c4d103f37260a7fbaff30e6d06c644ef260866932677739186244603f893817",
+      "availability": "retained"
     },
     {
       "path": "audit-evidence/results/engineering/cli-import-valid.txt",
       "bytes": 894,
-      "sha256": "035e53bf3ff8a62a3734b9b9dafd8fa53f9ef4ed44d46ab56fc6baccefe4cda9"
+      "sha256": "035e53bf3ff8a62a3734b9b9dafd8fa53f9ef4ed44d46ab56fc6baccefe4cda9",
+      "availability": "retained"
     },
     {
       "path": "audit-evidence/results/engineering/cli-network-count.json",
       "bytes": 11,
-      "sha256": "8a426a8986fe5156af486ca3b0145d30a2a3bf59d65643e7836980a3592c153b"
+      "sha256": "8a426a8986fe5156af486ca3b0145d30a2a3bf59d65643e7836980a3592c153b",
+      "availability": "retained"
     },
     {
       "path": "audit-evidence/results/engineering/downstream-results.json",
       "bytes": 1067,
-      "sha256": "248ec26f0ab0e8e0a1dc5a0b0f1b2adce3858f24fa60c7ed668b878eed3f199e"
+      "sha256": "248ec26f0ab0e8e0a1dc5a0b0f1b2adce3858f24fa60c7ed668b878eed3f199e",
+      "availability": "retained"
     },
     {
       "path": "audit-evidence/results/engineering/ingest-results.json",
       "bytes": 4695,
-      "sha256": "05f878d189a4dc19b95ba542b469db5f9902b34817f97cedfb617d2a43d33390"
+      "sha256": "05f878d189a4dc19b95ba542b469db5f9902b34817f97cedfb617d2a43d33390",
+      "availability": "retained"
     },
     {
       "path": "audit-evidence/results/intelligence/probe-results.json",
       "bytes": 20052,
-      "sha256": "d6dc9f13006aa5c484c44f69f9be8851c07b4c985eae4e3a47ef41bd6109b30a"
+      "sha256": "d6dc9f13006aa5c484c44f69f9be8851c07b4c985eae4e3a47ef41bd6109b30a",
+      "availability": "retained"
     },
     {
       "path": "audit-evidence/results/intelligence/probe-run.log",
       "bytes": 20053,
-      "sha256": "4e3874e08061297aa437e83e2be0f9a0199fe6b686cab273f90b7bf6305c204a"
+      "sha256": "4e3874e08061297aa437e83e2be0f9a0199fe6b686cab273f90b7bf6305c204a",
+      "availability": "retained"
     },
     {
       "path": "audit-evidence/results/runtime/build-with-fixture.txt",
       "bytes": 2124,
-      "sha256": "ebb5e3ae6d3d10e5df6844b6b323aefb38b1bbbe8d0a1129ac56d4f9ae007c08"
+      "sha256": "ebb5e3ae6d3d10e5df6844b6b323aefb38b1bbbe8d0a1129ac56d4f9ae007c08",
+      "availability": "retained"
     },
     {
       "path": "audit-evidence/results/runtime/build.txt",
       "bytes": 223,
-      "sha256": "1667021d7925240d686706faf5ca3a9490d35e5015348f3498b4e0c0d759a577"
+      "sha256": "1667021d7925240d686706faf5ca3a9490d35e5015348f3498b4e0c0d759a577",
+      "availability": "retained"
     },
     {
       "path": "audit-evidence/results/runtime/fixture-summary.json",
       "bytes": 5181,
-      "sha256": "5e95cfe191c1689408cb507415351b3cf56fb457db31e4c1ea721ea20e8a2271"
+      "sha256": "5e95cfe191c1689408cb507415351b3cf56fb457db31e4c1ea721ea20e8a2271",
+      "availability": "retained"
     },
     {
       "path": "audit-evidence/results/runtime/independent-recomputation.json",
       "bytes": 4553,
-      "sha256": "a70eee4ca5dbbfbe100c33b5103f678ef27139e1ce688c79b1a4a570814fff9c"
+      "sha256": "a70eee4ca5dbbfbe100c33b5103f678ef27139e1ce688c79b1a4a570814fff9c",
+      "availability": "retained"
     },
     {
       "path": "audit-evidence/results/runtime/lint.txt",
       "bytes": 136,
-      "sha256": "90d8e5dfc52d454c012bda231b3bb3aa4cbb367723d48d9f384d7df62c443ebb"
+      "sha256": "90d8e5dfc52d454c012bda231b3bb3aa4cbb367723d48d9f384d7df62c443ebb",
+      "availability": "retained"
     },
     {
       "path": "audit-evidence/results/runtime/npm-audit.json",
       "bytes": 365,
-      "sha256": "ba7d3164c543d311bd46439bc80375c8626e6b812ef76c6a69d41553fff0a268"
+      "sha256": "ba7d3164c543d311bd46439bc80375c8626e6b812ef76c6a69d41553fff0a268",
+      "availability": "retained"
     },
     {
       "path": "audit-evidence/results/runtime/performance.json",
       "bytes": 637,
-      "sha256": "d220e59909383f08e5b6852d5aa86c2c47a0937e343e375c67e27e3f4c4ab372"
+      "sha256": "d220e59909383f08e5b6852d5aa86c2c47a0937e343e375c67e27e3f4c4ab372",
+      "availability": "retained"
     },
     {
       "path": "audit-evidence/results/runtime/synthetic-app-data.json",
       "bytes": 572121,
-      "sha256": "111e326f6f769888d81ab754213a6b57dceaa0a3f8f31fc430c6d83b50e037bb"
+      "sha256": "111e326f6f769888d81ab754213a6b57dceaa0a3f8f31fc430c6d83b50e037bb",
+      "availability": "retained"
     },
     {
       "path": "audit-evidence/results/runtime/synthetic-dataset.json",
       "bytes": 213750,
-      "sha256": "88668a20b6b3701aae738141f3cc6a62d7fb505ecb869a36e1177541b4003655"
+      "sha256": "88668a20b6b3701aae738141f3cc6a62d7fb505ecb869a36e1177541b4003655",
+      "availability": "retained"
     },
     {
       "path": "audit-evidence/results/runtime/synthetic-metadata.json",
       "bytes": 306641,
-      "sha256": "3e6bfdb4f87203fa3a09783671e63a734abd351c8cf851ae787cfda1c2da64bb"
+      "sha256": "3e6bfdb4f87203fa3a09783671e63a734abd351c8cf851ae787cfda1c2da64bb",
+      "availability": "retained"
     },
     {
       "path": "audit-evidence/results/runtime/synthetic-source-files.json",
       "bytes": 82800,
-      "sha256": "8dc7a1675124d21caa436a4a168d2103a567f5cc8d87192e6fc614cac242d1f1"
+      "sha256": "8dc7a1675124d21caa436a4a168d2103a567f5cc8d87192e6fc614cac242d1f1",
+      "availability": "retained"
     },
     {
       "path": "audit-evidence/results/runtime/tests.txt",
       "bytes": 358,
-      "sha256": "317fa41700f054cf98a6fa17926633a042f45ed7b4b5160c1ebdfdb86d4c7a47"
+      "sha256": "317fa41700f054cf98a6fa17926633a042f45ed7b4b5160c1ebdfdb86d4c7a47",
+      "availability": "retained"
     },
     {
       "path": "audit-evidence/results/runtime/typecheck.txt",
       "bytes": 139,
-      "sha256": "8e795be3fec35672127b6ba7710c0954e8b006ada5dfc14162ee63906344ad3e"
+      "sha256": "8e795be3fec35672127b6ba7710c0954e8b006ada5dfc14162ee63906344ad3e",
+      "availability": "retained"
     },
     {
       "path": "audit-evidence/results/ux/contrast.json",
       "bytes": 2631,
-      "sha256": "55ac963ecd92539932a40476c6f533f8ef1aa26b91bfb8a4a785453506cfa667"
+      "sha256": "55ac963ecd92539932a40476c6f533f8ef1aa26b91bfb8a4a785453506cfa667",
+      "availability": "retained"
     },
     {
       "path": "audit-evidence/results/ux/desktop-capture-evidence.json",
       "bytes": 4964,
-      "sha256": "e0a6e534865c6bd470f1bd2c290cb3ed161a94cf8a2fb029cc7c489fff7a564c"
+      "sha256": "e0a6e534865c6bd470f1bd2c290cb3ed161a94cf8a2fb029cc7c489fff7a564c",
+      "availability": "retained"
     },
     {
       "path": "audit-evidence/results/ux/interaction-evidence.json",
       "bytes": 8755,
-      "sha256": "eb0a37115a00c5abc5b174ffe1ed1cc4d96a7213f797fc2f13a386ccf1cad1e9"
+      "sha256": "eb0a37115a00c5abc5b174ffe1ed1cc4d96a7213f797fc2f13a386ccf1cad1e9",
+      "availability": "retained"
     },
     {
       "path": "audit-evidence/results/ux/print-unvisited.pdf",
       "bytes": 66077,
-      "sha256": "f6065df19d5d405bde917b6c94fb412fb882b106760f86a1c55cfc225ddec25b"
+      "sha256": "f6065df19d5d405bde917b6c94fb412fb882b106760f86a1c55cfc225ddec25b",
+      "availability": "archived-at-tag",
+      "archiveUrl": "https://github.com/shaecodes-wilde/cinema-dna/blob/audit-2026-10-26/docs/audit-evidence/results/ux/print-unvisited.pdf"
     },
     {
       "path": "audit-evidence/results/ux/print-unvisited.txt",
       "bytes": 545,
-      "sha256": "274059e985b36e5d4231fb0368c9530e237b2d4264f662f4b215cc12455cbd65"
+      "sha256": "274059e985b36e5d4231fb0368c9530e237b2d4264f662f4b215cc12455cbd65",
+      "availability": "retained"
     },
     {
       "path": "audit-evidence/results/ux/print-visited.pdf",
       "bytes": 107556,
-      "sha256": "baa437a38faa3ad85e6b14eb1366c23d4eb41ebcb655a3a146a046a1f3851d82"
+      "sha256": "baa437a38faa3ad85e6b14eb1366c23d4eb41ebcb655a3a146a046a1f3851d82",
+      "availability": "archived-at-tag",
+      "archiveUrl": "https://github.com/shaecodes-wilde/cinema-dna/blob/audit-2026-10-26/docs/audit-evidence/results/ux/print-visited.pdf"
     },
     {
       "path": "audit-evidence/results/ux/print-visited.txt",
       "bytes": 7254,
-      "sha256": "ecc15caa307f77d5beae61e707f69f6dfc7ca9bfb5eee5e2064e5d05fe953e1e"
+      "sha256": "ecc15caa307f77d5beae61e707f69f6dfc7ca9bfb5eee5e2064e5d05fe953e1e",
+      "availability": "retained"
     },
     {
       "path": "audit-evidence/results/ux/responsive-evidence.json",
       "bytes": 6881,
-      "sha256": "7aaa2d1a288c834347fc94d56f2a9bd2ca1a17cc8082c52a016275c5cb1926ec"
+      "sha256": "7aaa2d1a288c834347fc94d56f2a9bd2ca1a17cc8082c52a016275c5cb1926ec",
+      "availability": "retained"
     },
     {
       "path": "audit-evidence/results/ux/screenshot-manifest.json",
       "bytes": 20257,
-      "sha256": "d6d84659a545008405220b73a8c25ccefbee06ef9e9e1d8cdad6c73a0b4a7696"
+      "sha256": "d6d84659a545008405220b73a8c25ccefbee06ef9e9e1d8cdad6c73a0b4a7696",
+      "availability": "retained"
     },
     {
       "path": "audit-evidence/screenshots/desktop-constellation.png",
       "bytes": 277152,
-      "sha256": "dc657c3d63536563ba3081ca59a07e3da0627d91bce6df98ccf2a9038701a76a"
+      "sha256": "dc657c3d63536563ba3081ca59a07e3da0627d91bce6df98ccf2a9038701a76a",
+      "availability": "archived-at-tag",
+      "archiveUrl": "https://github.com/shaecodes-wilde/cinema-dna/blob/audit-2026-10-26/docs/audit-evidence/screenshots/desktop-constellation.png"
     },
     {
       "path": "audit-evidence/screenshots/desktop-directors.png",
       "bytes": 155625,
-      "sha256": "f6666320b561a3156be2dfa73a04cf1ab3522335e17d54cb5c241c7fbae01508"
+      "sha256": "f6666320b561a3156be2dfa73a04cf1ab3522335e17d54cb5c241c7fbae01508",
+      "availability": "archived-at-tag",
+      "archiveUrl": "https://github.com/shaecodes-wilde/cinema-dna/blob/audit-2026-10-26/docs/audit-evidence/screenshots/desktop-directors.png"
     },
     {
       "path": "audit-evidence/screenshots/desktop-dna.png",
       "bytes": 217475,
-      "sha256": "40eda1d74f92a1677c603d660f1672f7de89971690a31a395ab79cf4fc8563af"
+      "sha256": "40eda1d74f92a1677c603d660f1672f7de89971690a31a395ab79cf4fc8563af",
+      "availability": "archived-at-tag",
+      "archiveUrl": "https://github.com/shaecodes-wilde/cinema-dna/blob/audit-2026-10-26/docs/audit-evidence/screenshots/desktop-dna.png"
     },
     {
       "path": "audit-evidence/screenshots/desktop-five-star.png",
       "bytes": 341122,
-      "sha256": "402661b0a06c4c9727182945fbc19b677d7bb020459335cd1b6d3c937c324803"
+      "sha256": "402661b0a06c4c9727182945fbc19b677d7bb020459335cd1b6d3c937c324803",
+      "availability": "archived-at-tag",
+      "archiveUrl": "https://github.com/shaecodes-wilde/cinema-dna/blob/audit-2026-10-26/docs/audit-evidence/screenshots/desktop-five-star.png"
     },
     {
       "path": "audit-evidence/screenshots/desktop-genres.png",
       "bytes": 118356,
-      "sha256": "fa29e7ebbb92f6318421937d93184c3e2de6a58b280a223bd0379ec24729e2f2"
+      "sha256": "fa29e7ebbb92f6318421937d93184c3e2de6a58b280a223bd0379ec24729e2f2",
+      "availability": "archived-at-tag",
+      "archiveUrl": "https://github.com/shaecodes-wilde/cinema-dna/blob/audit-2026-10-26/docs/audit-evidence/screenshots/desktop-genres.png"
     },
     {
       "path": "audit-evidence/screenshots/desktop-next.png",
       "bytes": 244065,
-      "sha256": "c9410425cf20d857b37ee4e49bea7b47ce1b9959f234779e4a5fb07a2e3429eb"
+      "sha256": "c9410425cf20d857b37ee4e49bea7b47ce1b9959f234779e4a5fb07a2e3429eb",
+      "availability": "archived-at-tag",
+      "archiveUrl": "https://github.com/shaecodes-wilde/cinema-dna/blob/audit-2026-10-26/docs/audit-evidence/screenshots/desktop-next.png"
     },
     {
       "path": "audit-evidence/screenshots/desktop-opening.png",
       "bytes": 354106,
-      "sha256": "a318dba89196a036df1ae88bd17ef209219bb76cb900835aea0cc8875757f139"
+      "sha256": "a318dba89196a036df1ae88bd17ef209219bb76cb900835aea0cc8875757f139",
+      "availability": "archived-at-tag",
+      "archiveUrl": "https://github.com/shaecodes-wilde/cinema-dna/blob/audit-2026-10-26/docs/audit-evidence/screenshots/desktop-opening.png"
     },
     {
       "path": "audit-evidence/screenshots/desktop-quality.png",
       "bytes": 164700,
-      "sha256": "909a2b796e80ebd1e904374c09dd0daf634e55b4c8b715f3c55546057135b7b0"
+      "sha256": "909a2b796e80ebd1e904374c09dd0daf634e55b4c8b715f3c55546057135b7b0",
+      "availability": "archived-at-tag",
+      "archiveUrl": "https://github.com/shaecodes-wilde/cinema-dna/blob/audit-2026-10-26/docs/audit-evidence/screenshots/desktop-quality.png"
     },
     {
       "path": "audit-evidence/screenshots/desktop-timeline.png",
       "bytes": 121938,
-      "sha256": "afa41aced97afb8c952092735a8e2635afb3016c7ef5cd1e51aca4135333e00f"
+      "sha256": "afa41aced97afb8c952092735a8e2635afb3016c7ef5cd1e51aca4135333e00f",
+      "availability": "archived-at-tag",
+      "archiveUrl": "https://github.com/shaecodes-wilde/cinema-dna/blob/audit-2026-10-26/docs/audit-evidence/screenshots/desktop-timeline.png"
     },
     {
       "path": "audit-evidence/screenshots/mobile-dna.png",
       "bytes": 111474,
-      "sha256": "9485e859d0da461c1e1d392815f516dad78bd01a74619bd81a267645a4144c00"
+      "sha256": "9485e859d0da461c1e1d392815f516dad78bd01a74619bd81a267645a4144c00",
+      "availability": "archived-at-tag",
+      "archiveUrl": "https://github.com/shaecodes-wilde/cinema-dna/blob/audit-2026-10-26/docs/audit-evidence/screenshots/mobile-dna.png"
     },
     {
       "path": "audit-evidence/screenshots/mobile-next.png",
       "bytes": 87108,
-      "sha256": "3762e49e8a0d57c4ca2ae351644215d1b2df474f88dd33177cfa4e0b82bcf6d1"
+      "sha256": "3762e49e8a0d57c4ca2ae351644215d1b2df474f88dd33177cfa4e0b82bcf6d1",
+      "availability": "archived-at-tag",
+      "archiveUrl": "https://github.com/shaecodes-wilde/cinema-dna/blob/audit-2026-10-26/docs/audit-evidence/screenshots/mobile-next.png"
     },
     {
       "path": "audit-evidence/screenshots/print-unvisited-1.png",
       "bytes": 38481,
-      "sha256": "9fab20c10b909003a367ec8ae9567736348a12a709f6e9fce681fc0104dd5126"
+      "sha256": "9fab20c10b909003a367ec8ae9567736348a12a709f6e9fce681fc0104dd5126",
+      "availability": "archived-at-tag",
+      "archiveUrl": "https://github.com/shaecodes-wilde/cinema-dna/blob/audit-2026-10-26/docs/audit-evidence/screenshots/print-unvisited-1.png"
     },
     {
       "path": "audit-evidence/screenshots/print-unvisited-2.png",
       "bytes": 5383,
-      "sha256": "9358383061b13237f59bd535330dd516ad3456a81de9231f07942a136e34aa7d"
+      "sha256": "9358383061b13237f59bd535330dd516ad3456a81de9231f07942a136e34aa7d",
+      "availability": "archived-at-tag",
+      "archiveUrl": "https://github.com/shaecodes-wilde/cinema-dna/blob/audit-2026-10-26/docs/audit-evidence/screenshots/print-unvisited-2.png"
     },
     {
       "path": "audit-evidence/screenshots/print-visited-1.png",
       "bytes": 67485,
-      "sha256": "4d5a67b163fa236dd978bab10cc86404b372ab6e576c29d1d8edbc405885028d"
+      "sha256": "4d5a67b163fa236dd978bab10cc86404b372ab6e576c29d1d8edbc405885028d",
+      "availability": "archived-at-tag",
+      "archiveUrl": "https://github.com/shaecodes-wilde/cinema-dna/blob/audit-2026-10-26/docs/audit-evidence/screenshots/print-visited-1.png"
     },
     {
       "path": "audit-evidence/screenshots/print-visited-2.png",
       "bytes": 102982,
-      "sha256": "828c302efa78752ae01062aadfbe2e4cf03d3449a35c135ebc7e415f41093613"
+      "sha256": "828c302efa78752ae01062aadfbe2e4cf03d3449a35c135ebc7e415f41093613",
+      "availability": "archived-at-tag",
+      "archiveUrl": "https://github.com/shaecodes-wilde/cinema-dna/blob/audit-2026-10-26/docs/audit-evidence/screenshots/print-visited-2.png"
     },
     {
       "path": "audit-evidence/screenshots/tablet-dna.png",
       "bytes": 153813,
-      "sha256": "26003f6481bfaf71659f433e974498f8cc089d66328d91b4dc36dd74e041735d"
+      "sha256": "26003f6481bfaf71659f433e974498f8cc089d66328d91b4dc36dd74e041735d",
+      "availability": "archived-at-tag",
+      "archiveUrl": "https://github.com/shaecodes-wilde/cinema-dna/blob/audit-2026-10-26/docs/audit-evidence/screenshots/tablet-dna.png"
     }
-  ]
+  ],
+  "curation": {
+    "date": "2026-10-26",
+    "curatedCopy": "Reports, reproduction guides and non-binary evidence retained on main.",
+    "archiveTag": "audit-2026-10-26",
+    "archiveCommit": "db5aa1076d48741049af9f06c1239e8dd7fa2c04",
+    "layoutNote": "The 18 PNG/PDF binaries are archived at the tag. A tag does not remove objects from the repository; this curation changes clone layout only.",
+    "integrityNote": "Existing file entries, byte counts and hashes describe the original audit contents at the archive commit, before curation banners and links. New curation documents are not part of that historical inventory."
+  }
 }

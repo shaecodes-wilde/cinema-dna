@@ -1,5 +1,7 @@
 # CINEMA DNA — Executive audit
 
+> **Historical audit.** Synthetic evidence only. Application audited at `b7a732a`; file and line references are valid at that commit. Findings are not measurements of the owner's personal recommendation accuracy. This document ships no fixes. Current status and the adopted repair sequence: [AUDIT_STATUS.md](AUDIT_STATUS.md). Screenshots and PDFs are archived at tag [`audit-2026-10-26`](https://github.com/shaecodes-wilde/cinema-dna/tree/audit-2026-10-26/docs).
+
 **Audit date:** 26 October 2026
 
 **Repository:** [shaecodes-wilde/cinema-dna](https://github.com/shaecodes-wilde/cinema-dna)

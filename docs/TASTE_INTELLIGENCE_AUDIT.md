@@ -1,5 +1,7 @@
 # CINEMA DNA — Taste Intelligence Audit
 
+> **Historical audit.** Synthetic evidence only. Application audited at `b7a732a`; file and line references are valid at that commit. Findings are not measurements of the owner's personal recommendation accuracy. This document ships no fixes. Current status and the adopted repair sequence: [AUDIT_STATUS.md](AUDIT_STATUS.md). Screenshots and PDFs are archived at tag [`audit-2026-10-26`](https://github.com/shaecodes-wilde/cinema-dna/tree/audit-2026-10-26/docs).
+
 **Audit date:** 2026-10-26. **Source:** `main` at `b7a732a5b076858f5cee92da0c9408dded0823a0`.
 
 **Scope:** independent inspection of `pipeline/analyze/`, associated shared contracts, tests and explanatory UI. No application source was changed. All executable probes in this report use invented synthetic records. The owner’s original personal export and generated private analysis were unavailable. No film metadata lookup or private-data upload was performed. **Personal taste accuracy and personal ranking quality are not assessable from this audit.**

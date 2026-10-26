@@ -1,5 +1,7 @@
 # CINEMA DNA — Implementation roadmap
 
+> **Historical audit.** Synthetic evidence only. Application audited at `b7a732a`; file and line references are valid at that commit. Findings are not measurements of the owner's personal recommendation accuracy. This document ships no fixes. Current status and the adopted repair sequence: [AUDIT_STATUS.md](AUDIT_STATUS.md). Screenshots and PDFs are archived at tag [`audit-2026-10-26`](https://github.com/shaecodes-wilde/cinema-dna/tree/audit-2026-10-26/docs). The coordinator, schema-freeze and three-worktree Phase 1 orchestration below was superseded by the smaller sequential sequence in AUDIT_STATUS.md; its architecture ideas remain a future backlog.
+
 **Planning basis:** audit of `b7a732a5b076858f5cee92da0c9408dded0823a0` on 26 October 2026.
 
 **Status:** recommendation only. No application implementation began during the audit.

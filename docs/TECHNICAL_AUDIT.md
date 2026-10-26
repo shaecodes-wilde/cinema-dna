@@ -1,5 +1,7 @@
 # CINEMA DNA — Technical Audit
 
+> **Historical audit.** Synthetic evidence only. Application audited at `b7a732a`; file and line references are valid at that commit. Findings are not measurements of the owner's personal recommendation accuracy. This document ships no fixes. Current status and the adopted repair sequence: [AUDIT_STATUS.md](AUDIT_STATUS.md). Screenshots and PDFs are archived at tag [`audit-2026-10-26`](https://github.com/shaecodes-wilde/cinema-dna/tree/audit-2026-10-26/docs).
+
 **Audit date:** 2026-10-26. **Audited source:** `main` at `b7a732a5b076858f5cee92da0c9408dded0823a0`. **Documentation branch:** `audit/cinema-dna-2026-10-26`.
 
 The audit used a fresh clone whose initial working tree was clean. The owner's original workstation, uncommitted changes, private export, cached metadata and previously generated dashboard were not available. The documentation branch was created from the audited commit; application source and the source `main` branch were left unchanged. Only audit documentation and synthetic evidence are added.
