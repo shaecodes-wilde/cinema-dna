@@ -1,7 +1,7 @@
 import { motion } from 'motion/react'
 import { useMemo } from 'react'
 import { useData, useReducedMotion } from '../lib/data.tsx'
-import { fmtDate, fmtRating, pct } from '../lib/format.ts'
+import { fmtDate, fmtRating, fmtStars, pct, plural } from '../lib/format.ts'
 import { InfoTip, Poster, Reveal, Stat } from '../ui/primitives.tsx'
 
 /** 01 — The Opening Sequence: title card, editorial intro, totals as a credits roll. */
@@ -141,11 +141,11 @@ export function Opening() {
                   <InfoTip>Runtime × diary viewings (films without a diary entry count once). Runtime is known for {pct(t.hoursCoverage)} of watched films, so this is a lower bound.</InfoTip>
                 </>
               }
-              hint={`≈ ${t.hoursWatched ? Math.round(t.hoursWatched / 24) : '—'} days`}
+              hint={t.hoursWatched ? `≈ ${Math.round(t.hoursWatched / 24)} days` : 'needs film metadata'}
             />
           </Reveal>
           <Reveal delay={0.15}>
-            <Stat value={fmtRating(t.meanRating)} label="Average rating" hint={`median ${fmtRating(t.medianRating, 1)} · SD ${t.sdRating.toFixed(2)}`} accent />
+            <Stat value={fmtRating(t.meanRating)} label="Average rating" hint={`median ${fmtStars(t.medianRating)} · SD ${t.sdRating.toFixed(2)}`} accent />
           </Reveal>
           <Reveal>
             <Stat value={t.rewatchViewings} label="Rewatches" hint={`${pct(t.rewatchViewings / Math.max(t.diaryViewings, 1))} of entries`} />
@@ -157,7 +157,7 @@ export function Opening() {
             <Stat
               value={decades.byCount ? decades.byCount.key : '—'}
               label="Most-watched decade"
-              hint={decades.byCount ? `${decades.byCount.n} films · ${pct(decades.byCount.share)}` : undefined}
+              hint={decades.byCount ? `${plural(decades.byCount.n, 'film')} · ${pct(decades.byCount.share)}` : undefined}
             />
           </Reveal>
           <Reveal delay={0.15}>

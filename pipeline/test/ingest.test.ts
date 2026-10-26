@@ -94,7 +94,7 @@ describe('normalize', () => {
   it('creates title-keyed films only when no film-level record exists, and logs it', () => {
     const ds2 = normalize(fixtureArchive({ 'diary.csv': FIXTURE_FILES['diary.csv'] + '2023-09-01,Unknown Film,2001,https://boxd.it/d009,3,,,2023-09-01\n' }))
     const f = ds2.films.find((x) => x.title === 'Unknown Film')!
-    expect(f.id).toBe('ty:unknown-film:2001')
+    expect(f.id).toBe('ty:unknownfilm:2001')
     expect(f.watched).toBe(true)
     expect(ds2.audit.conflicts.some((c) => c.kind === 'unresolved-title-year')).toBe(true)
   })

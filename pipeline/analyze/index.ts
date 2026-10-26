@@ -194,9 +194,10 @@ export async function analyze(dataset: Dataset, metadata: MetadataFile | null, o
       hoursCoverage: round(withRuntime.length / Math.max(watched.length, 1), 3),
       firstLog: logDates[0] ?? null,
       lastLog: logDates.at(-1) ?? null,
-      meanRating: round(base.mean),
-      sdRating: round(base.sd),
-      medianRating: median(ratings),
+      // Zero-rating libraries are gated in the UI and reports (MIN_RATED_FILMS); keep the bundle finite.
+      meanRating: ratings.length ? round(base.mean) : 0,
+      sdRating: ratings.length ? round(base.sd) : 0,
+      medianRating: ratings.length ? median(ratings) : 0,
     },
     films,
     viewings,
@@ -216,11 +217,10 @@ export async function analyze(dataset: Dataset, metadata: MetadataFile | null, o
     critical: {
       distribution: ratingDistribution,
       revisions: dataset.audit.conflicts
-        .filter((c) => c.kind === 'rating-mismatch')
+        .filter((c) => c.kind === 'rating-mismatch' && c.filmId)
         .map((c) => {
-          const m = c.detail.match(/^"(.+)": latest diary rating ([\d.]+)★, current rating ([\d.]+)★ \(revised (.+)\)$/)
-          const film = m ? records.find((r) => r.film.title === m[1] && r.viewings.length) : null
-          return film && m ? { filmId: film.film.id, from: Number(m[2]), to: Number(m[3]), date: m[4] === 'null' ? null : m[4] } : null
+          const m = c.detail.match(/latest diary rating ([\d.]+)★, current rating ([\d.]+)★ \(revised (.+)\)$/)
+          return m ? { filmId: c.filmId!, from: Number(m[1]), to: Number(m[2]), date: m[3] === 'null' ? null : m[3] } : null
         })
         .filter((x): x is NonNullable<typeof x> => !!x),
       language: language.categories,
@@ -228,13 +228,13 @@ export async function analyze(dataset: Dataset, metadata: MetadataFile | null, o
       lengthVsRating: language.lengthVsRating,
       textRatingCorrelation: language.textRatingCorrelation,
       exceptions: {
-        above: rated
-          .map((r) => ({ id: r.film.id, gap: r.rating! - (model.cvPredictions.get(r.film.id) ?? base.mean) }))
+        above: (model.report.available ? rated : [])
+          .map((r) => ({ id: r.film.id, gap: r.rating! - model.cvPredictions.get(r.film.id)! }))
           .sort((a, b) => b.gap - a.gap)
           .slice(0, 8)
           .map((x) => x.id),
-        below: rated
-          .map((r) => ({ id: r.film.id, gap: r.rating! - (model.cvPredictions.get(r.film.id) ?? base.mean) }))
+        below: (model.report.available ? rated : [])
+          .map((r) => ({ id: r.film.id, gap: r.rating! - model.cvPredictions.get(r.film.id)! }))
           .sort((a, b) => a.gap - b.gap)
           .slice(0, 8)
           .map((x) => x.id),

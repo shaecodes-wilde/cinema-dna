@@ -31,7 +31,7 @@ export const tokenize = (text: string) =>
   text
     .toLowerCase()
     .replace(/[’‘]/g, "'")
-    .match(/[a-z][a-z'-]*/g) ?? []
+    .match(/\p{L}[\p{L}\p{M}'-]*/gu) ?? []
 
 function matcher(terms: string[]): (text: string) => boolean {
   const res = terms.map((t) =>

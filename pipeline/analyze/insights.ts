@@ -39,12 +39,20 @@ export function buildInsights(ctx: AnalysisContext): { insights: Insight[]; five
     const m = c.detail.match(/latest diary rating ([\d.]+)★, current rating ([\d.]+)★/)
     return m && Number(m[2]) < Number(m[1])
   })
-  add({
+  const generous = base.mean >= 3.25
+  const fivesRare = fives.length / Math.max(ratings.length, 1) <= 0.08
+  if (ratings.length) add({
     id: 'generosity',
     category: 'generosity',
-    title: base.mean >= 3.25 ? 'A generous grader who rations perfection' : 'A tough grader',
-    finding: `Your average is ${star(base.mean)} (median ${star(median(ratings))}), so a 3★ from you is a below-average grade — ${pct(threeOrLess)} of your films sit at 3★ or lower. Yet only ${fives.length} of ${ratings.length} films (${pct(fives.length / ratings.length)}) have earned 5★.`,
-    explanation: 'Your stars are compressed into the upper-middle of the scale. Read your 3★ as "fine" and your 4★ as a genuine recommendation; 5★ is a rare, deliberate act.',
+    title: generous ? (fivesRare ? 'A generous grader who rations perfection' : 'A generous grader') : base.mean >= 2.75 ? 'A measured grader' : 'A tough grader',
+    finding: generous
+      ? `Your average is ${star(base.mean)} (median ${star(median(ratings))}), so a 3★ from you is a below-average grade — ${pct(threeOrLess)} of your films sit at 3★ or lower. ${fivesRare ? 'Yet only' : 'And'} ${fives.length} of ${ratings.length} films (${pct(fives.length / ratings.length)}) have earned 5★.`
+      : `Your average is ${star(base.mean)} (median ${star(median(ratings))}): ${pct(threeOrLess)} of your films sit at 3★ or lower, and ${fives.length} of ${ratings.length} (${pct(fives.length / ratings.length)}) have earned 5★.`,
+    explanation: generous
+      ? `Your stars are compressed into the upper-middle of the scale. Read your 3★ as "fine" and your 4★ as a genuine recommendation${fivesRare ? '; 5★ is a rare, deliberate act' : ''}.`
+      : base.mean >= 2.75
+        ? 'You use the middle of the scale honestly: a 3★ from you is an ordinary grade, and anything at 4★ or above stands out.'
+        : 'You grade hard. Most films land low on your scale, so even a 3★ is a recommendation and a 4★ is high praise.',
     stats: [
       { label: 'Mean', value: star(base.mean) },
       { label: 'Std. dev.', value: base.sd.toFixed(2) },
@@ -395,7 +403,8 @@ export function buildInsights(ctx: AnalysisContext): { insights: Insight[]; five
     const genreDelta = Object.keys({ ...first.genreShares, ...last.genreShares })
       .map((g) => ({ g, d: (last.genreShares[g] ?? 0) - (first.genreShares[g] ?? 0) }))
       .sort((a, b) => b.d - a.d)
-    const rising = genreDelta[0], falling = genreDelta.at(-1)!
+    const rising = genreDelta[0] ?? { g: '', d: 0 }
+    const falling = genreDelta.at(-1) ?? { g: '', d: 0 }
     const lagByYear = years.map((y) => {
       const lags = ctx.dataset.viewings
         .filter((v) => !v.rewatch && v.watchedDate?.startsWith(String(y.year)) && (v.dateQuality === 'live' || v.dateQuality === 'delayed'))
@@ -499,11 +508,11 @@ export function buildInsights(ctx: AnalysisContext): { insights: Insight[]; five
   }
 
   // ── Exceptions vs. the taste model ─────────────────────────────────────
-  const resid = rated
+  const resid = (ctx.model.report.available ? rated : [])
     .map((r) => ({ r, gap: r.rating! - (ctx.model.cvPredictions.get(r.film.id) ?? base.mean) }))
     .sort((a, b) => b.gap - a.gap)
   const over = resid.slice(0, 4), under = resid.slice(-4).reverse()
-  add({
+  if (resid.length >= 8) add({
     id: 'exceptions',
     category: 'exception',
     title: 'The films your taste model never saw coming',

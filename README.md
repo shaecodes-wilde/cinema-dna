@@ -146,6 +146,13 @@ Synthetic fixtures live in `pipeline/test/fixtures.ts`; tests never touch your r
 - Review-language analysis uses transparent lexicons on short reviews: treat it as tendency, not diagnosis.
 - With a few hundred ratings, most person-level and small-group findings are "low confidence" by design.
 - All patterns are correlations within your own history; none is a causal claim.
+- You need at least 5 rated films for the dashboard and 20 (with some variety) for the taste model; below that the
+  app says so instead of showing empty statistics.
+- People are identified by name, so two different people who share a name are merged.
+- The timeline only uses diary dates on/after your join date. If you imported older history from IMDb/Trakt, most of it
+  is treated as backfilled.
+- Very large libraries work (a 4,000-film map builds in under a minute) but the first Wikidata enrichment is slow
+  because unmatched titles are searched one at a time at a polite rate.
 - Wikidata content is CC0. TMDB use, if enabled, is subject to TMDB's terms ("This product uses the TMDB API but
   is not endorsed or certified by TMDB."). Not affiliated with Letterboxd.
 

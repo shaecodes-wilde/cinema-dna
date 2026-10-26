@@ -119,6 +119,8 @@ export interface Profile {
 }
 
 export interface IdentityConflict {
+  /** the film the conflict is about, when known */
+  filmId?: string
   kind: 'same-uri-different-title' | 'same-title-year-different-uri' | 'unresolved-title-year' | 'rating-mismatch'
   detail: string
   refs: SourceRef[]

@@ -36,7 +36,7 @@ function titleMatch(q: FilmQuery, e: CompactEntity): 'exact' | 'partial' | 'none
   if (names.includes(k)) return 'exact'
   const stripped = (s: string) => s.replace(/^the/, '')
   if (names.some((n) => stripped(n) === stripped(k))) return 'exact'
-  if (names.some((n) => n.length > 3 && (n.includes(k) || k.includes(n)))) return 'partial'
+  if (k.length > 3 && names.some((n) => n.length > 3 && (n.includes(k) || k.includes(n)))) return 'partial'
   return 'none'
 }
 

@@ -110,6 +110,8 @@ export function useAppData(): LoadState {
     fetch(`${import.meta.env.BASE_URL}data/cinema-dna.json`, { cache: 'no-store' })
       .then(async (res) => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`)
+        // Dev servers answer a missing file with index.html; treat anything non-JSON as "not generated yet".
+        if (!(res.headers.get('content-type') ?? '').includes('json')) throw new Error('public/data/cinema-dna.json not found')
         setState({ status: 'ready', data: (await res.json()) as AppData })
       })
       .catch((err: Error) => setState({ status: 'missing', message: err.message }))

@@ -1,6 +1,8 @@
 import type { FilmMetadata, PersonRef } from '../../shared/types.ts'
-import { CachedHttp } from './http.ts'
+import { CachedHttp, HttpError } from './http.ts'
+export { HttpError }
 import { fromTmdbGenre } from './genres.ts'
+import { titleKey } from '../util/slug.ts'
 
 /**
  * Optional TMDB layer. Enabled when TMDB_API_KEY (v3 key) or TMDB_READ_ACCESS_TOKEN (v4 token)
@@ -56,11 +58,17 @@ export class Tmdb {
   async search(title: string, year: number | null): Promise<number | null> {
     const params: Record<string, string> = { query: title, include_adult: 'false' }
     if (year) params.year = String(year)
-    const res = await this.http.json<{ results: { id: number; title: string; release_date?: string }[] }>(
+    const res = await this.http.json<{ results: { id: number; title: string; original_title?: string; release_date?: string }[] }>(
       this.url('/search/movie', params),
     )
-    const hit = res?.results.find((r) => !year || Math.abs(Number(r.release_date?.slice(0, 4)) - year) <= 1)
-    return hit?.id ?? null
+    // Only accept a result whose (original) title actually matches and whose year agrees within ±1.
+    const want = titleKey(title)
+    const hits = (res?.results ?? []).filter(
+      (r) =>
+        [r.title, r.original_title ?? ''].some((t) => titleKey(t) === want) &&
+        (!year || Math.abs(Number(r.release_date?.slice(0, 4)) - year) <= 1),
+    )
+    return hits.length === 1 || (hits.length > 1 && year) ? hits[0].id : null
   }
 
   async movie(id: number): Promise<TmdbMovie | null> {

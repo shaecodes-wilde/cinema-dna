@@ -31,7 +31,7 @@ export function buildDna(ctx: AnalysisContext): DnaDimension[] {
   const fives = rated.filter((r) => r.rating === 5)
   push({
     id: 'generosity', name: 'Generosity', axis: 'Generosity',
-    score: ((base.mean - 0.5) / 4.5) * 100,
+    score: ratings.length ? ((base.mean - 0.5) / 4.5) * 100 : 0,
     headline: `Average ${base.mean.toFixed(2)}★ — but only ${fives.length} perfect scores`,
     definition: 'Where your average rating sits on the 0.5–5★ scale (0 = everything gets ½★, 100 = everything gets 5★).',
     value: `${base.mean.toFixed(2)}★ mean · ${pct(fourPlus)}% rated 4★+ · ${pct(fives.length / ratings.length)}% rated 5★`,
@@ -202,7 +202,7 @@ export function buildDna(ctx: AnalysisContext): DnaDimension[] {
     value: `${reviews.length} reviews · mean ${ctx.language.meanWords} words · ${pct(ctx.language.shortShare)}% are 12 words or fewer`,
     n: reviews.length, confidence: proportionConfidence(reviews.length), evidence: 'review-text',
     filmIds: [...reviews].sort((a, b) => b.wordCount - a.wordCount).slice(0, 6).map((r) => r.filmId),
-    stats: [{ label: 'Longest review', value: `${Math.max(...reviews.map((r) => r.wordCount))} words` }],
+    stats: reviews.length ? [{ label: 'Longest review', value: `${Math.max(...reviews.map((r) => r.wordCount))} words` }] : [],
     affinity: null,
   })
 

@@ -137,6 +137,14 @@ export function RatingMotion() {
 export function ModelPanel() {
   const { data } = useData()
   const m = data.model
+  if (!m.available) {
+    return (
+      <p className="max-w-2xl text-[15px] leading-relaxed text-ink-2">
+        The taste model needs at least 20 rated films with some variety in your ratings ({m.n} so far), so predictions and the "films the model never saw
+        coming" are switched off. Everything else on this page is computed directly from your ratings.
+      </p>
+    )
+  }
   const gain = 1 - m.cvRmse / m.baselineRmse
   const weights = [...m.topPositive.slice(0, 6), ...m.topNegative.slice(0, 6)].sort((a, b) => b.weight - a.weight)
   const max = Math.max(...weights.map((w) => Math.abs(w.weight)))
@@ -145,8 +153,18 @@ export function ModelPanel() {
       <div className="space-y-5">
         <p className="text-[15px] leading-relaxed text-ink-2">
           A ridge regression over {m.features} film attributes, fit on {m.n} rated films and scored by 10-fold cross-validation. It predicts your stars{' '}
-          <span className="text-ink">{Math.round(gain * 100)}% better</span> than always guessing your average — a modest signal, which is the honest answer: most of what makes you love a film is not in its
-          metadata.
+          {gain > 0.005 ? (
+            <>
+              <span className="text-ink">{Math.round(gain * 100)}% better</span> than always guessing your average —{' '}
+              {gain < 0.15
+                ? 'a modest signal, which is the honest answer: most of what makes you love a film is not in its metadata.'
+                : 'a strong signal: the attributes of a film genuinely predict how you will rate it.'}
+            </>
+          ) : (
+            <>
+              <span className="text-ink">no better</span> than always guessing your average: your ratings aren't predictable from film metadata, so treat predictions as rough.
+            </>
+          )}
         </p>
         <dl className="grid grid-cols-2 gap-4">
           {[

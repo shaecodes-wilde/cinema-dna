@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from 'react'
 import type { AppFilm } from '../../shared/app-types.ts'
 import { useData } from '../lib/data.tsx'
 import { COOL, fmtRating, heat, NEUTRAL, WARM } from '../lib/format.ts'
-import { Chapter, FilmChips, InfoTip, Reveal, Segmented } from '../ui/primitives.tsx'
+import { Chapter, Empty, FilmChips, InfoTip, Reveal, Segmented } from '../ui/primitives.tsx'
 import { StarMap, type ColorMode } from './constellation/StarMap.tsx'
 
 const select = 'rounded-full border border-line-2 bg-night-2 px-3 py-1 text-[12px] text-ink-2 focus:border-amber focus:outline-none'
@@ -41,6 +41,17 @@ export function Constellation() {
   const selectCluster = (id: number | null) => {
     setSelectedCluster(id)
     if (id !== null) setColorMode('cluster')
+  }
+
+  if (!films.length) {
+    return (
+      <Chapter id="constellation" number="06" title="The Movie Constellation" kicker="Your films as a map">
+        <Empty>
+          The map needs at least 15 watched films with matched metadata ({data.quality.metadata.watchedMatched} so far). Run <code className="num">npm run enrich</code> with network
+          access, then <code className="num">npm run analyze</code>.
+        </Empty>
+      </Chapter>
+    )
   }
 
   return (

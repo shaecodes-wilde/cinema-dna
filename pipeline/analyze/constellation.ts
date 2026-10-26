@@ -23,7 +23,7 @@ export const WEIGHTS: { feature: string; weight: number; note: string }[] = [
   { feature: 'Runtime band', weight: 0.3, note: 'length bucket' },
 ]
 
-export function filmVectors(records: FilmRecord[]): { keys: string[]; vectors: number[][] } {
+export function filmVectors(records: FilmRecord[]): { keys: string[]; vectors: SparseVec[] } {
   const castCount = new Map<string, number>()
   const crewCount = new Map<string, number>()
   for (const r of records) {
@@ -54,21 +54,36 @@ export function filmVectors(records: FilmRecord[]): { keys: string[]; vectors: n
     for (const k of f.keys()) if (!dims.has(k)) dims.set(k, dims.size)
     return f
   })
-  const keys = [...dims.keys()]
+  // An attribute only one film has adds no similarity to anything; dropping it keeps vectors small.
+  const df = new Map<string, number>()
+  for (const f of sparse) for (const k of f.keys()) df.set(k, (df.get(k) ?? 0) + 1)
+  const keys = [...dims.keys()].filter((k) => (df.get(k) ?? 0) >= 2)
+  const index = new Map(keys.map((k, i) => [k, i]))
   const vectors = sparse.map((f) => {
-    const v = new Array<number>(keys.length).fill(0)
-    for (const [k, w] of f) v[dims.get(k)!] = w
-    const norm = Math.sqrt(v.reduce((a, x) => a + x * x, 0)) || 1
-    return v.map((x) => x / norm)
+    const entries = [...f].filter(([k]) => index.has(k)).map(([k, w]) => [index.get(k)!, w] as const).sort((x, y) => x[0] - y[0])
+    const norm = Math.sqrt(entries.reduce((acc, [, w]) => acc + w * w, 0)) || 1
+    return { idx: Int32Array.from(entries.map(([i]) => i)), val: Float64Array.from(entries.map(([, w]) => w / norm)) }
   })
   return { keys, vectors }
 }
 
-export const cosineDistance = (a: number[], b: number[]) => {
-  let s = 0
-  for (let i = 0; i < a.length; i++) s += a[i] * b[i]
-  return 1 - s
+/** Unit-normalised sparse attribute vector. */
+export interface SparseVec {
+  idx: Int32Array
+  val: Float64Array
 }
+
+/** Cosine distance between two unit-normalised sparse vectors (merge over sorted indices). */
+export function sparseCosineDistance(a: SparseVec, b: SparseVec): number {
+  let i = 0, j = 0, dot = 0
+  while (i < a.idx.length && j < b.idx.length) {
+    if (a.idx[i] === b.idx[j]) dot += a.val[i++] * b.val[j++]
+    else if (a.idx[i] < b.idx[j]) i++
+    else j++
+  }
+  return a.idx.length && b.idx.length ? 1 - dot : 1
+}
+
 
 export interface ConstellationResult {
   positions: Map<string, { x: number; y: number; cluster: number }>
@@ -80,15 +95,16 @@ export function buildConstellation(records: FilmRecord[], seed = 42): Constellat
   // UMAP and k-means need a reasonable sample; without metadata the map is simply omitted.
   if (usable.length < 15) return { positions: new Map(), clusters: [] }
   const { vectors } = filmVectors(usable)
+  // UMAP only needs pairwise distances: hand it row indices and resolve them against the sparse vectors.
   const umap = new UMAP({
     nComponents: 2,
     nNeighbors: Math.min(14, usable.length - 1),
     minDist: 0.35,
     spread: 1.2,
-    distanceFn: cosineDistance,
+    distanceFn: (a, b) => sparseCosineDistance(vectors[a[0]], vectors[b[0]]),
     random: rng(seed),
   })
-  const raw = umap.fit(vectors)
+  const raw = umap.fit(vectors.map((_, i) => [i]))
   // Normalise to [0, 1].
   const xs = raw.map((p) => p[0]), ys = raw.map((p) => p[1])
   const [minX, maxX, minY, maxY] = [Math.min(...xs), Math.max(...xs), Math.min(...ys), Math.max(...ys)]
@@ -96,9 +112,10 @@ export function buildConstellation(records: FilmRecord[], seed = 42): Constellat
 
   // k-means on the high-dimensional vectors; k chosen by silhouette (cosine).
   let best: { k: number; labels: number[]; score: number } = { k: 0, labels: [], score: -Infinity }
-  for (let k = 5; k <= Math.min(8, Math.floor(usable.length / 4)); k++) {
-    const labels = kmeans(vectors, k, seed)
-    const score = silhouette(vectors, labels)
+  const kMax = Math.min(8, Math.max(2, Math.floor(usable.length / 4)))
+  for (let k = Math.min(5, kMax); k <= kMax; k++) {
+    const labels = kmeans(vectors, keysCount(vectors), k, seed)
+    const score = silhouette(vectors, labels, seed)
     if (score > best.score) best = { k, labels, score }
   }
 
@@ -157,51 +174,75 @@ function prettyKey(k: string): string {
   return value
 }
 
-export function kmeans(vectors: number[][], k: number, seed: number, iters = 60): number[] {
+const keysCount = (vs: SparseVec[]) => vs.reduce((m, v) => Math.max(m, v.idx.length ? v.idx[v.idx.length - 1] + 1 : 0), 0)
+
+/** Spherical k-means (k-means++ init) over sparse unit vectors with dense centroids. */
+export function kmeans(vectors: SparseVec[], dims: number, k: number, seed: number, iters = 60): number[] {
   const rand = rng(seed + k)
-  // k-means++ initialisation
-  const centroids: number[][] = [vectors[Math.floor(rand() * vectors.length)]]
+  const toDense = (v: SparseVec) => {
+    const c = new Float64Array(dims)
+    v.idx.forEach((ix, t) => (c[ix] = v.val[t]))
+    return c
+  }
+  const dist = (v: SparseVec, c: Float64Array) => {
+    let dot = 0
+    for (let t = 0; t < v.idx.length; t++) dot += v.val[t] * c[v.idx[t]]
+    return 1 - dot
+  }
+  const centroids: Float64Array[] = [toDense(vectors[Math.floor(rand() * vectors.length)])]
   while (centroids.length < k) {
-    const d = vectors.map((v) => Math.min(...centroids.map((c) => cosineDistance(v, c))) ** 2)
-    const total = d.reduce((a, b) => a + b, 0)
+    const d = vectors.map((v) => Math.min(...centroids.map((c) => dist(v, c))) ** 2)
+    const total = d.reduce((acc, x) => acc + x, 0)
     let t = rand() * total
     let idx = 0
     while (idx < d.length - 1 && (t -= d[idx]) > 0) idx++
-    centroids.push(vectors[idx])
+    centroids.push(toDense(vectors[idx]))
   }
   let labels = new Array<number>(vectors.length).fill(0)
   for (let it = 0; it < iters; it++) {
     const next = vectors.map((v) => {
       let bi = 0, bd = Infinity
       centroids.forEach((c, i) => {
-        const d = cosineDistance(v, c)
+        const d = dist(v, c)
         if (d < bd) [bd, bi] = [d, i]
       })
       return bi
     })
     const changed = next.some((l, i) => l !== labels[i])
     labels = next
-    for (let c = 0; c < k; c++) {
-      const members = vectors.filter((_, i) => labels[i] === c)
-      if (!members.length) continue
-      const m = members[0].map((_, j) => mean(members.map((v) => v[j])))
-      const norm = Math.sqrt(m.reduce((a, x) => a + x * x, 0)) || 1
-      centroids[c] = m.map((x) => x / norm)
-    }
+    const sums = centroids.map(() => new Float64Array(dims))
+    vectors.forEach((v, i) => v.idx.forEach((ix, t) => (sums[labels[i]][ix] += v.val[t])))
+    sums.forEach((m, c) => {
+      const norm = Math.sqrt(m.reduce((acc, x) => acc + x * x, 0))
+      if (norm) centroids[c] = m.map((x) => x / norm)
+    })
     if (!changed) break
   }
   return labels
 }
 
-export function silhouette(vectors: number[][], labels: number[]): number {
-  const scores = vectors.map((v, i) => {
-    const byCluster = new Map<number, number[]>()
-    vectors.forEach((w, j) => {
-      if (i !== j) byCluster.set(labels[j], [...(byCluster.get(labels[j]) ?? []), cosineDistance(v, w)])
-    })
-    const a = mean(byCluster.get(labels[i]) ?? [0])
-    const b = Math.min(...[...byCluster].filter(([c]) => c !== labels[i]).map(([, ds]) => mean(ds)))
-    return Number.isFinite(b) ? (b - a) / Math.max(a, b) : 0
+/** Mean silhouette (cosine) on a seeded sample of at most `sample` points — O(sample²), not O(n²). */
+export function silhouette(vectors: SparseVec[], labels: number[], seed = 1, sample = 400): number {
+  const rand = rng(seed)
+  const order = vectors.map((_, i) => i)
+  for (let i = order.length - 1; i > 0; i--) {
+    const j = Math.floor(rand() * (i + 1))
+    ;[order[i], order[j]] = [order[j], order[i]]
+  }
+  const pick = order.slice(0, sample)
+  const scores = pick.map((i) => {
+    const sum = new Map<number, number>(), cnt = new Map<number, number>()
+    for (const j of pick) {
+      if (i === j) continue
+      const c = labels[j]
+      sum.set(c, (sum.get(c) ?? 0) + sparseCosineDistance(vectors[i], vectors[j]))
+      cnt.set(c, (cnt.get(c) ?? 0) + 1)
+    }
+    const own = labels[i]
+    const a = cnt.get(own) ? sum.get(own)! / cnt.get(own)! : 0
+    let b = Infinity
+    for (const [c, total] of sum) if (c !== own) b = Math.min(b, total / cnt.get(c)!)
+    return Number.isFinite(b) && Math.max(a, b) > 0 ? (b - a) / Math.max(a, b) : 0
   })
   return mean(scores)
 }

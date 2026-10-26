@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import type { AppData } from '../shared/app-types.ts'
+import { MIN_RATED_FILMS, type AppData } from '../shared/app-types.ts'
 import { Constellation } from './chapters/Constellation.tsx'
 import { Critic } from './chapters/Critic.tsx'
 import { Directors } from './chapters/Directors.tsx'
@@ -15,6 +15,7 @@ import { Timeline } from './chapters/Timeline.tsx'
 import { CHAPTERS } from './chapters/registry.ts'
 import { DataProvider, scrollToSection, useAppData } from './lib/data.tsx'
 import { FilmDrawer } from './ui/FilmDrawer.tsx'
+import { ChapterBoundary } from './ui/ErrorBoundary.tsx'
 import { TooltipProvider } from './ui/primitives.tsx'
 
 export function App() {
@@ -27,6 +28,7 @@ export function App() {
     )
   }
   if (state.status === 'missing') return <MissingData message={state.message} />
+  if (state.data.totals.ratedFilms < MIN_RATED_FILMS) return <NotEnoughRatings data={state.data} />
   return <Dashboard data={state.data} />
 }
 
@@ -55,18 +57,42 @@ function Dashboard({ data }: { data: AppData }) {
         </a>
         <Nav username={data.profile.username} />
         <main>
-          <Opening />
-          <Dna />
-          <Genres />
-          <Timeline />
-          <Directors />
-          <Constellation />
-          <FiveStar />
-          <Critic />
-          <Next />
-          <Report />
-          <Explorer />
-          <Quality />
+          <ChapterBoundary name="Opening">
+            <Opening />
+          </ChapterBoundary>
+          <ChapterBoundary name="Taste DNA">
+            <Dna />
+          </ChapterBoundary>
+          <ChapterBoundary name="Genre Universe">
+            <Genres />
+          </ChapterBoundary>
+          <ChapterBoundary name="Timeline">
+            <Timeline />
+          </ChapterBoundary>
+          <ChapterBoundary name="Director's Gallery">
+            <Directors />
+          </ChapterBoundary>
+          <ChapterBoundary name="Constellation">
+            <Constellation />
+          </ChapterBoundary>
+          <ChapterBoundary name="Five-Star Universe">
+            <FiveStar />
+          </ChapterBoundary>
+          <ChapterBoundary name="Critical Analysis">
+            <Critic />
+          </ChapterBoundary>
+          <ChapterBoundary name="Next favourite">
+            <Next />
+          </ChapterBoundary>
+          <ChapterBoundary name="Identity report">
+            <Report />
+          </ChapterBoundary>
+          <ChapterBoundary name="Film Explorer">
+            <Explorer />
+          </ChapterBoundary>
+          <ChapterBoundary name="Data quality">
+            <Quality />
+          </ChapterBoundary>
         </main>
         <footer className="border-t hairline px-5 py-10 text-center text-[12px] text-muted md:px-16">
           CINEMA DNA · built locally from your Letterboxd export ({data.source.archive}) · film metadata from{' '}
@@ -134,6 +160,20 @@ function Nav({ username }: { username: string }) {
         <span className="hidden shrink-0 text-[12px] text-muted lg:inline">@{username}</span>
       </div>
     </nav>
+  )
+}
+
+function NotEnoughRatings({ data }: { data: AppData }) {
+  const t = data.totals
+  return (
+    <div className="mx-auto flex min-h-screen max-w-2xl flex-col justify-center gap-6 px-6">
+      <div className="eyebrow">CINEMA DNA · @{data.profile.username}</div>
+      <h1 className="display text-6xl">Not enough ratings yet.</h1>
+      <p className="text-lg leading-relaxed text-ink-2">{data.identity.intro[0]}</p>
+      <p className="text-sm text-muted">
+        Your export was read fine: {t.watchedFilms} watched films, {t.diaryViewings} diary entries, {t.watchlist} on your watchlist and {t.ratedFilms} rated.
+      </p>
+    </div>
   )
 }
 

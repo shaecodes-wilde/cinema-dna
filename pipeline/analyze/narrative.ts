@@ -1,4 +1,4 @@
-import type { AppData, DnaDimension, Insight, ReportSection, Stat } from '../../shared/app-types.ts'
+import { MIN_RATED_FILMS, type AppData, type DnaDimension, type Insight, type ReportSection, type Stat } from '../../shared/app-types.ts'
 import type { AnalysisContext } from './index.ts'
 import { mean } from './stats.ts'
 
@@ -13,6 +13,14 @@ type NarrativeInput = AnalysisContext & {
  * justify it; nothing here introduces a fact that isn't in the analysis bundle.
  */
 export function buildNarrative(x: NarrativeInput): { identity: AppData['identity']; report: AppData['report'] } {
+  if (x.rated.length < MIN_RATED_FILMS) {
+    const msg = `CINEMA DNA reads your taste from your star ratings, and this export has ${x.rated.length} rated film${x.rated.length === 1 ? '' : 's'}. Rate at least ${MIN_RATED_FILMS} films on Letterboxd (more is better: most patterns need 20–50), export again and re-run the import.`
+    return {
+      identity: { title: 'Not enough ratings yet', subtitle: msg, intro: [msg], standouts: [] },
+      report: { title: 'Not enough ratings yet', subtitle: `@${x.partial.profile.username}`, sections: [{ heading: 'What happened', paragraphs: [msg] }] },
+    }
+  }
+
   const { dna, insights, partial, base, affinities, byId, rated } = x
   const d = (id: string) => dna.find((v) => v.id === id)
   const ins = (id: string) => insights.find((v) => v.id === id)
@@ -70,7 +78,7 @@ export function buildNarrative(x: NarrativeInput): { identity: AppData['identity
   // ── Opening editorial ────────────────────────────────────────────────────
   const intro: string[] = []
   intro.push(
-    `Since ${partial.profile.joined ? new Date(partial.profile.joined).getFullYear() : 'joining Letterboxd'}, ${partial.profile.name} has logged ${t.diaryViewings} diary entries across ${t.watchedFilms} films${t.hoursWatched ? ` — roughly ${t.hoursWatched.toLocaleString('en-US')} hours in the dark` : ''}. ` +
+    `Since ${partial.profile.joined ? partial.profile.joined.slice(0, 4) : 'joining Letterboxd'}, ${partial.profile.name} has logged ${t.diaryViewings} diary entries across ${t.watchedFilms} films${t.hoursWatched ? ` — roughly ${t.hoursWatched.toLocaleString('en-US')} hours in the dark` : ''}. ` +
       `${present && present.score >= 40 ? `This is someone who watches cinema in the present tense: ${pct(present.score)} of first viewings happen within a year of release.` : ''}`,
   )
   if (genreAgnostic || longRow) {
@@ -82,7 +90,7 @@ export function buildNarrative(x: NarrativeInput): { identity: AppData['identity
     )
   }
   intro.push(
-    `The grading is generous — a ${star(base.mean)} average — but perfection is rationed: only ${fives.length} films hold 5★${fives.length ? `, among them ${list(fives.slice(0, 4).map((r) => r.film.title))}` : ''}.` +
+    `The grading is ${base.mean >= 3.25 ? 'generous' : base.mean >= 2.75 ? 'measured' : 'tough'} — a ${star(base.mean)} average${fives.length <= Math.max(1, rated.length * 0.08) ? ` — and perfection is rationed: only ${fives.length} ${fives.length === 1 ? 'film holds' : 'films hold'} 5★` : `, with ${fives.length} films at 5★`}${fives.length === 1 ? `: ${fives[0].film.title}` : fives.length ? `, among them ${list(fives.slice(0, 4).map((r) => r.film.title))}` : ''}.` +
       `${drift && /up on the later viewing/.test(drift.finding) ? ' And the stars move: rewatches tend to raise them; second thoughts tend to lower them.' : ''}`,
   )
 

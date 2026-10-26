@@ -191,6 +191,8 @@ export interface Recommendation {
 }
 
 export interface ModelReport {
+  /** false when there are too few (or no varied) ratings to fit anything honestly */
+  available: boolean
   n: number
   features: number
   lambda: number
@@ -220,6 +222,9 @@ export interface ReportSection {
   paragraphs: string[]
   filmIds?: string[]
 }
+
+/** Fewer rated films than this and the dashboard/report show a "rate a few more films" state. */
+export const MIN_RATED_FILMS = 5
 
 export interface AppData {
   generatedAt: string

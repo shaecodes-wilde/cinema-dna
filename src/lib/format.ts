@@ -29,7 +29,8 @@ export const stars = (r: number | null | undefined): string => {
 export const fmtRating = (r: number | null | undefined, digits = 2) => (r === null || r === undefined ? '—' : `${r.toFixed(digits)}★`)
 
 /** A single star rating as entered on Letterboxd ("4.5★", "3★"). */
-export const fmtStars = (r: number | null | undefined) => (r === null || r === undefined ? '—' : `${r % 1 ? r.toFixed(1) : r.toFixed(0)}★`)
+export const fmtStars = (r: number | null | undefined) =>
+  r === null || r === undefined ? '—' : `${Number.isInteger(r) ? r.toFixed(0) : Number.isInteger(r * 2) ? r.toFixed(1) : r.toFixed(2)}★`
 
 export const signed = (x: number | null | undefined, digits = 2) =>
   x === null || x === undefined ? '—' : `${x >= 0 ? '+' : '−'}${Math.abs(x).toFixed(digits)}`

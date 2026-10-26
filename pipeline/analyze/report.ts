@@ -1,4 +1,4 @@
-import type { AppData } from '../../shared/app-types.ts'
+import { MIN_RATED_FILMS, type AppData } from '../../shared/app-types.ts'
 
 const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
 
@@ -77,6 +77,7 @@ export function renderReportMarkdown(data: AppData): string {
 
 /** The long-form written analysis: every DNA dimension and insight with its evidence. */
 export function renderTasteAnalysisMarkdown(data: AppData): string {
+  if (data.totals.ratedFilms < MIN_RATED_FILMS) return `# CINEMA DNA — @${data.profile.username}\n\n${data.identity.intro[0]}\n`
   const film = new Map(data.films.map((f) => [f.id, f]))
   const fl = (ids: string[], n = 6) =>
     ids.slice(0, n).map((id) => film.get(id)).filter(Boolean).map((f) => `*${f!.title}*${f!.rating ? ` (${f!.rating}★)` : ''}`).join(', ')

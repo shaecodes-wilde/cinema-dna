@@ -5,6 +5,9 @@ dist
 .env.local
 # Personal Letterboxd data — never commit or publish
 data/raw/
+# Letterboxd exports dropped anywhere in the repo
+*.zip
+letterboxd-*/
 data/overrides.json
 data/cache/
 data/normalized/

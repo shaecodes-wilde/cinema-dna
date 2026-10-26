@@ -1,5 +1,5 @@
 import type { ModelReport } from '../../shared/app-types.ts'
-import type { Baseline } from './affinity.ts'
+import { baseline, type Baseline } from './affinity.ts'
 import type { FilmRecord } from './features.ts'
 import { dot, mean, pearson, ridge, rng, round, shrink } from './stats.ts'
 
@@ -140,35 +140,62 @@ export interface TrainedModel {
   base: Baseline
 }
 
+/** Below this many ratings (or with no variation at all) there is nothing honest to learn. */
+export const MIN_MODEL_RATINGS = 20
+
 export function trainModel(rated: FilmRecord[], base: Baseline, seed = 7): TrainedModel {
   const space = featureSpace(rated)
   const index = personIndex(rated)
-  const X = rated.map((r) => space.vector(r, personSignals(r, index, base, r.film.id)))
   const y = rated.map((r) => r.rating!)
+  const zeros = space.names.map(() => 0)
+  if (rated.length < MIN_MODEL_RATINGS || new Set(y).size < 2) {
+    return {
+      space,
+      weights: zeros,
+      colMeans: zeros,
+      intercept: Number.isFinite(base.mean) ? base.mean : 2.75,
+      lambda: 0,
+      index,
+      base,
+      cvPredictions: new Map(),
+      report: { available: false, n: rated.length, features: space.names.length, lambda: 0, cvRmse: 0, baselineRmse: 0, cvMae: 0, correlation: 0, topPositive: [], topNegative: [] },
+    }
+  }
+  // Full-data design matrix (people signals are leave-one-out) for the final fit.
+  const X = rated.map((r) => space.vector(r, personSignals(r, index, base, r.film.id)))
 
-  // 10-fold CV over a λ grid.
+  // 10-fold CV over a λ grid. People track records are rebuilt from each training fold only,
+  // so a held-out film's rating can never leak into any feature used to predict it.
   const folds = rated.map((_, i) => i % 10)
   const rand = rng(seed)
   for (let i = folds.length - 1; i > 0; i--) {
     const j = Math.floor(rand() * (i + 1))
     ;[folds[i], folds[j]] = [folds[j], folds[i]]
   }
-  const fitPredict = (trainIdx: number[], testIdx: number[], lambda: number) => {
-    const ty = trainIdx.map((i) => y[i])
+  const foldData = Array.from({ length: 10 }, (_, f) => {
+    const train = y.map((_, i) => i).filter((i) => folds[i] !== f)
+    const test = y.map((_, i) => i).filter((i) => folds[i] === f)
+    const trainRecs = train.map((i) => rated[i])
+    const foldBase = baseline(trainRecs)
+    const foldIndex = personIndex(trainRecs)
+    return {
+      train,
+      test,
+      Xtrain: train.map((i) => space.vector(rated[i], personSignals(rated[i], foldIndex, foldBase, rated[i].film.id))),
+      Xtest: test.map((i) => space.vector(rated[i], personSignals(rated[i], foldIndex, foldBase))),
+    }
+  })
+  const fitPredict = (fd: (typeof foldData)[number], lambda: number) => {
+    const ty = fd.train.map((i) => y[i])
     const my = mean(ty)
-    const cm = space.names.map((_, j) => mean(trainIdx.map((i) => X[i][j])))
-    const Xc = trainIdx.map((i) => X[i].map((x, j) => x - cm[j]))
-    const w = ridge(Xc, ty.map((v) => v - my), lambda)
-    return testIdx.map((i) => clamp(my + dot(w, X[i].map((x, j) => x - cm[j]))))
+    const cm = space.names.map((_, j) => mean(fd.Xtrain.map((row) => row[j])))
+    const w = ridge(fd.Xtrain.map((row) => row.map((x, j) => x - cm[j])), ty.map((v) => v - my), lambda)
+    return fd.Xtest.map((row) => clamp(my + dot(w, row.map((x, j) => x - cm[j]))))
   }
   let best = { lambda: 10, rmse: Infinity, preds: [] as number[] }
   for (const lambda of [1, 2, 4, 8, 16, 32, 64]) {
     const preds = new Array<number>(y.length)
-    for (let f = 0; f < 10; f++) {
-      const test = y.map((_, i) => i).filter((i) => folds[i] === f)
-      const train = y.map((_, i) => i).filter((i) => folds[i] !== f)
-      fitPredict(train, test, lambda).forEach((p, k) => (preds[test[k]] = p))
-    }
+    for (const fd of foldData) fitPredict(fd, lambda).forEach((p, k) => (preds[fd.test[k]] = p))
     const rmse = Math.sqrt(mean(preds.map((p, i) => (p - y[i]) ** 2)))
     if (rmse < best.rmse) best = { lambda, rmse, preds }
   }
@@ -179,6 +206,7 @@ export function trainModel(rated: FilmRecord[], base: Baseline, seed = 7): Train
   const colMeans = space.names.map((_, j) => mean(X.map((row) => row[j])))
   const weights = ridge(X.map((row) => row.map((x, j) => x - colMeans[j])), y.map((v) => v - mean(y)), best.lambda)
   const ranked = space.names.map((n, i) => ({ feature: featureLabel(n), weight: round(weights[i], 3) }))
+  const corr = pearson(best.preds, y)
   return {
     space,
     weights,
@@ -189,15 +217,16 @@ export function trainModel(rated: FilmRecord[], base: Baseline, seed = 7): Train
     base,
     cvPredictions: new Map(rated.map((r, i) => [r.film.id, round(best.preds[i], 2)])),
     report: {
+      available: true,
       n: rated.length,
       features: space.names.length,
       lambda: best.lambda,
       cvRmse: round(best.rmse, 3),
       baselineRmse: round(baselineRmse, 3),
       cvMae: round(mean(best.preds.map((p, i) => Math.abs(p - y[i]))), 3),
-      correlation: round(pearson(best.preds, y), 3),
-      topPositive: [...ranked].sort((a, b) => b.weight - a.weight).slice(0, 8),
-      topNegative: [...ranked].sort((a, b) => a.weight - b.weight).slice(0, 8),
+      correlation: Number.isFinite(corr) ? round(corr, 3) : 0,
+      topPositive: ranked.filter((r) => r.weight > 0).sort((a, b) => b.weight - a.weight).slice(0, 8),
+      topNegative: ranked.filter((r) => r.weight < 0).sort((a, b) => a.weight - b.weight).slice(0, 8),
     },
   }
 }

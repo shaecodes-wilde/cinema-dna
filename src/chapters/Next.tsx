@@ -208,7 +208,7 @@ export function Next() {
         <p className="text-[13px] text-muted" aria-live="polite">
           {ranked.length} films match · showing {Math.min(shown, ranked.length)}
         </p>
-        <p className="hidden text-[12px] text-faint md:block">Predicted ratings are cross-validated estimates (typical miss ±{data.model.cvMae.toFixed(1)}★).</p>
+        <p className="hidden text-[12px] text-faint md:block">{data.model.available ? `Predicted ratings are cross-validated estimates (typical miss ±${data.model.cvMae.toFixed(1)}★).` : 'Too few ratings for a taste model yet: predictions default to your average, so ranking leans on reasons and novelty.'}</p>
       </div>
       {ranked.length === 0 ? (
         <Empty>No films match these filters.</Empty>

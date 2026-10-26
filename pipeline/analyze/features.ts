@@ -100,7 +100,9 @@ export function buildRecords(dataset: Dataset, metadata: MetadataFile | null): F
   for (const v of dataset.viewings) viewingsByFilm.set(v.filmId, [...(viewingsByFilm.get(v.filmId) ?? []), v])
 
   return dataset.films.map((film) => {
-    const meta = metadata?.films[film.id] ?? null
+    // Low-confidence (partial-title) matches are kept for the audit but never feed the analysis.
+    const candidate = metadata?.films[film.id] ?? null
+    const meta = candidate && candidate.match.confidence !== 'low' ? candidate : null
     const viewings = (viewingsByFilm.get(film.id) ?? []).sort((a, b) =>
       (a.watchedDate ?? a.loggedDate).localeCompare(b.watchedDate ?? b.loggedDate),
     )

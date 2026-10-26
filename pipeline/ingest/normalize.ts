@@ -238,6 +238,7 @@ export function normalize(archive: ExportArchive, now = new Date()): Dataset {
     if (last && film.rating !== null && last.rating !== film.rating) {
       ratingRevisions++
       conflicts.push({
+        filmId: film.id,
         kind: 'rating-mismatch',
         detail: `"${film.title}": latest diary rating ${last.rating}★, current rating ${film.rating}★ (revised ${film.ratingDate})`,
         refs: [...last.provenance, ...film.provenance.filter((p) => p.file === 'ratings.csv')],

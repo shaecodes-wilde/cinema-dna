@@ -1,6 +1,6 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
-import type { CachedHttp } from './http.ts'
+import { writeAtomic, type CachedHttp } from './http.ts'
 
 /**
  * Wikidata access goes through the SPARQL endpoint in batches (dozens of films per query),
@@ -100,15 +100,20 @@ export class Wikidata {
     this.entityDir = join(cacheRoot, 'wikidata-entities')
     this.labelsPath = join(cacheRoot, 'wikidata-labels.json')
     mkdirSync(this.entityDir, { recursive: true })
-    this.labels = existsSync(this.labelsPath) ? JSON.parse(readFileSync(this.labelsPath, 'utf8')) : {}
+    this.labels = readJsonOr(this.labelsPath, {})
   }
 
   async sparql(query: string): Promise<Binding[]> {
+    return (await this.sparqlOrNull(query)) ?? []
+  }
+
+  /** null = not available (offline cache miss), as opposed to an empty result. */
+  async sparqlOrNull(query: string): Promise<Binding[] | null> {
     const res = await this.http.json<{ results: { bindings: Binding[] } }>(
       SPARQL,
       new URLSearchParams({ query: query.replace(/\s+/g, ' ').trim(), format: 'json' }),
     )
-    return res?.results.bindings ?? []
+    return res ? res.results.bindings : null
   }
 
   /** Items whose Letterboxd film ID (P6127) is one of `slugs`. */
@@ -157,25 +162,28 @@ export class Wikidata {
     const missing: string[] = []
     for (const id of new Set(ids)) {
       const p = join(this.entityDir, `${id}.json`)
-      if (existsSync(p)) out.set(id, JSON.parse(readFileSync(p, 'utf8')))
+      const cached = readJsonOr<CompactEntity | null>(p, null)
+      if (cached) out.set(id, cached)
       else missing.push(id)
     }
     const props = CLAIM_PROPS.map((p) => `wdt:${p}`).join(' ')
     for (let i = 0; i < missing.length; i += 40) {
       const batch = missing.slice(i, i + 40)
       const values = batch.map((id) => `wd:${id}`).join(' ')
-      const head = await this.sparql(`SELECT ?item ?itemLabel ?itemDescription ?sl ?secs WHERE {
+      const head = await this.sparqlOrNull(`SELECT ?item ?itemLabel ?itemDescription ?sl ?secs WHERE {
         VALUES ?item { ${values} }
         OPTIONAL { ?item wikibase:sitelinks ?sl }
         OPTIONAL { ?item p:P2047/psn:P2047/wikibase:quantityAmount ?secs }
         SERVICE wikibase:label { bd:serviceParam wikibase:language "en,mul". }
       }`)
-      const claims = await this.sparql(`SELECT ?item ?prop ?val ?valLabel WHERE {
+      const claims = await this.sparqlOrNull(`SELECT ?item ?prop ?val ?valLabel WHERE {
         VALUES ?item { ${values} }
         VALUES ?prop { ${props} }
         ?item ?prop ?val .
         SERVICE wikibase:label { bd:serviceParam wikibase:language "en,mul". }
       }`)
+      // Only cache entities when both halves were actually fetched; a partial (offline) batch is skipped.
+      if (!head || !claims) continue
       const built = new Map<string, CompactEntity>()
       for (const r of head) {
         const id = qid(r.item.value)
@@ -201,7 +209,7 @@ export class Wikidata {
         if (!list.includes(value)) list.push(value)
       }
       for (const [id, e] of built) {
-        writeFileSync(join(this.entityDir, `${id}.json`), JSON.stringify(e))
+        writeAtomic(join(this.entityDir, `${id}.json`), JSON.stringify(e))
         this.labels[id] = e.label
         out.set(id, e)
       }
@@ -215,6 +223,15 @@ export class Wikidata {
   }
 
   saveLabels() {
-    writeFileSync(this.labelsPath, JSON.stringify(this.labels))
+    writeAtomic(this.labelsPath, JSON.stringify(this.labels))
+  }
+}
+
+function readJsonOr<T>(path: string, fallback: T): T {
+  if (!existsSync(path)) return fallback
+  try {
+    return JSON.parse(readFileSync(path, 'utf8')) as T
+  } catch {
+    return fallback // truncated by an interrupted run: refetch
   }
 }

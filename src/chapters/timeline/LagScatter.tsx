@@ -2,7 +2,7 @@ import { scaleLinear, scaleTime } from 'd3'
 import { useMemo, useState } from 'react'
 import { useData } from '../../lib/data.tsx'
 import { COOL, fmtDate, fmtStars, NEUTRAL, ratingColor, WARM } from '../../lib/format.ts'
-import { useTooltip } from '../../ui/primitives.tsx'
+import { Empty, useTooltip } from '../../ui/primitives.tsx'
 import { useWidth } from '../../lib/useSize.ts'
 
 /**
@@ -25,6 +25,7 @@ export function LagScatter() {
         .map((p) => ({ ...p, t: new Date(`${p.v.date}T12:00:00`), year: p.f.year! })),
     [data.viewings, film],
   )
+  if (!points.length) return <Empty>No diary entries with a trustworthy watch date yet, so there's nothing to plot here.</Empty>
   const h = 340
   const m = { l: 44, r: 16, t: 12, b: 28 }
   const x = scaleTime()

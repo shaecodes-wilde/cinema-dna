@@ -35,7 +35,23 @@ export function readExport(path: string): ExportArchive {
       files.set(name.replace(/^\/+/, ''), stripBom(strFromU8(data)))
     }
   }
-  return { path, sha256: hash.digest('hex'), files }
+  return { path, sha256: hash.digest('hex'), files: normalizeLayout(files, path) }
+}
+
+const CORE = ['watched.csv', 'ratings.csv', 'diary.csv']
+
+/**
+ * Re-zipped exports (macOS "Compress", or a parent folder) nest everything under one directory and may
+ * carry __MACOSX/._* junk. Strip a shared prefix, drop the junk, and refuse archives with no Letterboxd CSVs.
+ */
+export function normalizeLayout(files: Map<string, string>, path = 'export'): Map<string, string> {
+  const kept = [...files].filter(([name]) => !name.startsWith('__MACOSX/') && !name.split('/').some((part) => part.startsWith('._')))
+  const coreHit = kept.map(([name]) => name).find((name) => CORE.some((c) => name === c || name.endsWith(`/${c}`)))
+  if (!coreHit) {
+    throw new Error(`${path} doesn't look like a Letterboxd export (no watched.csv, ratings.csv or diary.csv found).`)
+  }
+  const prefix = coreHit.slice(0, coreHit.lastIndexOf('/') + 1)
+  return new Map(kept.filter(([name]) => name.startsWith(prefix)).map(([name, text]) => [name.slice(prefix.length), text]))
 }
 
 const stripBom = (s: string) => (s.charCodeAt(0) === 0xfeff ? s.slice(1) : s)

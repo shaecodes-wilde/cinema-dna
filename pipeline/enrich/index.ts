@@ -5,7 +5,7 @@ import { PATHS, readJson, writeJson } from '../paths.ts'
 import { canonicalGenres, isPlainGenre, subgenreLabel } from './genres.ts'
 import { CachedHttp } from './http.ts'
 import { pickBest, scoreCandidate, slugCandidates, type CandidateScore } from './match.ts'
-import { Tmdb, applyTmdb, tmdbCredentials } from './tmdb.ts'
+import { HttpError, Tmdb, applyTmdb, tmdbCredentials } from './tmdb.ts'
 import { FILM_CLASSES, FILM_PROPS as P, TV_CLASSES, Wikidata, yearsOf, type CompactEntity } from './wikidata.ts'
 
 export interface EnrichOptions {
@@ -104,6 +104,7 @@ export async function enrich(dataset: Dataset, opts: EnrichOptions = {}): Promis
     sources.push('tmdb')
     let n = 0
     for (const film of films) {
+      if (overrides.matches?.[film.id] === null) continue // user forced "no match"
       try {
         const meta = out[film.id]
         const id = meta?.match.tmdbId ?? (await tmdb.search(film.title, film.year))
@@ -115,6 +116,10 @@ export async function enrich(dataset: Dataset, opts: EnrichOptions = {}): Promis
           : applyTmdb(emptyMetadata(film, { method: 'tmdb-search', confidence: 'medium', notes: ['matched via TMDB search only'] }), movie)
         n++
       } catch (err) {
+        if (err instanceof HttpError && (err.status === 401 || err.status === 403)) {
+          log('  TMDB rejected the credentials (check TMDB_API_KEY / TMDB_READ_ACCESS_TOKEN); skipping TMDB.')
+          break
+        }
         log(`  tmdb: ${film.title}: ${(err as Error).message}`)
       }
     }

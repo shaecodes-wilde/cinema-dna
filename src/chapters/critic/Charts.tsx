@@ -122,8 +122,8 @@ export function RatingHistogram() {
           )
         })}
         <line x1={m.l} x2={width - m.r} y1={h - m.b} y2={h - m.b} stroke="#3a3632" />
-        {[mean, median].map((v) => (
-          <line key={v} x1={pos(v)} x2={pos(v)} y1={m.t - 6} y2={h - m.b} stroke="#efe8dc" strokeWidth={1} opacity={0.6} pointerEvents="none" />
+        {[mean, median].map((v, i) => (
+          <line key={i ? 'median' : 'mean'} x1={pos(v)} x2={pos(v)} y1={m.t - 6} y2={h - m.b} stroke="#efe8dc" strokeWidth={1} opacity={0.6} pointerEvents="none" />
         ))}
       </svg>
       <p className="mt-2 text-[12px] text-muted">
