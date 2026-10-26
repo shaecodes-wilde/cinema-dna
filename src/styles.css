@@ -1,0 +1,72 @@
+@import 'tailwindcss';
+@import '@fontsource/instrument-serif/400.css';
+@import '@fontsource/instrument-serif/400-italic.css';
+@import '@fontsource-variable/inter-tight';
+@import '@fontsource-variable/jetbrains-mono';
+
+/*
+ * CINEMA DNA design tokens.
+ * Surfaces are warm near-blacks (projection-booth dark); ink is a cream off-white.
+ * Accent: projector amber, used sparingly for emphasis and "above your baseline".
+ * Data colours (validated with the dataviz palette validator, dark mode):
+ *   diverging rating scale: cool #3987e5 ← neutral #77736b → warm #c98500 / #e0a43a
+ *   categorical (max 3 at once in scatters): #3987e5, #d95926, #199e70
+ */
+@theme {
+  --font-display: 'Instrument Serif', 'Times New Roman', serif;
+  --font-sans: 'Inter Tight Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, monospace;
+
+  --color-night: #0f0e0d;
+  --color-night-2: #161412;
+  --color-night-3: #1e1b18;
+  --color-line: #2a2724;
+  --color-line-2: #3a3632;
+  --color-ink: #efe8dc;
+  --color-ink-2: #c9c1b4;
+  --color-muted: #8d877d;
+  --color-faint: #5d5850;
+  --color-amber: #e0a43a;
+  --color-amber-deep: #c98500;
+  --color-ember: #d95926;
+  --color-cool: #3987e5;
+  --color-aqua: #199e70;
+  --color-neutral: #77736b;
+
+  --ease-cine: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@layer base {
+  html { background: var(--color-night); color: var(--color-ink); scroll-behavior: smooth; scroll-padding-top: 72px; }
+  body { font-family: var(--font-sans); font-feature-settings: 'ss01', 'cv11'; -webkit-font-smoothing: antialiased; }
+  ::selection { background: color-mix(in oklab, var(--color-amber) 40%, transparent); color: var(--color-ink); }
+  :focus-visible { outline: 2px solid var(--color-amber); outline-offset: 2px; border-radius: 2px; }
+  button { cursor: pointer; }
+  /* Grid items may shrink below their content (measured SVG charts would otherwise pin their track wide). */
+  .grid > * { min-width: 0; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+  }
+}
+
+@layer components {
+  .eyebrow { font: 600 11px/1 var(--font-sans); letter-spacing: 0.32em; text-transform: uppercase; color: var(--color-amber); }
+  .label { font: 500 11px/1.2 var(--font-sans); letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-muted); }
+  .num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+  .display { font-family: var(--font-display); font-weight: 400; letter-spacing: -0.015em; }
+  .hairline { border-color: var(--color-line); }
+  .grain::after {
+    content: ''; position: absolute; inset: 0; pointer-events: none; opacity: 0.06; mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .chip {
+    display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--color-line-2); border-radius: 999px;
+    padding: 3px 10px; font-size: 12px; color: var(--color-ink-2); background: var(--color-night-2);
+    transition: border-color .2s, color .2s, background .2s;
+  }
+  .chip:hover { border-color: var(--color-amber); color: var(--color-ink); }
+  .chip[aria-pressed='true'] { background: var(--color-amber); border-color: var(--color-amber); color: #1a1408; }
+  .panel { background: var(--color-night-2); border: 1px solid var(--color-line); border-radius: 4px; }
+  .scroll-thin { scrollbar-width: thin; scrollbar-color: var(--color-line-2) transparent; }
+}
