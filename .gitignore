@@ -1,0 +1,17 @@
+node_modules
+dist
+*.log
+.env
+.env.local
+# Personal Letterboxd data — never commit or publish
+data/raw/
+data/overrides.json
+data/cache/
+data/normalized/
+public/data/
+reports/
+# Agent harness state (project skills under .claude/skills are committed)
+.claude/*
+!.claude/skills/
+# Local security/review reports
+.pstack/
