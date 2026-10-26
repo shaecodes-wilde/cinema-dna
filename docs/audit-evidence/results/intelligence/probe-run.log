@@ -1,0 +1,746 @@
+{
+  "fixtureNotice": "All records, ratings and results below are synthetic adversarial probes, not the user profile.",
+  "harshGrader": {
+    "mean": 1.5,
+    "identity": {
+      "title": "The Restless Cinephile",
+      "subtitle": "A wide-ranging viewer whose ratings follow craft more than labels.",
+      "intro": [
+        "Since 2020, Synthetic has logged 0 diary entries across 20 films. ",
+        "The grading is tough — a 1.5★ average — and perfection is rationed: only 0 films hold 5★."
+      ],
+      "standouts": [
+        {
+          "label": "First watched near release",
+          "value": "0%"
+        },
+        {
+          "label": "5★ films",
+          "value": "0",
+          "hint": "of 20 rated"
+        },
+        {
+          "label": "Rewatch share",
+          "value": "0%"
+        }
+      ]
+    },
+    "reportIdentity": {
+      "kicker": "I.",
+      "heading": "The identity",
+      "paragraphs": [
+        "The Restless Cinephile. The phrase is not a horoscope; it is distilled from 20 ratings and 0 reviews. Since 2020, Synthetic has logged 0 diary entries across 20 films. ",
+        "In practice your average is 1.5★, which makes a 3★ a below-average grade: 100% of your films sit there or lower, and anything at 4★ is a genuine recommendation."
+      ]
+    },
+    "closing": {
+      "kicker": "VIII.",
+      "heading": "A closing reading",
+      "paragraphs": [
+        "Put together, the evidence describes someone for whom cinema is an event. You seek films out, grade them warmly but honestly, and save your highest praise for films that are big in every sense — ambitious. "
+      ]
+    }
+  },
+  "fallingRewatches": {
+    "baseline": 3.4,
+    "insights": [
+      {
+        "id": "rewatch-drift",
+        "category": "rewatch",
+        "title": "How your ratings move on a second look",
+        "finding": "Of 4 films you've rated more than once in your diary, 0 went up on the later viewing, 0 held and 4 went down. ",
+        "explanation": "Selection plays a role — you rewatch what you already liked — but the asymmetry is still telling: returning to a film tends to deepen your appreciation, while thinking about it from a distance tends to deflate early enthusiasm.",
+        "stats": [
+          {
+            "label": "Up on rewatch",
+            "value": "0"
+          },
+          {
+            "label": "Unchanged",
+            "value": "0"
+          },
+          {
+            "label": "Down on rewatch",
+            "value": "4"
+          },
+          {
+            "label": "Avg rating of rewatched films",
+            "value": "1★"
+          }
+        ],
+        "filmIds": [
+          "lb:X0",
+          "lb:X1",
+          "lb:X2",
+          "lb:X3"
+        ],
+        "n": 4,
+        "confidence": "low",
+        "evidence": "ratings"
+      },
+      {
+        "id": "rewatch-comfort",
+        "category": "rewatch",
+        "title": "What you return to",
+        "finding": "4 films carry a rewatch in your diary, averaging 1★ — −2.40★ versus your baseline. ",
+        "explanation": "Your rewatches are not comfort-food filler; they are almost entirely your top-tier films. Returning is how you confirm a favourite.",
+        "stats": [
+          {
+            "label": "Rewatched films",
+            "value": "4"
+          },
+          {
+            "label": "Rewatch entries",
+            "value": "4"
+          },
+          {
+            "label": "3+ viewings",
+            "value": "0"
+          }
+        ],
+        "filmIds": [
+          "lb:X0",
+          "lb:X1",
+          "lb:X2",
+          "lb:X3"
+        ],
+        "n": 4,
+        "confidence": "low",
+        "evidence": "behaviour"
+      }
+    ],
+    "intro": [
+      "Since 2020, Synthetic has logged 8 diary entries across 20 films. ",
+      "The grading is generous — a 3.4★ average — and perfection is rationed: only 0 films hold 5★. And the stars move: rewatches tend to raise them; second thoughts tend to lower them."
+    ]
+  },
+  "singleRuntimeBucket": {
+    "crashed": true,
+    "message": "TypeError: Cannot read properties of undefined (reading 'key')",
+    "stack": "TypeError: Cannot read properties of undefined (reading 'key')\n    at buildInsights (/workspace/scratch/a3dcaaa33ee6/cinema-dna/pipeline/analyze/insights.ts:128:185)\n    at analyze (/workspace/scratch/a3dcaaa33ee6/cinema-dna/pipeline/analyze/index.ts:250:34)\n    at async <anonymous> (/workspace/scratch/a3dcaaa33ee6/audit-work/intelligence/probes.mts:47:6)"
+  },
+  "centeredExplanations": {
+    "baseline": {
+      "mean": 4,
+      "sd": 1.7541160386140584,
+      "n": 40
+    },
+    "model": {
+      "available": true,
+      "n": 40,
+      "features": 14,
+      "lambda": 1,
+      "cvRmse": 0.122,
+      "baselineRmse": 1.746,
+      "cvMae": 0.105,
+      "correlation": 1,
+      "topPositive": [
+        {
+          "feature": "Drama",
+          "weight": 1.875
+        }
+      ],
+      "topNegative": [
+        {
+          "feature": "Horror",
+          "weight": -1.875
+        }
+      ]
+    },
+    "dramaCandidate": {
+      "key": "lb:Candidate",
+      "title": "Synthetic candidate",
+      "year": 2020,
+      "source": "watchlist",
+      "filmId": "lb:Candidate",
+      "wikidataId": null,
+      "predicted": 4.94,
+      "novelty": 0,
+      "genres": [
+        "Drama"
+      ],
+      "directors": [],
+      "cast": [],
+      "countries": [
+        "United States"
+      ],
+      "languages": [
+        "English"
+      ],
+      "runtime": 100,
+      "decade": 2020,
+      "sitelinks": 20,
+      "moods": [
+        "Heartfelt"
+      ],
+      "reasons": [
+        "Horror: +0.47★ in your taste model",
+        "Drama: +0.47★ in your taste model",
+        "Like lb:X10 (5★)",
+        "Like lb:X11 (5★)"
+      ],
+      "becauseFilmIds": [
+        "lb:X10",
+        "lb:X11",
+        "lb:X12"
+      ],
+      "via": [],
+      "matchConfidence": "high",
+      "uncertain": true,
+      "uncertainty": [
+        "no director data"
+      ],
+      "poster": null
+    },
+    "missingMetadataCandidate": {
+      "key": "lb:Candidate",
+      "title": "Synthetic candidate",
+      "year": 2020,
+      "source": "watchlist",
+      "filmId": "lb:Candidate",
+      "wikidataId": null,
+      "predicted": 3.06,
+      "novelty": 0,
+      "genres": [],
+      "directors": [],
+      "cast": [],
+      "countries": [],
+      "languages": [],
+      "runtime": null,
+      "decade": 2020,
+      "sitelinks": 0,
+      "moods": [],
+      "reasons": [
+        "Horror: +0.47★ in your taste model",
+        "Caveat — drama tends to pull your ratings down (-1.41★)"
+      ],
+      "becauseFilmIds": [],
+      "via": [],
+      "matchConfidence": null,
+      "uncertain": true,
+      "uncertainty": [
+        "no metadata match — prediction uses your average only"
+      ],
+      "poster": null
+    },
+    "contributions": [
+      {
+        "name": "genre:Drama",
+        "label": "Drama",
+        "value": 0.4687499999999996
+      },
+      {
+        "name": "genre:Horror",
+        "label": "Horror",
+        "value": 0.46875000000000033
+      }
+    ]
+  },
+  "genreSynergy": {
+    "baseline": {
+      "mean": 0.95,
+      "sd": 1.3637059351454848,
+      "n": 50
+    },
+    "groups": [
+      {
+        "kind": "genre",
+        "key": "Comedy",
+        "label": "Comedy",
+        "n": 5,
+        "mean": 5,
+        "shrunk": 2.79,
+        "delta": 1.84,
+        "ci": [
+          2.11,
+          3.47
+        ],
+        "sd": 0,
+        "share": 0.1,
+        "topShare": 1,
+        "confidence": "medium",
+        "filmIds": [
+          "lb:X0",
+          "lb:X1",
+          "lb:X2",
+          "lb:X3",
+          "lb:X4"
+        ]
+      },
+      {
+        "kind": "genre",
+        "key": "Horror",
+        "label": "Horror",
+        "n": 5,
+        "mean": 5,
+        "shrunk": 2.79,
+        "delta": 1.84,
+        "ci": [
+          2.11,
+          3.47
+        ],
+        "sd": 0,
+        "share": 0.1,
+        "topShare": 1,
+        "confidence": "medium",
+        "filmIds": [
+          "lb:X0",
+          "lb:X1",
+          "lb:X2",
+          "lb:X3",
+          "lb:X4"
+        ]
+      },
+      {
+        "kind": "genre",
+        "key": "Drama",
+        "label": "Drama",
+        "n": 45,
+        "mean": 0.5,
+        "shrunk": 0.55,
+        "delta": -0.4,
+        "ci": [
+          0.24,
+          0.87
+        ],
+        "sd": 0,
+        "share": 0.9,
+        "topShare": 0,
+        "confidence": "high",
+        "filmIds": [
+          "lb:X10",
+          "lb:X11",
+          "lb:X12",
+          "lb:X13",
+          "lb:X14",
+          "lb:X15",
+          "lb:X16",
+          "lb:X17",
+          "lb:X18",
+          "lb:X19",
+          "lb:X20",
+          "lb:X21",
+          "lb:X22",
+          "lb:X23",
+          "lb:X24",
+          "lb:X25",
+          "lb:X26",
+          "lb:X27",
+          "lb:X28",
+          "lb:X29",
+          "lb:X30",
+          "lb:X31",
+          "lb:X32",
+          "lb:X33",
+          "lb:X34",
+          "lb:X35",
+          "lb:X36",
+          "lb:X37",
+          "lb:X38",
+          "lb:X39",
+          "lb:X40",
+          "lb:X41",
+          "lb:X42",
+          "lb:X43",
+          "lb:X44",
+          "lb:X45",
+          "lb:X46",
+          "lb:X47",
+          "lb:X48",
+          "lb:X49",
+          "lb:X5",
+          "lb:X6",
+          "lb:X7",
+          "lb:X8",
+          "lb:X9"
+        ]
+      }
+    ],
+    "computed": [
+      {
+        "a": "Comedy",
+        "b": "Horror",
+        "n": 5,
+        "mean": 5,
+        "shrunk": 2.98,
+        "synergy": 0.19,
+        "filmIds": [
+          "lb:X0",
+          "lb:X1",
+          "lb:X2",
+          "lb:X3",
+          "lb:X4"
+        ]
+      }
+    ],
+    "insights": [
+      {
+        "id": "pair-Comedy-Horror",
+        "category": "intersection",
+        "title": "Comedy × Horror: better together",
+        "finding": "Comedy on its own averages 2.79★; Horror 2.79★. When a film is both (5 films), it averages 5★ — +0.19★ above the better of the two.",
+        "explanation": "The combination is doing work that neither genre does alone — for you, humour is what makes the other genre land.",
+        "stats": [
+          {
+            "label": "Comedy alone",
+            "value": "2.79★"
+          },
+          {
+            "label": "Horror alone",
+            "value": "2.79★"
+          },
+          {
+            "label": "Together",
+            "value": "5★ (n=5)"
+          },
+          {
+            "label": "Synergy",
+            "value": "+0.19★"
+          }
+        ],
+        "filmIds": [
+          "lb:X0",
+          "lb:X1",
+          "lb:X2",
+          "lb:X3",
+          "lb:X4"
+        ],
+        "n": 5,
+        "confidence": "low",
+        "evidence": "metadata"
+      }
+    ],
+    "singleGenreOnlyCount": 0
+  },
+  "emptyComparisonGroup": {
+    "insight": {
+      "id": "five-star-formula",
+      "category": "formula",
+      "title": "The five-star formula",
+      "finding": "Comparing your 6 films rated 4★+ with the 0 rated 3.5★ or less: drama in the genre mix (100% vs 0%) are markedly more common at the top.",
+      "explanation": "This is a recipe description, not a causal claim: these traits travel together in the films you love. Use it as a filter when choosing what to watch next.",
+      "stats": [
+        {
+          "label": "Drama in the genre mix",
+          "value": "100% of top vs 0% of ≤3.5★",
+          "hint": "log-odds z = 1.7"
+        }
+      ],
+      "filmIds": [
+        "lb:X0",
+        "lb:X1",
+        "lb:X2",
+        "lb:X3",
+        "lb:X4",
+        "lb:X5"
+      ],
+      "n": 6,
+      "confidence": "low",
+      "evidence": "metadata"
+    },
+    "formula": [
+      {
+        "label": "Drama in the genre mix",
+        "value": "100% of top vs 0% of ≤3.5★",
+        "hint": "log-odds z = 1.7"
+      }
+    ]
+  },
+  "mostWatchedDirector": {
+    "actualWatched": {
+      "Director Rated": 3,
+      "Director Unrated": 10
+    },
+    "insight": {
+      "id": "director-loyalty",
+      "category": "loyalty",
+      "title": "Director Rated: most-watched and most-loved",
+      "finding": "Director Rated is your most-watched director (3 films, 4★ average).  ",
+      "explanation": "Watching a director a lot and loving them are different things. Loyalty can be habit; a consistently high average across several films is a much stronger signal of genuine affinity.",
+      "stats": [
+        {
+          "label": "Director Rated",
+          "value": "4★ · n=3 · SD 0"
+        }
+      ],
+      "filmIds": [
+        "lb:X0",
+        "lb:X1",
+        "lb:X2"
+      ],
+      "n": 3,
+      "confidence": "low",
+      "evidence": "ratings"
+    }
+  },
+  "lexicon": {
+    "notGood": 0.7071067811865475,
+    "notBad": -0.7071067811865475,
+    "slowButLoved": 0
+  },
+  "binaryLogOdds": {
+    "input": {
+      "countA": 9,
+      "totalA": 10,
+      "countB": 1,
+      "totalB": 10,
+      "prior": 0.5,
+      "priorTotal": 1
+    },
+    "appZ": 4.201767396176531,
+    "fullBinaryApproximationZ": 2.971098218804968,
+    "note": "Standard independent binary log-odds variance includes successes AND failures; app omits both complement terms."
+  },
+  "silhouetteSingletons": {
+    "appMeanScore": 0.3333333333333333,
+    "referenceMeanScore": 0,
+    "note": "Three mutually orthogonal vectors, one singleton cluster and one size-two cluster: singleton should score0, other points both score0; app singleton scores1, inflating mean to1/3."
+  },
+  "sparseMetadataDNA": {
+    "dimensions": [
+      {
+        "id": "range",
+        "name": "Genre Range",
+        "axis": "Range",
+        "score": 0,
+        "headline": "0 of 18 genres visited;  dominate",
+        "definition": "Normalised Shannon entropy of your watched films across the 18 canonical genres (100 = perfectly even spread).",
+        "value": "Evenness 0.00",
+        "n": 60,
+        "confidence": "high",
+        "evidence": "metadata",
+        "filmIds": [],
+        "stats": [],
+        "affinity": null
+      },
+      {
+        "id": "franchise",
+        "name": "Franchise Gravity",
+        "axis": "Franchise",
+        "score": 0,
+        "headline": "0% of films belong to a series or franchise",
+        "definition": "Share of films that Wikidata records as part of a series or media franchise.",
+        "value": "0 of 60 films",
+        "n": 60,
+        "confidence": "high",
+        "evidence": "metadata",
+        "filmIds": [],
+        "stats": [],
+        "affinity": null
+      },
+      {
+        "id": "prestige",
+        "name": "Awards Radar",
+        "axis": "Awards",
+        "score": 0,
+        "headline": "0% of films were nominated by a major awards body or festival",
+        "definition": "Share of films with a recorded win or nomination at the Oscars, BAFTA, Golden Globes, Cannes, Venice, Berlin, Independent Spirit, Annie, César or Sundance.",
+        "value": "0 of 60 films",
+        "n": 60,
+        "confidence": "high",
+        "evidence": "metadata",
+        "filmIds": [],
+        "stats": [],
+        "affinity": null
+      },
+      {
+        "id": "dark",
+        "name": "Dark Matter",
+        "axis": "Dark",
+        "score": 0,
+        "headline": "0% of films are horror, thriller or crime",
+        "definition": "Share of films tagged Horror, Thriller or Crime.",
+        "value": "0 of 60 films",
+        "n": 60,
+        "confidence": "high",
+        "evidence": "metadata",
+        "filmIds": [],
+        "stats": [
+          {
+            "label": "Horror",
+            "value": "0%"
+          },
+          {
+            "label": "Thriller",
+            "value": "0%"
+          },
+          {
+            "label": "Crime",
+            "value": "0%"
+          }
+        ],
+        "affinity": null
+      },
+      {
+        "id": "critic",
+        "name": "Critic's Voice",
+        "axis": "Reviewing",
+        "score": 0,
+        "headline": "You write something for 0% of what you log — usually NaN words",
+        "definition": "Reviews written per diary entry (capped at 100).",
+        "value": "0 reviews · mean NaN words · 0% are 12 words or fewer",
+        "n": 0,
+        "confidence": "low",
+        "evidence": "review-text",
+        "filmIds": [],
+        "stats": [],
+        "affinity": null
+      },
+      {
+        "id": "offbeat",
+        "name": "Off the Beaten Path",
+        "axis": "Offbeat",
+        "score": 100,
+        "headline": "100% of films are covered by fewer than 35 Wikipedias",
+        "definition": "Share of films with modest global footprint (fewer than 35 Wikipedia language editions) — a rough notability proxy, not a quality judgement.",
+        "value": "60 of 60 films · median 0 editions",
+        "n": 60,
+        "confidence": "high",
+        "evidence": "metadata",
+        "filmIds": [
+          "lb:X0",
+          "lb:X10",
+          "lb:X12",
+          "lb:X14",
+          "lb:X16",
+          "lb:X18"
+        ],
+        "stats": [],
+        "affinity": 0
+      }
+    ],
+    "fieldCoverage": [
+      {
+        "field": "Genres",
+        "watched": 0,
+        "share": 0
+      },
+      {
+        "field": "Director",
+        "watched": 0,
+        "share": 0
+      },
+      {
+        "field": "Writer",
+        "watched": 0,
+        "share": 0
+      },
+      {
+        "field": "Cast",
+        "watched": 0,
+        "share": 0
+      },
+      {
+        "field": "Cinematographer",
+        "watched": 0,
+        "share": 0
+      },
+      {
+        "field": "Composer",
+        "watched": 0,
+        "share": 0
+      },
+      {
+        "field": "Runtime",
+        "watched": 0,
+        "share": 0
+      },
+      {
+        "field": "Country",
+        "watched": 0,
+        "share": 0
+      },
+      {
+        "field": "Language",
+        "watched": 0,
+        "share": 0
+      },
+      {
+        "field": "Poster",
+        "watched": 0,
+        "share": 0
+      }
+    ]
+  },
+  "coldStartCertainty": {
+    "model": {
+      "available": false,
+      "n": 6,
+      "features": 9,
+      "lambda": 0,
+      "cvRmse": 0,
+      "baselineRmse": 0,
+      "cvMae": 0,
+      "correlation": 0,
+      "topPositive": [],
+      "topNegative": []
+    },
+    "recommendation": {
+      "key": "lb:Cold",
+      "title": "Synthetic 0",
+      "year": 2020,
+      "source": "watchlist",
+      "filmId": "lb:Cold",
+      "wikidataId": null,
+      "predicted": 4,
+      "novelty": 1,
+      "genres": [
+        "Drama"
+      ],
+      "directors": [
+        "Synthetic director"
+      ],
+      "cast": [],
+      "countries": [
+        "United States"
+      ],
+      "languages": [
+        "English"
+      ],
+      "runtime": 100,
+      "decade": 2020,
+      "sitelinks": 20,
+      "moods": [
+        "Heartfelt"
+      ],
+      "reasons": [],
+      "becauseFilmIds": [],
+      "via": [],
+      "matchConfidence": "high",
+      "uncertain": false,
+      "uncertainty": [],
+      "poster": null
+    }
+  },
+  "modelProse": {
+    "nullModel": {
+      "available": true,
+      "n": 40,
+      "features": 12,
+      "lambda": 1,
+      "cvRmse": 1.023,
+      "baselineRmse": 1.023,
+      "cvMae": 1.022,
+      "correlation": -0.447,
+      "topPositive": [],
+      "topNegative": [
+        {
+          "feature": "Track record of its directors",
+          "weight": -0.953
+        }
+      ]
+    },
+    "paragraph": "Cross-validated RMSE **1.023★** vs **1.023★** for always guessing your average (0% better); correlation with your actual ratings r = -0.447. That is a modest but real signal — your taste is only partly predictable from metadata, which is exactly why the exceptions are interesting.",
+    "constantModelParagraph": "Cross-validated RMSE **0★** vs **0★** for always guessing your average (NaN% better); correlation with your actual ratings r = 0. That is a modest but real signal — your taste is only partly predictable from metadata, which is exactly why the exceptions are interesting."
+  },
+  "watchlistIdentityExclusion": {
+    "watchedQid": "Q123456",
+    "recommended": [
+      {
+        "key": "lb:X6",
+        "qid": "Q123456",
+        "title": "Synthetic alternate title"
+      }
+    ]
+  }
+}

@@ -1,0 +1,60 @@
+// Documentation-only, synthetic audit reproduction. Never run against personal data.
+import { join as auditJoin, resolve as auditResolve } from 'node:path'
+import { mkdirSync as auditMkdir, existsSync as auditExists } from 'node:fs'
+import { pathToFileURL as auditFileUrl } from 'node:url'
+const auditRepoEnv=process.env.CINEMA_DNA_AUDIT_ROOT
+const auditOutputEnv=process.env.CINEMA_DNA_AUDIT_OUTPUT
+if(!auditRepoEnv || !auditOutputEnv) throw new Error('Set CINEMA_DNA_AUDIT_ROOT and CINEMA_DNA_AUDIT_OUTPUT as documented in README.md')
+const auditRepo=auditResolve(auditRepoEnv)
+const auditOutput=auditResolve(auditOutputEnv)
+if(!auditExists(auditJoin(auditRepo,'pipeline/ingest/normalize.ts'))) throw new Error('CINEMA_DNA_AUDIT_ROOT is not the isolated audit source copy')
+auditMkdir(auditOutput,{recursive:true})
+const auditImport=(path:string)=>import(auditFileUrl(auditJoin(auditRepo,path)).href)
+const auditFile=(name:string)=>auditJoin(auditOutput,name)
+const { normalize, classifyDate } = await auditImport('pipeline/ingest/normalize.ts')
+const { parseCsv, isoDate, num } = await auditImport('pipeline/ingest/csv.ts')
+const { scoreCandidate, pickBest } = await auditImport('pipeline/enrich/match.ts')
+const { Tmdb } = await auditImport('pipeline/enrich/tmdb.ts')
+import { mkdtempSync, writeFileSync, rmSync } from 'node:fs'
+import { join } from 'node:path'
+import { tmpdir } from 'node:os'
+const base = {
+  'profile.csv':'Date Joined,Username\n2020-01-01,audit-fixture\n',
+  'watched.csv':'Date,Name,Year,Letterboxd URI\n',
+  'ratings.csv':'Date,Name,Year,Letterboxd URI,Rating\n',
+  'diary.csv':'Date,Name,Year,Letterboxd URI,Rating,Rewatch,Tags,Watched Date\n',
+  'reviews.csv':'Date,Name,Year,Letterboxd URI,Rating,Rewatch,Review,Tags,Watched Date\n',
+}
+const ds = (overrides: Record<string,string>) => normalize({path:'synthetic.zip',sha256:'synthetic',files:new Map(Object.entries({...base,...overrides}))},new Date('2026-10-26T00:00:00Z'))
+const out: Record<string,unknown> = {}
+out.invalid_values = {date:isoDate('2024-99-99'),nonLeap:isoDate('2023-02-29'),negativeRating:num('-4'),tooHighRating:num('500'),fractionalRating:num('3.14159'),futureWatchQuality:classifyDate('2030-01-01','2024-01-01','2020-01-01')}
+const bad = ds({'ratings.csv':base['ratings.csv']+'2024-99-99,Outside scale,2020,https://boxd.it/F1,500\n'})
+out.normalized_invalid_rating = {rating:bad.films[0].rating,date:bad.films[0].ratingDate,conflicts:bad.audit.conflicts,missing:bad.audit.files.find(f=>f.file==='ratings.csv')?.missing}
+for(const [name,text] of Object.entries({extra_field:'Date,Name\n2024-01-01,A,B\n',unclosed_quote:'Date,Name\n2024-01-01,"A\n'})){
+  try{out[name] = {result:parseCsv(text)}}catch(e){out[name]={error:(e as Error).message}}
+}
+const watchA='2024-01-01,Duplicate,2020,https://boxd.it/A\n'
+const watchB='2024-01-01,Duplicate,2020,https://boxd.it/B\n'
+const diary=base['diary.csv']+'2024-01-01,Duplicate,2020,https://boxd.it/D1,4,,,2024-01-01\n'
+out.ambiguous_join = [watchA+watchB,watchB+watchA].map(rows=>{
+  const d=ds({'watched.csv':base['watched.csv']+rows,'diary.csv':diary})
+  return {assigned:d.viewings[0].filmId,conflicts:d.audit.conflicts,diaryAudit:d.audit.files.find(f=>f.file==='diary.csv')}
+})
+const list='Letterboxd list export v7\nDate,Name,Tags,URL,Description\n2024-01-01,Example,,https://boxd.it/L1,\n\nPosition,Name,Year,URL,Description\n1,Duplicate,2020,https://boxd.it/F1,\n'
+const listDs=ds({'diary.csv':diary,'lists/list.csv':list})
+out.late_list_identity={films:listDs.films.map(f=>({id:f.id,title:f.title,watched:f.watched,viewingIds:f.viewingIds,listMemberships:f.listMemberships})),conflicts:listDs.audit.conflicts}
+const reviewOnly=ds({'reviews.csv':base['reviews.csv']+'2024-01-01,Review only,2020,https://boxd.it/R1,4,,Review.,,2024-01-01\n'})
+out.review_only={films:reviewOnly.films.map(f=>({id:f.id,watched:f.watched,rating:f.rating,reviewIds:f.reviewIds})),counts:reviewOnly.audit.counts}
+const e={id:'Q1',label:'Another film',description:'film',aliases:[],sitelinks:10,claims:{P31:['Q11424'],P577:['2020-01-01']}}
+out.guessed_slug_mismatch=scoreCandidate({title:'Target film',year:2020},e,true)
+const named={...e,label:'Target film'}
+out.missing_year_match=scoreCandidate({title:'Target film',year:null},named,false)
+const scored=scoreCandidate({title:'Target film',year:2020},named,true)
+out.self_ambiguity=pickBest([scored,scored])
+const dir=mkdtempSync(join(tmpdir(),'cinema-audit-tmdb-'))
+try{
+  const tmdb=new Tmdb({key:'synthetic'},dir,false,async()=>new Response(JSON.stringify({results:[{id:1,title:'Twin',release_date:'2021-01-01'},{id:2,title:'Twin',release_date:'2020-01-01'}]}),{status:200}))
+  out.tmdb_ambiguity={chosen:await tmdb.search('Twin',2020),expectedExactYear:2}
+}finally{rmSync(dir,{recursive:true,force:true})}
+writeFileSync(auditFile('ingest-results.json'),JSON.stringify(out,null,2)+'\n')
+console.log(JSON.stringify(out,null,2))

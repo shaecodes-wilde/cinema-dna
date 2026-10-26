@@ -1,0 +1,39 @@
+// Documentation-only, synthetic audit reproduction. Never run against personal data.
+import { join as auditJoin, resolve as auditResolve } from 'node:path'
+import { mkdirSync as auditMkdir, existsSync as auditExists } from 'node:fs'
+import { pathToFileURL as auditFileUrl } from 'node:url'
+const auditRepoEnv=process.env.CINEMA_DNA_AUDIT_ROOT
+const auditOutputEnv=process.env.CINEMA_DNA_AUDIT_OUTPUT
+if(!auditRepoEnv || !auditOutputEnv) throw new Error('Set CINEMA_DNA_AUDIT_ROOT and CINEMA_DNA_AUDIT_OUTPUT as documented in README.md')
+const auditRepo=auditResolve(auditRepoEnv)
+const auditOutput=auditResolve(auditOutputEnv)
+if(!auditExists(auditJoin(auditRepo,'pipeline/ingest/normalize.ts'))) throw new Error('CINEMA_DNA_AUDIT_ROOT is not the isolated audit source copy')
+auditMkdir(auditOutput,{recursive:true})
+const auditImport=(path:string)=>import(auditFileUrl(auditJoin(auditRepo,path)).href)
+const auditFile=(name:string)=>auditJoin(auditOutput,name)
+import { mkdtempSync, mkdirSync, writeFileSync, symlinkSync, rmSync, statSync } from 'node:fs'
+import { join } from 'node:path'
+import { tmpdir } from 'node:os'
+import { createRequire } from 'node:module'
+const { readExport } = await auditImport('pipeline/ingest/archive.ts')
+const require=createRequire(auditJoin(auditRepo,'package.json'))
+const {zipSync,strToU8}=require('fflate')
+const dir=mkdtempSync(join(tmpdir(),'cinema-audit-archive-'))
+const out:Record<string,unknown>={}
+try{
+ const exp=join(dir,'export');mkdirSync(exp)
+ writeFileSync(join(exp,'watched.csv'),'Date,Name,Year,Letterboxd URI\n')
+ writeFileSync(join(dir,'outside.csv'),'synthetic outside file')
+ symlinkSync(join(dir,'outside.csv'),join(exp,'linked.csv'))
+ const sy=readExport(exp)
+ out.symlinkTraversal={files:[...sy.files.keys()],outsideContentRead:sy.files.get('linked.csv')==='synthetic outside file'}
+ const zipped=zipSync({'watched.csv':strToU8('Date,Name,Year,Letterboxd URI\n'),'ignored.bin':new Uint8Array(16*1024*1024)},{level:9})
+ const p=join(dir,'bounded-fixture.zip');writeFileSync(p,zipped)
+ globalThis.gc?.();globalThis.gc?.()
+ const before=process.memoryUsage()
+ const archive=readExport(p)
+ const after=process.memoryUsage()
+ out.nonCsvExpansion={zipBytes:statSync(p).size,nonCsvUncompressedBytes:16*1024*1024,files:[...archive.files.keys()],arrayBuffersDelta:after.arrayBuffers-before.arrayBuffers,externalDelta:after.external-before.external,rssDelta:after.rss-before.rss}
+ writeFileSync(auditFile('archive-results.json'),JSON.stringify(out,null,2)+'\n')
+ console.log(JSON.stringify(out,null,2))
+}finally{rmSync(dir,{recursive:true,force:true})}

@@ -1,0 +1,221 @@
+{
+  "dataset": "Synthetic audit fixture",
+  "checks": {
+    "drawerOpen": true,
+    "drawerInitialFocus": {
+      "tag": "BUTTON",
+      "text": "Close ✕",
+      "inDialog": true
+    },
+    "drawerShiftTab": {
+      "tag": "A",
+      "text": "data quality & provenance",
+      "inDialog": false
+    },
+    "drawerEscape": {
+      "closed": true,
+      "firstText": "Amber Tide 01 (1960)\n♥\n★\n↻\nDrama · Science Fiction\n\t5★\t5.0\tJan 10, 2023\t2\t85′\tSynthetic Director 0",
+      "active": "Amber Tide 01 (1960)♥★↻Drama · Science Fiction5★5.0Jan 10, 2023285′Synthetic Director 0"
+    },
+    "explorerSearch": {
+      "query": "Amber Tide 01",
+      "visibleRows": 1,
+      "rowText": [
+        "Amber Tide 01 (1960)♥★↻Drama · Science Fiction5★5.0Jan 10, 2023285′Synthetic Director 0"
+      ]
+    },
+    "explorerEmpty": true,
+    "genreSelection": "GENRE\nDrama\n✕\n57\nFILMS\n3.41★\nSHRUNK AVG\n+0.05★\nVS YOU\nraw 3.41★ · SD 1.17 · 30% at 4.5★+ · 27% of your ratings\nlow confidence · n=57\nRating\nYear\nA–Z\nMidnight Atlas 19\n1968\n5★\nGlass Orchard 17\n1967\n5★\nAmber Tide 15\n1966\n5★\nMidnight Atlas 12\n1965\n5★\nGlass Orchard 10\n1964\n5★\nAmber Tide 08\n1963\n5★\nGlass Orchard 03\n1961\n5★\nAmber Tide 01\n1960\n5★\nGlass Orchard 20\n2024\n4.5★\nAmber Tide 18\n2023\n4.5★\nMidnight Atlas 15\n2022\n4.5★\nGlass Orchard 13\n2021\n4.5★\nAmber Tide 11\n2020\n4.5★\nMidnight Atlas 08\n2019\n4.5★\nGlass Orchard 06\n2018\n4.5★\nAmber Tide 04\n2017\n4.5★\nMidnight Atlas 01\n2016\n4.5★\nMidnight Atlas 18\n2014\n4★\nGlass Orchard 16\n2013\n4★\nAmber Tide 14\n2012\n4★\nMidnight Atlas 11\n2011\n4★\nGlass Orchard 09\n2010\n4★\nAmber Tide 07\n2009\n4★\nMidnight Atlas 04\n2008\n4★\nGlass Orchard 02\n2007\n4★\nshow all 57\nOpen Drama in the explorer →",
+    "genreDrill": {
+      "hash": "#genres",
+      "text": "∞\nEVERY RECORD, SEARCHABLE\nFilm Explorer\nEvery film in your export — watched, watchlisted or listed — with the numbers behind every chart. Click a genre, director or bar anywhere above and it lands here, filtered.\nSEARCH TITLE, DIRECTOR OR CAST\nSTATUS\nAll films\nWatched\nWatchlist (unwatched)\nRated\nReviewed\nRewatched\nLiked\nMINIMUM RATING\nAny\n1★ or higher\n2★ or higher\n2.5★ or higher\n3★ or higher\n3.5★ or higher\n4★ or higher\n4.5★ or higher\n5★ or higher\nGENRE\nAny\nAction\nAdventure\nAnimation\nComedy\nCrime\nDocumentary\nDrama\nFantasy\nHistory\nHorror\nMystery\nRomance\nScience Fiction\nThriller\nPERSON\nRELEASE DECADE\nAny\n2020s\n2010s\n2000s\n1990s\n1980s\n1970s\n1960s\nWATCHED IN\nAny year\n2026\n2025\n2024\n2023\n86 films\nDrama\n✕\nclear all\n↓ Export CSV\nFILM\tRATING↓\tMODEL",
+      "top": 72.5
+    },
+    "recommendationInitial": "36 films match · showing 24",
+    "moodFilter": {
+      "mood": "Mind-bending\n14",
+      "text": "14 films match · showing 14",
+      "selected": "true"
+    },
+    "radioArrow": [
+      {
+        "text": "Everything",
+        "checked": "true",
+        "focused": true
+      },
+      {
+        "text": "From my watchlist",
+        "checked": "false",
+        "focused": false
+      },
+      {
+        "text": "New discoveries",
+        "checked": "false",
+        "focused": false
+      }
+    ],
+    "mapZoom": {
+      "before": {
+        "cx": "1222.1812",
+        "cy": "382.8064",
+        "r": "6.5"
+      },
+      "zoomed": {
+        "cx": "69.87232000000006",
+        "cy": "199.42527999999993",
+        "r": "5.4528470752104745"
+      },
+      "reset": {
+        "cx": "1222.1812",
+        "cy": "382.8064",
+        "r": "6.5"
+      },
+      "keyboardStars": 0
+    },
+    "mapFilterText": "86 of 228 films match",
+    "reducedShelf": {
+      "clientWidth": 390,
+      "scrollWidth": 2264,
+      "overflowX": "hidden",
+      "animation": "none",
+      "posters": 14,
+      "ariaHiddenFocusable": 0,
+      "visiblePosters": 2
+    },
+    "missing": {
+      "text": "CINEMA DNA\nNo analysis found yet.\n\nThe dashboard reads public/data/cinema-dna.json, which is generated locally from your Letterboxd export (HTTP 404).\n\nPut your export zip in data/raw/\nRun npm run refresh\nReload this page.",
+      "errors": []
+    },
+    "invalid-schema": {
+      "text": "",
+      "errors": [
+        "TypeError: Cannot read properties of undefined (reading 'ratedFilms')"
+      ]
+    },
+    "broken-poster": {
+      "text": "Skip to the analysis\nCINEMA DNA\n01\nOpening\n02\nTaste DNA\n03\nGenres\n04\nTimeline\n05\nDirectors\n06\nConstellation\n07\nFive stars\n08\nCritic\n09\nNext\n10\nReport\n∞\nExplorer\n@synthetic-audit\nCINEMA DNA\n@SYNTHETIC-AUDIT · SOMEWHERE IN THE DARK · SINCE JANUARY 2023\nTheTime-TravellingOmnivore\n\nA genre-agnostic viewer whose ratings follow craft more than labels.\n\nR",
+      "errors": [],
+      "image": {
+        "complete": true,
+        "naturalWidth": 0,
+        "parentText": "",
+        "alt": ""
+      }
+    },
+    "printBeforeScreen": [
+      {
+        "opacity": "1",
+        "text": "Cinema DNA · Identity reportThe Time-Travelling OmnivoreA genre-agnostic vi"
+      },
+      {
+        "opacity": "0",
+        "text": "I.The identityThe Time-Travelling Omnivore. The phrase is not a horoscope; "
+      },
+      {
+        "opacity": "0",
+        "text": "II.What actually moves youAcross your 13 main genres the shrunk averages sp"
+      },
+      {
+        "opacity": "0",
+        "text": "III.The five-star formulaComparing your 60 films rated 4.5★+ with the 120 r"
+      },
+      {
+        "opacity": "0",
+        "text": "IV.Hidden patterns and contradictionsThe Action films paradox. Action films"
+      },
+      {
+        "opacity": "0",
+        "text": "V.Representative films and filmmakersSynthetic Director 4 is your most-watc"
+      },
+      {
+        "opacity": "0",
+        "text": "VI.How the taste has movedIn 2023 you logged 78 viewings averaging 3.40★; i"
+      },
+      {
+        "opacity": "0",
+        "text": "VII.The unexplored mapSome territory is barely mapped: western (0 films), w"
+      },
+      {
+        "opacity": "0",
+        "text": "VIII.A closing readingPut together, the evidence describes someone for whom"
+      }
+    ],
+    "printBeforeMedia": [
+      {
+        "opacity": "1",
+        "text": "Cinema DNA · Identity reportThe Time-Travelling OmnivoreA genre-agnostic vi"
+      },
+      {
+        "opacity": "0",
+        "text": "I.The identityThe Time-Travelling Omnivore. The phrase is not a horoscope; "
+      },
+      {
+        "opacity": "0",
+        "text": "II.What actually moves youAcross your 13 main genres the shrunk averages sp"
+      },
+      {
+        "opacity": "0",
+        "text": "III.The five-star formulaComparing your 60 films rated 4.5★+ with the 120 r"
+      },
+      {
+        "opacity": "0",
+        "text": "IV.Hidden patterns and contradictionsThe Action films paradox. Action films"
+      },
+      {
+        "opacity": "0",
+        "text": "V.Representative films and filmmakersSynthetic Director 4 is your most-watc"
+      },
+      {
+        "opacity": "0",
+        "text": "VI.How the taste has movedIn 2023 you logged 78 viewings averaging 3.40★; i"
+      },
+      {
+        "opacity": "0",
+        "text": "VII.The unexplored mapSome territory is barely mapped: western (0 films), w"
+      },
+      {
+        "opacity": "0",
+        "text": "VIII.A closing readingPut together, the evidence describes someone for whom"
+      }
+    ],
+    "printAfter": [
+      {
+        "opacity": "1",
+        "text": "Cinema DNA · Identity reportThe Time-Travelling OmnivoreA genre-agnostic vi"
+      },
+      {
+        "opacity": "1",
+        "text": "I.The identityThe Time-Travelling Omnivore. The phrase is not a horoscope; "
+      },
+      {
+        "opacity": "1",
+        "text": "II.What actually moves youAcross your 13 main genres the shrunk averages sp"
+      },
+      {
+        "opacity": "1",
+        "text": "III.The five-star formulaComparing your 60 films rated 4.5★+ with the 120 r"
+      },
+      {
+        "opacity": "1",
+        "text": "IV.Hidden patterns and contradictionsThe Action films paradox. Action films"
+      },
+      {
+        "opacity": "1",
+        "text": "V.Representative films and filmmakersSynthetic Director 4 is your most-watc"
+      },
+      {
+        "opacity": "1",
+        "text": "VI.How the taste has movedIn 2023 you logged 78 viewings averaging 3.40★; i"
+      },
+      {
+        "opacity": "1",
+        "text": "VII.The unexplored mapSome territory is barely mapped: western (0 films), w"
+      },
+      {
+        "opacity": "1",
+        "text": "VIII.A closing readingPut together, the evidence describes someone for whom"
+      }
+    ]
+  },
+  "errors": []
+}

@@ -1,0 +1,47 @@
+{
+  "invalidRating": {
+    "rated": 5,
+    "mean": 23,
+    "histogramTotal": 4,
+    "inputRatings": [
+      99,
+      4,
+      4,
+      4,
+      4
+    ]
+  },
+  "invalidDate": {
+    "viewings": [
+      {
+        "id": "D1",
+        "filmId": "lb:F1",
+        "date": "2024-99-99",
+        "logged": "2024-99-99",
+        "rating": 4,
+        "rewatch": false,
+        "reviewed": false,
+        "quality": "live",
+        "tags": []
+      }
+    ],
+    "months": [
+      {
+        "month": "2024-99",
+        "viewings": 1,
+        "rewatches": 0,
+        "meanRating": 4,
+        "newReleaseShare": 0
+      }
+    ]
+  },
+  "unavailableModelReport": {
+    "available": false,
+    "line": "Cross-validated RMSE **0★** vs **0★** for always guessing your average (NaN% better); correlation with your actual ratings r = 0. That is a modest but real signal — your taste is only partly predictable from metadata, which is exactly why the exceptions are interesting."
+  },
+  "reportEscaping": {
+    "rawScript": false,
+    "escapedTitle": true,
+    "rawImg": false
+  }
+}

@@ -1,0 +1,233 @@
+{
+  "invalid_values": {
+    "date": "2024-99-99",
+    "nonLeap": "2023-02-29",
+    "negativeRating": -4,
+    "tooHighRating": 500,
+    "fractionalRating": 3.14159,
+    "futureWatchQuality": "live"
+  },
+  "normalized_invalid_rating": {
+    "rating": 500,
+    "date": "2024-99-99",
+    "conflicts": [],
+    "missing": {}
+  },
+  "extra_field": {
+    "error": "(v ?? \"\").trim is not a function"
+  },
+  "unclosed_quote": {
+    "result": [
+      {
+        "Date": "2024-01-01",
+        "Name": "A"
+      }
+    ]
+  },
+  "ambiguous_join": [
+    {
+      "assigned": "lb:A",
+      "conflicts": [
+        {
+          "kind": "same-title-year-different-uri",
+          "detail": "\"Duplicate\" (2020) maps to lb:A and lb:B",
+          "refs": [
+            {
+              "file": "watched.csv",
+              "row": 1
+            },
+            {
+              "file": "watched.csv",
+              "row": 2
+            }
+          ]
+        }
+      ],
+      "diaryAudit": {
+        "file": "diary.csv",
+        "present": true,
+        "rows": 1,
+        "linked": 1,
+        "unlinked": 0,
+        "missing": {}
+      }
+    },
+    {
+      "assigned": "lb:B",
+      "conflicts": [
+        {
+          "kind": "same-title-year-different-uri",
+          "detail": "\"Duplicate\" (2020) maps to lb:B and lb:A",
+          "refs": [
+            {
+              "file": "watched.csv",
+              "row": 1
+            },
+            {
+              "file": "watched.csv",
+              "row": 2
+            }
+          ]
+        }
+      ],
+      "diaryAudit": {
+        "file": "diary.csv",
+        "present": true,
+        "rows": 1,
+        "linked": 1,
+        "unlinked": 0,
+        "missing": {}
+      }
+    }
+  ],
+  "late_list_identity": {
+    "films": [
+      {
+        "id": "ty:duplicate:2020",
+        "title": "Duplicate",
+        "watched": true,
+        "viewingIds": [
+          "D1"
+        ],
+        "listMemberships": []
+      },
+      {
+        "id": "lb:F1",
+        "title": "Duplicate",
+        "watched": false,
+        "viewingIds": [],
+        "listMemberships": [
+          {
+            "listId": "L1",
+            "position": 1
+          }
+        ]
+      }
+    ],
+    "conflicts": [
+      {
+        "kind": "unresolved-title-year",
+        "detail": "\"Duplicate\" (2020) has no film-level record; created a title-keyed film",
+        "refs": [
+          {
+            "file": "diary.csv",
+            "row": 1
+          }
+        ]
+      },
+      {
+        "kind": "same-title-year-different-uri",
+        "detail": "\"Duplicate\" (2020) maps to ty:duplicate:2020 and lb:F1",
+        "refs": [
+          {
+            "file": "diary.csv",
+            "row": 1
+          },
+          {
+            "file": "lists/list.csv",
+            "row": 1
+          }
+        ]
+      }
+    ]
+  },
+  "review_only": {
+    "films": [
+      {
+        "id": "ty:reviewonly:2020",
+        "watched": false,
+        "rating": null,
+        "reviewIds": [
+          "R1"
+        ]
+      }
+    ],
+    "counts": {
+      "films": 1,
+      "watchedFilms": 0,
+      "ratedFilms": 0,
+      "diaryViewings": 0,
+      "rewatchViewings": 0,
+      "reviews": 1,
+      "watchedWithoutDiary": 0,
+      "watchlistFilms": 0,
+      "likedFilms": 0,
+      "lists": 0,
+      "detachedEntries": 0,
+      "viewingsByDateQuality": {
+        "live": 0,
+        "delayed": 0,
+        "backfilled": 0,
+        "approximate": 0,
+        "missing": 0
+      },
+      "ratingRevisions": 0
+    }
+  },
+  "guessed_slug_mismatch": {
+    "entity": {
+      "id": "Q1",
+      "label": "Another film",
+      "description": "film",
+      "aliases": [],
+      "sitelinks": 10,
+      "claims": {
+        "P31": [
+          "Q11424"
+        ],
+        "P577": [
+          "2020-01-01"
+        ]
+      }
+    },
+    "score": 9.166666666666666,
+    "confidence": "high",
+    "notes": []
+  },
+  "missing_year_match": {
+    "entity": {
+      "id": "Q1",
+      "label": "Target film",
+      "description": "film",
+      "aliases": [],
+      "sitelinks": 10,
+      "claims": {
+        "P31": [
+          "Q11424"
+        ],
+        "P577": [
+          "2020-01-01"
+        ]
+      }
+    },
+    "score": 6.166666666666667,
+    "confidence": "high",
+    "notes": []
+  },
+  "self_ambiguity": {
+    "entity": {
+      "id": "Q1",
+      "label": "Target film",
+      "description": "film",
+      "aliases": [],
+      "sitelinks": 10,
+      "claims": {
+        "P31": [
+          "Q11424"
+        ],
+        "P577": [
+          "2020-01-01"
+        ]
+      }
+    },
+    "score": 12.166666666666666,
+    "confidence": "medium",
+    "notes": [
+      "ambiguous with Q1"
+    ]
+  },
+  "tmdb_ambiguity": {
+    "chosen": 1,
+    "expectedExactYear": 2
+  }
+}

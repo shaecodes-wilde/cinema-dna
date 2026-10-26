@@ -1,0 +1,150 @@
+{
+  "dataset": "Synthetic audit fixture; no personal Letterboxd export",
+  "captures": [
+    {
+      "filename": "desktop-opening.png",
+      "viewport": [
+        1440,
+        1000
+      ],
+      "section": "opening",
+      "top": 0,
+      "height": 2498,
+      "text": "CINEMA DNA\n@SYNTHETIC-AUDIT \u00b7 SOMEWHERE IN THE DARK \u00b7 SINCE JANUARY 2023\nTheTime-TravellingOmnivore\n\nA genre-agnostic viewer whose ratings follow craft more than labels.\n\nROLL FILM",
+      "svg": 0,
+      "buttons": 33
+    },
+    {
+      "filename": "desktop-dna.png",
+      "viewport": [
+        1440,
+        1000
+      ],
+      "section": "dna",
+      "top": 73,
+      "height": 2508,
+      "text": "02\nTHE FINGERPRINT\nYour Taste DNA\nTwelve measurable traits. The pale shape is what you watch \u2014 how much of your viewing carries each trait. The coloured dots on the outer ring are ",
+      "svg": 5,
+      "buttons": 25
+    },
+    {
+      "filename": "desktop-genres.png",
+      "viewport": [
+        1440,
+        1000
+      ],
+      "section": "genres",
+      "top": 73,
+      "height": 3473,
+      "text": "03\nHABIT VS. LOVE\nGenre Universe\nEvery genre you watch, placed by how much of your viewing it fills and how you actually rate it. Among genres with 10+ films the shrunk averages ru",
+      "svg": 15,
+      "buttons": 26
+    },
+    {
+      "filename": "desktop-timeline.png",
+      "viewport": [
+        1440,
+        1000
+      ],
+      "section": "timeline",
+      "top": 73,
+      "height": 3237,
+      "text": "04\nWHEN YOU WATCHED\nMy Cinema Timeline\nTwo clocks run through your diary: the date you watched a film, and the year it was released. This chapter keeps them apart. Only diary entri",
+      "svg": 4,
+      "buttons": 38
+    },
+    {
+      "filename": "desktop-directors.png",
+      "viewport": [
+        1440,
+        1000
+      ],
+      "section": "directors",
+      "top": 72,
+      "height": 2013,
+      "text": "05\nLOYALTY VS. LOVE\nDirector's Gallery\nThe filmmakers you keep returning to, and the ones who actually deliver. 12 directors appear at least twice in your library. Each card shows ",
+      "svg": 13,
+      "buttons": 22
+    },
+    {
+      "filename": "desktop-constellation.png",
+      "viewport": [
+        1440,
+        1000
+      ],
+      "section": "constellation",
+      "top": 73,
+      "height": 2746,
+      "text": "06\nYOUR FILMS AS A MAP\nThe Movie Constellation\nEvery film you've watched with verified metadata is a star here. Films sit close together when they share concrete, recorded attribut",
+      "svg": 1,
+      "buttons": 71
+    },
+    {
+      "filename": "desktop-five-star.png",
+      "viewport": [
+        1440,
+        1000
+      ],
+      "section": "five-star",
+      "top": 72,
+      "height": 4573,
+      "text": "07\nTHE TOP SHELF\nMy Five-Star Universe\n60 films have earned 4.5\u2605 or more from you \u2014 30 of them a perfect 5\u2605. These are the films that define the top of your scale. Select one to re",
+      "svg": 1,
+      "buttons": 118
+    },
+    {
+      "filename": "desktop-critic.png",
+      "viewport": [
+        1440,
+        1000
+      ],
+      "section": "critic",
+      "top": 72,
+      "height": 4200,
+      "text": "08\nTHE CRITIC AT WORK\nCritical Analysis\nHow you score, how you write, and how the two disagree. Your stars average 3.36\u2605 with a spread of 1.19; everything below is measured against",
+      "svg": 8,
+      "buttons": 25
+    },
+    {
+      "filename": "desktop-next.png",
+      "viewport": [
+        1440,
+        1000
+      ],
+      "section": "next",
+      "top": 72,
+      "height": 4120,
+      "text": "09\nRECOMMENDATION ENGINE\nYour Next Favourite\n36 real films scored by your taste model: 36 unwatched titles from your watchlist, plus 0 discoveries pulled from Wikidata through the ",
+      "svg": 0,
+      "buttons": 105
+    },
+    {
+      "filename": "desktop-report.png",
+      "viewport": [
+        1440,
+        1000
+      ],
+      "section": "report",
+      "top": 72,
+      "height": 5612,
+      "text": "10\nAN ESSAY IN EIGHT REELS\nThe Identity Report\nEverything above, written up as a critic would: a single essay grounded in your ratings, diary and reviews. Download it, print it, or",
+      "svg": 0,
+      "buttons": 24
+    },
+    {
+      "filename": "desktop-explorer.png",
+      "viewport": [
+        1440,
+        1000
+      ],
+      "section": "explorer",
+      "top": 72,
+      "height": 2923,
+      "text": "\u221e\nEVERY RECORD, SEARCHABLE\nFilm Explorer\nEvery film in your export \u2014 watched, watchlisted or listed \u2014 with the numbers behind every chart. Click a genre, director or bar anywhere a",
+      "svg": 0,
+      "buttons": 10
+    }
+  ],
+  "provenance": "Captured before a harness selector mismatch for footer-only Quality; completed responsive run captured Quality. That selector timeout was not an app defect.",
+  "warning": "Any timing fields in original harness include artificial waits."
+}

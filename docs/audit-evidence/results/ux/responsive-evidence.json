@@ -1,0 +1,350 @@
+{
+  "dataset": "Synthetic audit fixture; no personal Letterboxd export",
+  "started": "2026-10-26T18:49:43.409Z",
+  "screenshots": [
+    {
+      "filename": "desktop-quality.png",
+      "viewport": [
+        1440,
+        1000
+      ],
+      "section": "quality",
+      "top": 73,
+      "height": 1947,
+      "text": "§\nSHOW YOUR WORK\nData Quality & Provenance\nEvery number on this page is reproducible from your export. Here is exactly what was read, how records were linked, which fields are miss",
+      "svg": 0,
+      "buttons": 1
+    },
+    {
+      "filename": "tablet-opening.png",
+      "viewport": [
+        768,
+        1000
+      ],
+      "section": "opening"
+    },
+    {
+      "filename": "tablet-dna.png",
+      "viewport": [
+        768,
+        1000
+      ],
+      "section": "dna"
+    },
+    {
+      "filename": "tablet-genres.png",
+      "viewport": [
+        768,
+        1000
+      ],
+      "section": "genres"
+    },
+    {
+      "filename": "tablet-timeline.png",
+      "viewport": [
+        768,
+        1000
+      ],
+      "section": "timeline"
+    },
+    {
+      "filename": "tablet-directors.png",
+      "viewport": [
+        768,
+        1000
+      ],
+      "section": "directors"
+    },
+    {
+      "filename": "tablet-constellation.png",
+      "viewport": [
+        768,
+        1000
+      ],
+      "section": "constellation"
+    },
+    {
+      "filename": "tablet-five-star.png",
+      "viewport": [
+        768,
+        1000
+      ],
+      "section": "five-star"
+    },
+    {
+      "filename": "tablet-next.png",
+      "viewport": [
+        768,
+        1000
+      ],
+      "section": "next"
+    },
+    {
+      "filename": "tablet-report.png",
+      "viewport": [
+        768,
+        1000
+      ],
+      "section": "report"
+    },
+    {
+      "filename": "tablet-explorer.png",
+      "viewport": [
+        768,
+        1000
+      ],
+      "section": "explorer"
+    },
+    {
+      "filename": "tablet-quality.png",
+      "viewport": [
+        768,
+        1000
+      ],
+      "section": "quality"
+    },
+    {
+      "filename": "mobile-opening.png",
+      "viewport": [
+        390,
+        1000
+      ],
+      "section": "opening"
+    },
+    {
+      "filename": "mobile-dna.png",
+      "viewport": [
+        390,
+        1000
+      ],
+      "section": "dna"
+    },
+    {
+      "filename": "mobile-genres.png",
+      "viewport": [
+        390,
+        1000
+      ],
+      "section": "genres"
+    },
+    {
+      "filename": "mobile-timeline.png",
+      "viewport": [
+        390,
+        1000
+      ],
+      "section": "timeline"
+    },
+    {
+      "filename": "mobile-directors.png",
+      "viewport": [
+        390,
+        1000
+      ],
+      "section": "directors"
+    },
+    {
+      "filename": "mobile-constellation.png",
+      "viewport": [
+        390,
+        1000
+      ],
+      "section": "constellation"
+    },
+    {
+      "filename": "mobile-five-star.png",
+      "viewport": [
+        390,
+        1000
+      ],
+      "section": "five-star"
+    },
+    {
+      "filename": "mobile-next.png",
+      "viewport": [
+        390,
+        1000
+      ],
+      "section": "next"
+    },
+    {
+      "filename": "mobile-report.png",
+      "viewport": [
+        390,
+        1000
+      ],
+      "section": "report"
+    },
+    {
+      "filename": "mobile-explorer.png",
+      "viewport": [
+        390,
+        1000
+      ],
+      "section": "explorer"
+    },
+    {
+      "filename": "mobile-quality.png",
+      "viewport": [
+        390,
+        1000
+      ],
+      "section": "quality"
+    }
+  ],
+  "errors": [],
+  "console": [
+    {
+      "type": "error",
+      "text": "Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. Documentary (51%)"
+    }
+  ],
+  "blocked": [],
+  "checks": {
+    "initialLoadMs": 3579,
+    "initialTitle": "TheTime-TravellingOmnivore",
+    "document": {
+      "scrollWidth": 1440,
+      "width": 1440,
+      "height": 20784,
+      "domNodes": 1840,
+      "svgs": 0,
+      "buttons": 68,
+      "ariaHiddenFocusable": 14
+    },
+    "viewport768": {
+      "scrollWidth": 768,
+      "width": 768,
+      "height": 52176,
+      "nav": [
+        {
+          "text": "CINEMA DNA",
+          "ariaLabel": null,
+          "width": 136
+        },
+        {
+          "text": "01\nOpening",
+          "ariaLabel": null,
+          "width": 81
+        },
+        {
+          "text": "02\nTaste DNA",
+          "ariaLabel": null,
+          "width": 93
+        },
+        {
+          "text": "03\nGenres",
+          "ariaLabel": null,
+          "width": 75
+        },
+        {
+          "text": "04\nTimeline",
+          "ariaLabel": null,
+          "width": 81
+        },
+        {
+          "text": "05\nDirectors",
+          "ariaLabel": null,
+          "width": 84
+        },
+        {
+          "text": "06\nConstellation",
+          "ariaLabel": null,
+          "width": 105
+        },
+        {
+          "text": "07\nFive stars",
+          "ariaLabel": null,
+          "width": 87
+        },
+        {
+          "text": "08\nCritic",
+          "ariaLabel": null,
+          "width": 64
+        },
+        {
+          "text": "09\nNext",
+          "ariaLabel": null,
+          "width": 62
+        },
+        {
+          "text": "10\nReport",
+          "ariaLabel": null,
+          "width": 73
+        },
+        {
+          "text": "∞\nExplorer",
+          "ariaLabel": null,
+          "width": 74
+        }
+      ]
+    },
+    "viewport390": {
+      "scrollWidth": 390,
+      "width": 390,
+      "height": 71623,
+      "nav": [
+        {
+          "text": "CINEMA DNA",
+          "ariaLabel": null,
+          "width": 136
+        },
+        {
+          "text": "01",
+          "ariaLabel": null,
+          "width": 32
+        },
+        {
+          "text": "02",
+          "ariaLabel": null,
+          "width": 32
+        },
+        {
+          "text": "03",
+          "ariaLabel": null,
+          "width": 32
+        },
+        {
+          "text": "04",
+          "ariaLabel": null,
+          "width": 32
+        },
+        {
+          "text": "05",
+          "ariaLabel": null,
+          "width": 32
+        },
+        {
+          "text": "06",
+          "ariaLabel": null,
+          "width": 32
+        },
+        {
+          "text": "07",
+          "ariaLabel": null,
+          "width": 32
+        },
+        {
+          "text": "08",
+          "ariaLabel": null,
+          "width": 32
+        },
+        {
+          "text": "09",
+          "ariaLabel": null,
+          "width": 32
+        },
+        {
+          "text": "10",
+          "ariaLabel": null,
+          "width": 32
+        },
+        {
+          "text": "∞",
+          "ariaLabel": null,
+          "width": 26
+        }
+      ]
+    }
+  }
+}

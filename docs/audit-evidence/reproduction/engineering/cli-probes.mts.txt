@@ -1,0 +1,66 @@
+// Documentation-only, synthetic CLI reproduction. Operates on an additional temporary source copy.
+import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs'
+import { createHash } from 'node:crypto'
+import { createRequire } from 'node:module'
+import { tmpdir } from 'node:os'
+import { join, resolve } from 'node:path'
+import { pathToFileURL } from 'node:url'
+import { spawnSync } from 'node:child_process'
+
+if (!process.env.CINEMA_DNA_AUDIT_ROOT || !process.env.CINEMA_DNA_AUDIT_OUTPUT) throw new Error('Follow README.md: both CINEMA_DNA_AUDIT_ROOT and CINEMA_DNA_AUDIT_OUTPUT are required')
+const repo = resolve(process.env.CINEMA_DNA_AUDIT_ROOT)
+const output = resolve(process.env.CINEMA_DNA_AUDIT_OUTPUT)
+if (!existsSync(join(repo, 'pipeline/cli.ts'))) throw new Error('Missing isolated source copy')
+mkdirSync(output, { recursive: true })
+const require = createRequire(join(repo, 'package.json'))
+const { zipSync, strToU8 } = require('fflate')
+const { FIXTURE_FILES } = await import(pathToFileURL(join(repo, 'pipeline/test/fixtures.ts')).href)
+const dir = mkdtempSync(join(tmpdir(), 'cinema-audit-cli-'))
+const sha = (path: string) => createHash('sha256').update(readFileSync(path)).digest('hex')
+const env = { ...process.env }
+for (const key of ['TMDB_API_KEY', 'TMDB_READ_ACCESS_TOKEN', 'CINEMA_DNA_CONTACT']) delete env[key]
+
+try {
+  for (const name of ['pipeline', 'shared']) cpSync(join(repo, name), join(dir, name), { recursive: true })
+  writeFileSync(join(dir, 'package.json'), '{"type":"module"}\n')
+  symlinkSync(join(repo, 'node_modules'), join(dir, 'node_modules'), 'dir')
+  writeFileSync(join(dir, 'block-network.mjs'), "import {writeFileSync} from 'node:fs';let calls=0;globalThis.fetch=async()=>{calls++;throw new Error('NO NETWORK IN AUDIT')};process.on('exit',()=>writeFileSync('network-count.json',JSON.stringify({calls})));\n")
+  writeFileSync(join(dir, 'deny-http.mjs'), "globalThis.fetch=async()=>new Response('synthetic denial',{status:401});\n")
+  const files = { ...FIXTURE_FILES, 'ratings.csv': FIXTURE_FILES['ratings.csv'] + '2023-06-03,Gamma,2023,https://boxd.it/GGG3,4\n' }
+  const makeZip = (name: string, data: Record<string, string>) => {
+    const path = join(dir, name)
+    writeFileSync(path, zipSync(Object.fromEntries(Object.entries(data).map(([key, text]) => [key, strToU8(text)]))))
+    return path
+  }
+  const valid = makeZip('letterboxd-synthetic-valid-2026-10-26-12-00-utc.zip', files)
+  const invalid = makeZip('letterboxd-synthetic-invalid-2026-10-26-12-01-utc.zip', { ...files, 'watched.csv': files['watched.csv'] + '2024-01-01,Bad,2020,https://boxd.it/Bad,extra\n' })
+  const run = (args: string[], guard: string) => {
+    const result = spawnSync(process.execPath, ['--import', join(repo, 'node_modules/tsx/dist/loader.mjs'), '--import', join(dir, guard), join(dir, 'pipeline/cli.ts'), ...args], { cwd: dir, env, encoding: 'utf8' })
+    if (result.error) throw result.error
+    return { exit: result.status, log: result.stdout + result.stderr }
+  }
+  const sourceBefore = sha(valid)
+  const validRun = run(['import', valid, '--offline', '--no-discover'], 'block-network.mjs')
+  writeFileSync(join(output, 'cli-import-valid.txt'), validRun.log)
+  if (validRun.exit !== 0) throw new Error(`Synthetic import failed: ${validRun.log}`)
+  const networkCalls = JSON.parse(readFileSync(join(dir, 'network-count.json'), 'utf8')).calls
+  const dataset = JSON.parse(readFileSync(join(dir, 'data/normalized/dataset.json'), 'utf8'))
+  const app = JSON.parse(readFileSync(join(dir, 'public/data/cinema-dna.json'), 'utf8'))
+  const paths = ['data/normalized/dataset.json', 'data/normalized/metadata.json', 'public/data/cinema-dna.json', 'public/data/cinema-dna-report.html', 'reports/cinema-dna-report.html', 'reports/cinema-dna-report.md', 'reports/taste-analysis.md']
+  const outputHashes = Object.fromEntries(paths.map(path => [path, sha(join(dir, path))]))
+  const modelLine = readFileSync(join(dir, 'reports/taste-analysis.md'), 'utf8').split('\n').find(line => line.includes('Cross-validated RMSE'))
+  const invalidBefore = sha(invalid)
+  const invalidRun = run(['import', invalid, '--offline', '--no-discover'], 'block-network.mjs')
+  writeFileSync(join(output, 'cli-import-invalid.txt'), invalidRun.log)
+  const invalidResult = { exit: invalidRun.exit, networkCalls: JSON.parse(readFileSync(join(dir, 'network-count.json'), 'utf8')).calls, sourceUnchanged: sha(invalid) === invalidBefore, previousOutputsUnchanged: paths.every(path => sha(join(dir, path)) === outputHashes[path]) }
+  // Remove only this probe's derived files, then demonstrate the standalone enrichment exit contract.
+  rmSync(join(dir, 'data/cache'), { recursive: true, force: true })
+  rmSync(join(dir, 'data/normalized/metadata.json'), { force: true })
+  const enrichRun = run(['enrich'], 'deny-http.mjs')
+  writeFileSync(join(output, 'cli-failure.txt'), enrichRun.log)
+  const results = { validExit: validRun.exit, networkCalls, datasetCounts: dataset.audit.counts, appTotals: app.totals, originalZipUnchanged: sha(valid) === sourceBefore, copiedZipMatches: sha(join(dir, 'data/raw', valid.split('/').at(-1)!)) === sourceBefore, outputs: outputHashes, unavailableModelReportLine: modelLine, invalidImport: invalidResult, failedEnrichment: { exit: enrichRun.exit, metadataExists: existsSync(join(dir, 'data/normalized/metadata.json')) } }
+  writeFileSync(join(output, 'cli-import-results.json'), JSON.stringify(results, null, 2) + '\n')
+  console.log(JSON.stringify(results, null, 2))
+} finally {
+  rmSync(dir, { recursive: true, force: true })
+}
