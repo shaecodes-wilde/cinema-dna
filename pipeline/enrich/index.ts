@@ -32,8 +32,8 @@ export function readPreviousMetadata(path: string, log: (msg: string) => void = 
   try {
     const file = readJson<MetadataFile | null>(path)
     if (file?.films && typeof file.films === 'object' && !Array.isArray(file.films)) return file
-  } catch {
-    // Missing or interrupted previous writes start cold.
+  } catch (err) {
+    if ((err as NodeJS.ErrnoException).code === 'ENOENT') return null
   }
   log('  ignoring unreadable previous metadata.json; nothing to carry forward')
   return null
@@ -56,7 +56,8 @@ export function carryForward(
   if (offline && prev) {
     for (const film of films) {
       const old = prev.films[film.id]
-      if (next[film.id] || !old || old.filmId !== film.id || !permitsPrevious(film.id, old, overrides)) continue
+      if (!old || old.filmId !== film.id || !permitsPrevious(film.id, old, overrides)
+        || (next[film.id] && !losesTmdbMetadata(old, next[film.id]))) continue
       next[film.id] = {
         ...old,
         match: { ...old.match, notes: [...new Set([...old.match.notes, 'carried from previous metadata (offline run)'])] },
@@ -97,6 +98,12 @@ export async function enrich(dataset: Dataset, opts: EnrichOptions = {}): Promis
   const previous = readPreviousMetadata(paths.metadata, log)
   const { wd, http } = newWikidata(offline, paths.cache, opts.fetchImpl)
   const overrides: Overrides = existsSync(paths.overrides) ? readJson(paths.overrides) : {}
+  for (const [id, value] of Object.entries(overrides.matches ?? {})) {
+    if (value !== null && (typeof value !== 'string' || !/^Q\d+$/.test(value))) {
+      log(`  ignoring invalid override for ${id}: expected a Wikidata QID or null`)
+      delete overrides.matches![id]
+    }
+  }
   const films = dataset.films
   log(`▸ enrich  ${films.length} films via Wikidata${offline ? ' (offline: cache only)' : ''}`)
 
@@ -169,7 +176,7 @@ export async function enrich(dataset: Dataset, opts: EnrichOptions = {}): Promis
 
   // 5 ─ Optional TMDB overlay.
   const sources = ['wikidata']
-  const tmdbFailed = new Set<string>()
+  const tmdbFailed = new Map<string, string>()
   const creds = tmdbCredentials()
   if (creds) {
     const tmdb = new Tmdb(creds, join(paths.cache, 'tmdb'), offline, opts.fetchImpl)
@@ -189,10 +196,10 @@ export async function enrich(dataset: Dataset, opts: EnrichOptions = {}): Promis
           : applyTmdb(emptyMetadata(film, { method: 'tmdb-search', confidence: 'medium', notes: ['matched via TMDB search only'] }), movie)
         n++
       } catch (err) {
-        tmdbFailed.add(film.id)
+        tmdbFailed.set(film.id, (err as Error).message)
         log(`  tmdb: ${film.title}: ${(err as Error).message}`)
         if (err instanceof HttpError && (err.status === 401 || err.status === 403)) {
-          for (const skipped of eligible.slice(index + 1)) tmdbFailed.add(skipped.id)
+          for (const skipped of eligible.slice(index + 1)) tmdbFailed.set(skipped.id, (err as Error).message)
           log('  TMDB rejected the credentials (check TMDB_API_KEY / TMDB_READ_ACCESS_TOKEN); skipping TMDB.')
           break
         }
@@ -215,11 +222,15 @@ export async function enrich(dataset: Dataset, opts: EnrichOptions = {}): Promis
     if (offline) throw new Error(message)
     log(`  ⚠ ${message}`)
   }
-  if ([...tmdbFailed].some((id) => {
+  const degraded = [...tmdbFailed].filter(([id]) => {
     const old = previous?.films[id]
     return old && permitsPrevious(id, old, overrides) && losesTmdbMetadata(old, out[id])
-  })) {
-    throw new Error('degraded refresh: a metadata source failed; previous metadata.json kept unchanged (replacement not published)')
+  })
+  if (degraded.length) {
+    const ids = degraded.slice(0, 5).map(([id]) => id).join(', ') + (degraded.length > 5 ? ', …' : '')
+    const unique = [...new Set(degraded.map(([, failure]) => failure))]
+    const failures = unique.slice(0, 3).join('; ') + (unique.length > 3 ? '; …' : '')
+    throw new Error(`degraded refresh: ${ids} (${failures}); previous metadata.json kept unchanged (replacement not published)`)
   }
   if (existsSync(paths.metadata)) {
     mkdirSync(dirname(paths.metadataPrev), { recursive: true })

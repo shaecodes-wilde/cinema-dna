@@ -74,6 +74,12 @@ export function buildNarrative(x: NarrativeInput): { identity: AppData['identity
   const crew = ins('below-the-line')
   const driftUp = drift ? Number(drift.stats.find((s) => s.label === 'Up on rewatch')?.value ?? 0) : 0
   const driftDown = drift ? Number(drift.stats.find((s) => s.label === 'Down on rewatch')?.value ?? 0) : 0
+  const revisions = x.dataset.audit.conflicts.filter((c) => c.kind === 'rating-mismatch')
+  const downwardRevisions = revisions.filter((c) => {
+    const m = c.detail.match(/latest diary rating ([\d.]+)★, current rating ([\d.]+)★/)
+    return m && Number(m[2]) < Number(m[1])
+  })
+  const revisionsShrink = revisions.length >= 2 && downwardRevisions.length > revisions.length / 2
 
   const subtitle =
     noun === 'Maximalist'
@@ -130,7 +136,7 @@ export function buildNarrative(x: NarrativeInput): { identity: AppData['identity
     heading: 'The identity',
     paragraphs: [
       `${identityTitle}. The phrase is not a horoscope; it is distilled from ${t.ratedFilms} ratings and ${t.reviews} reviews. ${intro[0]}`,
-      `${rubric ? `Your profile spells out a scale — "${rubric}". ` : ''}In practice your average is ${star(base.mean)}${base.mean > 3 ? ', which makes a 3★ a below-average grade' : ''}: ${Math.round(rated.filter((r) => r.rating! <= 3).length / rated.length * 100)}% of your films sit at 3★ or lower, and anything at 4★ is a genuine recommendation.`,
+      `${rubric ? `Your profile spells out a scale — "${rubric}". ` : ''}In practice your average is ${star(base.mean)}${base.mean > 3 ? ', which makes a 3★ a below-average grade' : ''}: ${Math.round(rated.filter((r) => r.rating! <= 3).length / rated.length * 100)}% of your films sit at 3★ or lower${base.mean < 4 ? ', and anything at 4★ is a genuine recommendation' : ''}.`,
     ],
   })
   const prefParas: string[] = []
@@ -186,12 +192,12 @@ export function buildNarrative(x: NarrativeInput): { identity: AppData['identity
   sections.push({ kicker: 'VII.', heading: 'The unexplored map', paragraphs: unexplored })
 
   const close: string[] = []
+  const scaleTerms = [longRow && longRow.delta >= 0.15 ? 'long' : '', prestigeGap >= 0.3 ? 'acclaimed' : ''].filter(Boolean)
   close.push(
     [
       'Put together, the evidence describes someone for whom cinema is an event.',
       present && present.score >= 40 ? 'You meet films close to their release,' : 'You seek films out,',
-      `grade them ${base.mean >= 3.25 ? 'warmly but honestly' : 'on your own scale'}, and save your highest praise for films that are big in every sense`,
-      `— ${[longRow && longRow.delta >= 0.15 ? 'long' : null, prestigeGap >= 0.3 ? 'acclaimed' : null, 'ambitious', pairs.length ? 'willing to mix registers' : null].filter(Boolean).join(', ')}.`,
+      `grade them ${base.mean >= 3.25 ? 'warmly but honestly' : 'on your own scale'}${scaleTerms.length ? `, and save your highest praise for films that are ${list(scaleTerms)}` : ''}.`,
       franchiseDim && franchiseDim.score >= 30 && (franchiseDim.affinity ?? 0) <= -0.05
         ? `Franchise instalments make up ${Math.round(franchiseDim.score)}% of your films and return less than the rest.`
         : '',
@@ -199,7 +205,7 @@ export function buildNarrative(x: NarrativeInput): { identity: AppData['identity
   )
   close.push(
     [
-      driftUp > driftDown && downs(insights) ? 'The most personal finding is the simplest: you trust a second viewing more than a first impression. The films you return to grow; the ones you only remember tend to shrink.' : '',
+      driftUp > driftDown && revisionsShrink ? 'The most personal finding is the simplest: you trust a second viewing more than a first impression. The films you return to grow; the ones you only remember tend to shrink.' : '',
       wlLean ? `Your watchlist already knows where to go next — ${wlLean}.` : '',
       wlLean && ((timeLift ?? -1) >= 0 || (worldLift ?? -1) >= 0)
         ? `And on the evidence of your own ratings${(timeLift ?? -1) >= 0 ? ` (older films ${timeLift! >= 0 ? '+' : ''}${timeLift!.toFixed(2)}★` : ' ('}${(worldLift ?? -1) >= 0 ? `${(timeLift ?? -1) >= 0 ? ', ' : ''}world cinema +${worldLift!.toFixed(2)}★` : ''}), going there is a better bet than habit suggests.`
@@ -216,11 +222,6 @@ export function buildNarrative(x: NarrativeInput): { identity: AppData['identity
       sections: sections.map((s) => ({ ...s, paragraphs: s.paragraphs.filter((p) => p && p.trim()) })).filter((s) => s.paragraphs.length),
     },
   }
-}
-
-function downs(insights: Insight[]): boolean {
-  const g = insights.find((i) => i.id === 'rewatch-drift')
-  return !!g && /moved only downward|downward \d+ times/.test(g.finding)
 }
 
 export { mean }

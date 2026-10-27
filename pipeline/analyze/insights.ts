@@ -50,7 +50,7 @@ export function buildInsights(ctx: AnalysisContext): { insights: Insight[]; five
       ? `Your average is ${star(base.mean)} (median ${star(median(ratings))}), so a 3★ from you is a below-average grade — ${pct(threeOrLess)} of your films sit at 3★ or lower. ${fivesRare ? 'Yet only' : 'And'} ${fives.length} of ${ratings.length} films (${pct(fives.length / ratings.length)}) have earned 5★.`
       : `Your average is ${star(base.mean)} (median ${star(median(ratings))}): ${pct(threeOrLess)} of your films sit at 3★ or lower, and ${fives.length} of ${ratings.length} (${pct(fives.length / ratings.length)}) have earned 5★.`,
     explanation: generous
-      ? `Your stars are compressed into the upper-middle of the scale. Read your 3★ as "fine" and your 4★ as a genuine recommendation${fivesRare ? '; 5★ is a rare, deliberate act' : ''}.`
+      ? `Your stars are compressed into the upper-middle of the scale. Read your 3★ as "fine"${base.mean < 4 ? ' and your 4★ as a genuine recommendation' : ''}${fivesRare ? '; 5★ is a rare, deliberate act' : ''}.`
       : base.mean >= 2.75
         ? 'You use the middle of the scale honestly: a 3★ from you is an ordinary grade, and anything at 4★ or above stands out.'
         : 'You grade hard. Most films land low on your scale, so even a 3★ is a recommendation and a 4★ is high praise.',
@@ -77,7 +77,8 @@ export function buildInsights(ctx: AnalysisContext): { insights: Insight[]; five
   const flat = drift.filter((d) => d.last === d.first)
   const dropped = drift.filter((d) => d.last < d.first)
   const rewatched = watched.filter((r) => r.viewings.some((v) => v.rewatch))
-  const rewatchedMean = mean(rewatched.filter((r) => r.rating !== null).map((r) => r.rating!))
+  const ratedRewatches = rewatched.filter((r) => r.rating !== null)
+  const rewatchedMean = mean(ratedRewatches.map((r) => r.rating!))
   if (drift.length >= 4) {
     const warm = ups.length > dropped.length
     const cool = dropped.length > ups.length
@@ -94,7 +95,7 @@ export function buildInsights(ctx: AnalysisContext): { insights: Insight[]; five
         { label: 'Up on rewatch', value: String(ups.length) },
         { label: 'Unchanged', value: String(flat.length) },
         { label: 'Down on rewatch', value: String(dropped.length) },
-        { label: 'Avg rating of rewatched films', value: star(rewatchedMean) },
+        ...(Number.isFinite(rewatchedMean) ? [{ label: 'Avg rating of rewatched films', value: star(rewatchedMean) }] : []),
       ],
       filmIds: [...ups, ...dropped].map((d) => d.r.film.id),
       n: drift.length,
@@ -102,15 +103,15 @@ export function buildInsights(ctx: AnalysisContext): { insights: Insight[]; five
       evidence: 'ratings',
     })
   }
-  if (rewatched.length >= 3) {
+  if (rewatched.length >= 3 && ratedRewatches.length) {
     const comfort = rewatched.filter((r) => r.viewings.length >= 3)
     add({
       id: 'rewatch-comfort',
       category: 'rewatch',
       title: 'What you return to',
-      finding: `${rewatched.length} films carry a rewatch in your diary, averaging ${star(rewatchedMean)} — ${signed(rewatchedMean - base.mean)} versus your baseline. ${comfort.length ? `You've logged ${titled(comfort.map((r) => r.film.id), 4)} three or more times.` : ''}`,
+      finding: `${rewatched.length} films carry a rewatch in your diary; the ${ratedRewatches.length} you rated average ${star(rewatchedMean)} — ${signed(rewatchedMean - base.mean)} versus your baseline. ${comfort.length ? `You've logged ${titled(comfort.map((r) => r.film.id), 4)} three or more times.` : ''}`,
       explanation: rewatchedMean - base.mean >= 0.1
-        ? 'Your rewatches are not comfort-food filler; they are almost entirely your top-tier films. Returning is how you confirm a favourite.'
+        ? `Films you rewatch average ${star(rewatchedMean)}, ${star(rewatchedMean - base.mean)} above your overall average.`
         : 'Your rewatches average about the same as, or below, your other films.',
       stats: [
         { label: 'Rewatched films', value: String(rewatched.length) },

@@ -34,6 +34,7 @@ If the user doesn't know how to get their export: Letterboxd → Settings → Da
 | Posters & keywords | user sets `TMDB_API_KEY` in `.env.local` (see `.env.example`), then `npm run enrich && npm run analyze` |
 | Faster Wikidata tier | user sets `CINEMA_DNA_CONTACT` (their URL or email) in `.env.local` |
 | Wrong film match | add `"lb:<code>": "Q<wikidata id>"` (or `null`) to `data/overrides.json`, re-run `npm run enrich && npm run analyze` |
+| Refresh refused to protect previous metadata | fix the TMDB credentials or retry later if TMDB was down, or set an override for the affected film; re-run `npm run enrich && npm run analyze` |
 
 Never put a user's email or other details into config on their behalf; ask them.
 
