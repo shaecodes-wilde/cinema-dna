@@ -14,7 +14,7 @@ import type {
 } from '../../shared/types.ts'
 import { filmKey, slugify } from '../util/slug.ts'
 import type { ExportArchive } from './archive.ts'
-import { isoDate, num, parseCsv, parseListCsv, uriCode, type Row } from './csv.ts'
+import { isoDate, num, parseCsvDetailed, parseListCsv, uriCode, type Row } from './csv.ts'
 
 const FILM_FILES = ['watched.csv', 'ratings.csv', 'likes/films.csv', 'watchlist.csv'] as const
 const DAY = 86_400_000
@@ -42,10 +42,41 @@ export function normalize(archive: ExportArchive, now = new Date()): Dataset {
   const fileAudits: FileAudit[] = []
   const conflicts: IdentityConflict[] = []
   const notes: string[] = []
+  const invalidRatings = new Map<string, number[]>()
+  const invalidDates = new Map<string, number[]>()
+  const recordInvalid = (rows: Map<string, number[]>, file: string, row: number) => {
+    const found = rows.get(file) ?? []
+    found.push(row)
+    rows.set(file, found)
+  }
+  const rowSummary = (rows: number[]) => {
+    const unique = [...new Set(rows)]
+    return `${unique.length === 1 ? 'row' : 'rows'} ${unique.slice(0, 5).join(', ')}${unique.length > 5 ? ', …' : ''}`
+  }
+  const rating = (s: string | undefined, file: string, row: number): number | null => {
+    const n = num(s)
+    if (n !== null && n >= 0.5 && n <= 5 && Number.isInteger(n * 2)) return n
+    if (s) recordInvalid(invalidRatings, file, row)
+    return null
+  }
+  const date = (s: string | undefined, file: string, row: number): string | null => {
+    const parsed = isoDate(s)
+    if (s && !parsed) recordInvalid(invalidDates, file, row)
+    return parsed
+  }
 
+  const reportCsv = (name: string, errors: { row: number; message: string }[], extraColumnRows: number[]) => {
+    if (extraColumnRows.length)
+      notes.push(`${name}: ${extraColumnRows.length} row${extraColumnRows.length === 1 ? '' : 's'} with extra unnamed columns (${rowSummary(extraColumnRows)})`)
+    if (errors.length)
+      notes.push(`${name}: CSV parse issue at ${errors.slice(0, 5).map((e) => `row ${e.row}: ${e.message}`).join('; ')}${errors.length > 5 ? '; …' : ''}`)
+  }
   const read = (name: string): Row[] => {
     const text = files.get(name)
-    return text === undefined ? [] : parseCsv(text)
+    if (text === undefined) return []
+    const { rows, errors, extraColumnRows } = parseCsvDetailed(text)
+    reportCsv(name, errors, extraColumnRows)
+    return rows
   }
   const audit = (file: string, rows: Row[], linked: number, required: string[]): FileAudit => {
     const missing: Record<string, number> = {}
@@ -60,7 +91,7 @@ export function normalize(archive: ExportArchive, now = new Date()): Dataset {
 
   // ── Profile ────────────────────────────────────────────────────────────
   const profileRow = read('profile.csv')[0] ?? {}
-  const joinedDate = isoDate(profileRow['Date Joined'])
+  const joinedDate = date(profileRow['Date Joined'], 'profile.csv', 2)
 
   // ── Films (identity) ──────────────────────────────────────────────────
   const byId = new Map<string, Film>()
@@ -139,19 +170,19 @@ export function normalize(archive: ExportArchive, now = new Date()): Dataset {
       if (!uriCode(uri) || !r.Name) return
       linked++
       const film = upsertByUri(r.Name, num(r.Year), uri, { file, row: i + 1 })
-      const date = isoDate(r.Date)
+      const addedDate = date(r.Date, file, i + 2)
       if (file === 'watched.csv') {
         film.watched = true
-        film.watchedAddedDate = date
+        film.watchedAddedDate = addedDate
       } else if (file === 'ratings.csv') {
-        film.rating = num(r.Rating)
-        film.ratingDate = date
+        film.rating = rating(r.Rating, file, i + 2)
+        film.ratingDate = addedDate
       } else if (file === 'likes/films.csv') {
         film.liked = true
-        film.likedDate = date
+        film.likedDate = addedDate
       } else {
         film.inWatchlist = true
-        film.watchlistAddedDate = date
+        film.watchlistAddedDate = addedDate
       }
     })
     audit(file, rows, linked, ['Name', 'Year', 'Letterboxd URI', ...(file === 'ratings.csv' ? ['Rating'] : [])])
@@ -170,14 +201,14 @@ export function normalize(archive: ExportArchive, now = new Date()): Dataset {
   diaryRows.forEach((r, i) => {
     const ref = { file: 'diary.csv', row: i + 1 }
     const film = resolveByTitle(r.Name, num(r.Year), ref)
-    const watchedDate = isoDate(r['Watched Date'])
-    const loggedDate = isoDate(r.Date) ?? watchedDate ?? ''
+    const watchedDate = date(r['Watched Date'], 'diary.csv', i + 2)
+    const loggedDate = date(r.Date, 'diary.csv', i + 2) ?? watchedDate ?? ''
     const v: Viewing = {
       id: uriCode(r['Letterboxd URI']) ?? `diary-${i + 1}`,
       filmId: film.id,
       watchedDate,
       loggedDate,
-      rating: num(r.Rating),
+      rating: rating(r.Rating, 'diary.csv', i + 2),
       rewatch: r.Rewatch === 'Yes',
       tags: splitTags(r.Tags),
       reviewId: null,
@@ -214,9 +245,9 @@ export function normalize(archive: ExportArchive, now = new Date()): Dataset {
       viewingId: viewing?.id ?? null,
       text,
       wordCount: wordCount(text),
-      rating: num(r.Rating),
-      watchedDate: isoDate(r['Watched Date']),
-      loggedDate: isoDate(r.Date) ?? '',
+      rating: rating(r.Rating, 'reviews.csv', i + 2),
+      watchedDate: date(r['Watched Date'], 'reviews.csv', i + 2),
+      loggedDate: date(r.Date, 'reviews.csv', i + 2) ?? '',
       rewatch: r.Rewatch === 'Yes',
       tags: splitTags(r.Tags),
       provenance: [ref],
@@ -249,13 +280,14 @@ export function normalize(archive: ExportArchive, now = new Date()): Dataset {
   // ── Lists ─────────────────────────────────────────────────────────────
   const lists: UserList[] = []
   for (const [name, text] of [...files].filter(([n]) => n.startsWith('lists/')).sort()) {
-    const { meta, entries } = parseListCsv(text)
+    const { meta, metaRow, entries, errors, extraColumnRows } = parseListCsv(text)
+    reportCsv(name, errors, extraColumnRows)
     const listId = uriCode(meta.URL) ?? name
     const list: UserList = {
       id: listId,
       name: meta.Name?.trim() || name,
       url: meta.URL || null,
-      createdDate: isoDate(meta.Date),
+      createdDate: date(meta.Date, name, metaRow),
       description: meta.Description ?? '',
       tags: splitTags(meta.Tags),
       isRanking: /rank/i.test(meta.Name ?? ''),
@@ -309,9 +341,9 @@ export function normalize(archive: ExportArchive, now = new Date()): Dataset {
           kind: kind === 'reviews' ? 'review' : kind === 'comments' ? 'comment' : 'diary',
           title: r.Name || null,
           year: num(r.Year),
-          rating: num(r.Rating),
-          watchedDate: isoDate(r['Watched Date']),
-          loggedDate: isoDate(r.Date),
+          rating: rating(r.Rating, file, i + 2),
+          watchedDate: date(r['Watched Date'], file, i + 2),
+          loggedDate: date(r.Date, file, i + 2),
           text: r.Review || r.Comment || null,
           provenance: [{ file, row: i + 1 }],
         }),
@@ -319,6 +351,11 @@ export function normalize(archive: ExportArchive, now = new Date()): Dataset {
       if (files.has(file)) audit(file, rows, 0, [])
     }
   }
+
+  for (const [file, rows] of invalidRatings)
+    notes.push(`${file}: ${rows.length} rating${rows.length === 1 ? '' : 's'} outside 0.5–5 in half-star steps ignored (${rowSummary(rows)})`)
+  for (const [file, rows] of invalidDates)
+    notes.push(`${file}: ${rows.length} impossible date${rows.length === 1 ? '' : 's'} ignored (${rowSummary(rows)})`)
 
   const films = [...byId.values()].sort((a, b) => a.title.localeCompare(b.title) || (a.year ?? 0) - (b.year ?? 0))
   const byQuality = { live: 0, delayed: 0, backfilled: 0, approximate: 0, missing: 0 } as Record<DateQuality, number>

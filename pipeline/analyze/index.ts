@@ -13,7 +13,7 @@ import { buildInsights } from './insights.ts'
 import { analyzeLanguage, snippet } from './language.ts'
 import { trainModel } from './model.ts'
 import { buildNarrative } from './narrative.ts'
-import { discoverPool, exposureOf, isKnown, poolRecords, scoreCandidate, type ScoreContext } from './recommend.ts'
+import { discoverPool, exposureOf, isKnown, poolRecords, scoreCandidate, watchedElsewhere, type ScoreContext } from './recommend.ts'
 import { renderReportHtml, renderReportMarkdown, renderTasteAnalysisMarkdown } from './report.ts'
 import { mean, median, round, sd } from './stats.ts'
 import { buildTimeline } from './timeline.ts'
@@ -282,9 +282,10 @@ async function buildRecommendations(
   const rating = new Map(records.map((r) => [r.film.id, r.rating]))
   const thisYear = new Date().getUTCFullYear()
   const released = (r: FilmRecord) => !r.film.year || r.film.year <= thisYear
+  const watchedQids = new Set(watched.map((r) => r.meta?.match.wikidataId).filter((q): q is string => !!q && /^Q\d+$/.test(q)))
 
   const out: Recommendation[] = records
-    .filter((r) => r.film.inWatchlist && !r.film.watched && released(r))
+    .filter((r) => r.film.inWatchlist && !r.film.watched && released(r) && !watchedElsewhere(r, watchedQids))
     .map((r) => scoreCandidate(r, ctx, 'watchlist', ['on your watchlist'], (id) => title.get(id) ?? id, (id) => rating.get(id) ?? null))
 
   if (opts.discover === false) return out.sort((a, b) => b.predicted - a.predicted)

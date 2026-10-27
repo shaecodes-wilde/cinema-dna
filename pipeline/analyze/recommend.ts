@@ -237,6 +237,11 @@ export function scoreCandidate(
   }
 }
 
+export function watchedElsewhere(rec: FilmRecord, watchedQids: Set<string>): boolean {
+  const q = rec.meta?.match.wikidataId
+  return !!q && /^Q\d+$/.test(q) && watchedQids.has(q)
+}
+
 /** Removes discovery candidates that are already in the user's library (by QID or title+year). */
 export function isKnown(rec: FilmRecord, known: { qids: Set<string>; titleYears: Set<string> }): boolean {
   const q = rec.meta?.match.wikidataId
