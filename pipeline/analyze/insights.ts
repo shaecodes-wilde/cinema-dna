@@ -1,6 +1,7 @@
 import type { AffinityRow, AppData, Confidence, Insight, Stat } from '../../shared/app-types.ts'
 import type { FilmRecord } from './features.ts'
 import { releaseLag } from './features.ts'
+import { PRIOR_K } from './affinity.ts'
 import type { AnalysisContext } from './index.ts'
 import { tokenize } from './language.ts'
 import { confidenceFor, logOddsZ, mean, median, proportionConfidence, round, shrink } from './stats.ts'
@@ -190,25 +191,25 @@ export function buildInsights(ctx: AnalysisContext): { insights: Insight[]; five
   }
 
   // ── 9 · Genre intersections ────────────────────────────────────────────
-  const synergies = ctx.pairs.filter((p) => p.n >= 5 && p.synergy >= 0.1).slice(0, 3)
-  for (const p of synergies) {
+  const overlaps = ctx.pairs.filter((p) => p.n >= 5 && p.synergy >= 0.1).slice(0, 3)
+  for (const p of overlaps) {
     const ga = affinities.genre.find((g) => g.key === p.a)!
     const gb = affinities.genre.find((g) => g.key === p.b)!
     add({
       id: `pair-${p.a}-${p.b}`,
       category: 'intersection',
-      title: `${p.a} × ${p.b}: better together`,
-      finding: `${p.a} on its own averages ${star(ga.shrunk)}; ${p.b} ${star(gb.shrunk)}. When a film is both (${p.n} films), it averages ${star(p.mean)} — ${signed(p.synergy)} above the better of the two.`,
-      explanation: `The combination is doing work that neither genre does alone — for you, ${p.b === 'Comedy' || p.a === 'Comedy' ? 'humour is what makes the other genre land' : 'the blend creates something you respond to more than either ingredient'}.`,
+      title: `${p.a} + ${p.b}: a high-rated overlap`,
+      finding: `The ${p.n} films tagged both average ${star(p.mean)} (${signed(p.synergy)} vs your average). All ${p.a} films (these included) average ${star(ga.mean)}; all ${p.b} films ${star(gb.mean)}.`,
+      explanation: 'Descriptive only. Both genre averages include these films, so this does not show the combination adds anything.',
       stats: [
-        { label: `${p.a} alone`, value: star(ga.shrunk) },
-        { label: `${p.b} alone`, value: star(gb.shrunk) },
-        { label: 'Together', value: `${star(p.mean)} (n=${p.n})` },
-        { label: 'Synergy', value: signed(p.synergy) },
+        { label: `All ${p.a} (incl. these)`, value: star(ga.mean) },
+        { label: `All ${p.b} (incl. these)`, value: star(gb.mean) },
+        { label: 'Both', value: `${star(p.mean)} (n=${p.n})` },
+        { label: 'Vs your average', value: signed(p.synergy) },
       ],
       filmIds: p.filmIds,
       n: p.n,
-      confidence: p.n >= 12 && p.synergy >= 0.15 ? 'medium' : 'low',
+      confidence: confidenceFor(p.n, p.synergy, base.sd, PRIOR_K.genre),
       evidence: 'metadata',
     })
   }

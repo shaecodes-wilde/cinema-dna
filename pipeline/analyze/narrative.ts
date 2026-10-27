@@ -58,6 +58,9 @@ export function buildNarrative(x: NarrativeInput): { identity: AppData['identity
   ).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([g]) => g.toLowerCase())
   const fives = rated.filter((r) => r.rating === 5)
   const pairs = insights.filter((i) => i.category === 'intersection')
+  const pairRows = pairs
+    .map((p) => partial.genrePairs.find((g) => `pair-${g.a}-${g.b}` === p.id))
+    .filter((p) => p !== undefined)
   const disappoint = insights.filter((i) => i.category === 'disappointment')
   const contradiction = insights.find((i) => i.id.startsWith('contradiction-'))
   const drift = ins('rewatch-drift')
@@ -83,13 +86,18 @@ export function buildNarrative(x: NarrativeInput): { identity: AppData['identity
     `Since ${partial.profile.joined ? partial.profile.joined.slice(0, 4) : 'joining Letterboxd'}, ${partial.profile.name} has logged ${t.diaryViewings} diary entries across ${t.watchedFilms} films${t.hoursWatched ? ` — roughly ${t.hoursWatched.toLocaleString('en-US')} hours in the dark` : ''}. ` +
       `${present && present.score >= 40 ? `This is someone who watches cinema in the present tense: ${pct(present.score)} of first viewings happen within a year of release.` : ''}`,
   )
-  if (genreAgnostic || longRow) {
-    intro.push(
-      `${genreAgnostic ? `On paper the diet is ${list(topGenres)}. But genre turns out to be a poor predictor of the stars. ` : ''}` +
-        `${longRow && longRow.delta >= 0.15 ? `What does predict them is ambition: films of 150 minutes or more average ${star(longRow.mean)}, ` : ''}` +
-        `${prestigeGap >= 0.3 ? `award-recognised films outscore the rest by ${prestigeGap.toFixed(2)}★, ` : ''}` +
-        `${pairs[0] ? `and ${pairs[0].title.split(':')[0].toLowerCase()} is a combination that lifts both of its genres.` : ''}`.replace(/, $/, '.'),
-    )
+  {
+    const ambition = !!longRow && longRow.delta >= 0.15
+    const clauses = [
+      ambition ? `films of 150 minutes or more average ${star(longRow!.mean)}` : '',
+      prestigeGap >= 0.3 ? `award-recognised films outscore the rest by ${prestigeGap.toFixed(2)}★` : '',
+      pairRows[0] ? `films tagged both ${pairRows[0].a.toLowerCase()} and ${pairRows[0].b.toLowerCase()} rate above your average` : '',
+    ].filter(Boolean)
+    const joined = list(clauses)
+    const signals = !joined ? '' : ambition ? `What does predict them is ambition: ${joined}.` : `${joined[0].toUpperCase()}${joined.slice(1)}.`
+    const opening = genreAgnostic ? `On paper the diet is ${list(topGenres)}. But genre turns out to be a poor predictor of the stars.` : ''
+    const paragraph = [opening, signals].filter(Boolean).join(' ')
+    if (paragraph) intro.push(paragraph)
   }
   intro.push(
     `The grading is ${base.mean >= 3.25 ? 'generous' : base.mean >= 2.75 ? 'measured' : 'tough'} — a ${star(base.mean)} average${fives.length <= Math.max(1, rated.length * 0.08) ? ` — and perfection is rationed: only ${fives.length} ${fives.length === 1 ? 'film holds' : 'films hold'} 5★` : `, with ${fives.length} films at 5★`}${fives.length === 1 ? `: ${fives[0].film.title}` : fives.length ? `, among them ${list(fives.slice(0, 4).map((r) => r.film.title))}` : ''}.` +
@@ -129,19 +137,11 @@ export function buildNarrative(x: NarrativeInput): { identity: AppData['identity
   if (genreAgnostic) prefParas.push(ins('genre-agnostic')!.finding + ' ' + ins('genre-agnostic')!.explanation)
   if (ins('runtime')) prefParas.push(`${ins('runtime')!.finding} ${ins('runtime')!.explanation}`)
   if (canon) prefParas.push(`${canon.finding} ${canon.explanation}`)
-  if (pairs.length) {
-    const genresIn = pairs.flatMap((p) => p.title.split(':')[0].split(' × '))
-    const multiplier = genresIn.find((g) => genresIn.filter((x) => x === g).length >= 2)
+  if (pairRows.length) {
     prefParas.push(
-      multiplier
-        ? `The combinations matter more than the components, and ${multiplier.toLowerCase()} is the great multiplier: ${pairs
-            .map((p) => {
-              const other = p.title.split(':')[0].split(' × ').find((g) => g !== multiplier) ?? ''
-              const together = p.stats.find((s) => s.label === 'Together')?.value ?? ''
-              return `with ${other.toLowerCase()} it reaches ${together}`
-            })
-            .join('; ')}. ${pairs[0].finding}`
-        : `The combinations matter more than the components. ${pairs.map((p) => p.finding).join(' ')}`,
+      `Some genre overlaps rate above your average: ${pairRows
+        .map((p) => `${p.a.toLowerCase()} with ${p.b.toLowerCase()} (${p.n} films, +${p.synergy.toFixed(2)}★ vs your average)`)
+        .join('; ')}. Each genre's own average includes these films, so this shows which overlaps you rate highly, not that combining genres adds anything.`,
     )
   }
   sections.push({ kicker: 'II.', heading: 'What actually moves you', paragraphs: prefParas })

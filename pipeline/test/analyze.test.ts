@@ -67,10 +67,10 @@ describe('affinity & model', () => {
     expect(rows[0].key).toBe('150+ min')
     expect(rows[0].confidence).toBe('high')
   })
-  it('computes genre-pair synergy against the parent genres', () => {
+  it('ranks genre-pair overlaps by lift vs baseline', () => {
     const rows = affinity('genre', recs, (r) => r.genres, base)
     const pairs = genrePairs(recs, rows, base)
-    expect(pairs[0]).toMatchObject({ a: 'Comedy', b: 'Drama' })
+    expect(pairs[0]).toMatchObject({ a: 'Comedy', b: 'Drama', synergy: Math.round((shrink(Array(10).fill(4.5), base.mean, 6) - base.mean) * 100) / 100 })
   })
   it('people signals exclude the film itself (leave-one-out)', () => {
     const idx = personIndex(recs)

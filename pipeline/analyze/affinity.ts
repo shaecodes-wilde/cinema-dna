@@ -62,9 +62,8 @@ export function affinity(
   return rows.sort((a, b) => b.delta - a.delta || b.n - a.n)
 }
 
-/** Genre pairs that beat both of their parent genres (after shrinkage). */
-export function genrePairs(records: FilmRecord[], genreRows: AffinityRow[], base: Baseline, minN = 3): GenrePair[] {
-  const byGenre = new Map(genreRows.map((g) => [g.key, g]))
+/** Genre pairs: shrunk joint-tag mean minus your baseline (descriptive overlap, not an interaction). */
+export function genrePairs(records: FilmRecord[], _genreRows: AffinityRow[], base: Baseline, minN = 3): GenrePair[] {
   const pairs = new Map<string, FilmRecord[]>()
   for (const r of records) {
     if (r.rating === null) continue
@@ -80,15 +79,14 @@ export function genrePairs(records: FilmRecord[], genreRows: AffinityRow[], base
     if (rs.length < minN) continue
     const [a, b] = key.split('|')
     const vals = rs.map((r) => r.rating!)
-    const s = shrink(vals, base.mean, 5)
-    const parent = Math.max(byGenre.get(a)?.shrunk ?? base.mean, byGenre.get(b)?.shrunk ?? base.mean)
+    const s = shrink(vals, base.mean, PRIOR_K.genre)
     out.push({
       a,
       b,
       n: rs.length,
       mean: round(mean(vals)),
       shrunk: round(s),
-      synergy: round(s - parent),
+      synergy: round(s - base.mean),
       filmIds: rs.sort((x, y) => y.rating! - x.rating!).map((r) => r.film.id),
     })
   }
