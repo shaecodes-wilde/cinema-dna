@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, readFileSync, readdirSync, renameSync, rmSync, statSync, writeFileSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
 
 export const ROOT = resolve(import.meta.dirname, '..')
@@ -8,6 +8,7 @@ export const PATHS = {
   normalized: join(ROOT, 'data/normalized'),
   dataset: join(ROOT, 'data/normalized/dataset.json'),
   metadata: join(ROOT, 'data/normalized/metadata.json'),
+  metadataPrev: join(ROOT, 'data/normalized/metadata.prev.json'),
   overrides: join(ROOT, 'data/overrides.json'),
   appData: join(ROOT, 'public/data/cinema-dna.json'),
   reports: join(ROOT, 'reports'),
@@ -26,7 +27,18 @@ export function latestExport(): string {
 
 export function writeJson(path: string, value: unknown, pretty = true): void {
   mkdirSync(dirname(path), { recursive: true })
-  writeFileSync(path, JSON.stringify(value, null, pretty ? 1 : undefined) + '\n')
+  writeAtomic(path, JSON.stringify(value, null, pretty ? 1 : undefined) + '\n')
+}
+
+/** Write-then-rename so an interrupted run never leaves a half-written file. */
+export function writeAtomic(path: string, text: string): void {
+  const tmp = `${path}.${process.pid}.tmp`
+  try {
+    writeFileSync(tmp, text)
+    renameSync(tmp, path)
+  } finally {
+    rmSync(tmp, { force: true })
+  }
 }
 
 export function readJson<T>(path: string): T {

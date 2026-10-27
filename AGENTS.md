@@ -29,7 +29,7 @@ If the user doesn't know how to get their export: Letterboxd → Settings → Da
 | Situation | Command |
 |---|---|
 | No network / sandboxed | `npm run import -- <zip> --offline --no-discover` (analysis runs on export data; metadata-driven parts degrade gracefully) |
-| Newer export later | `npm run import -- <new zip>` (only new films hit the network) |
+| Newer export later | `npm run import -- <new zip>` (offline refreshes keep previous matches; online refreshes may re-query existing films) |
 | Re-run analysis only | `npm run analyze` |
 | Posters & keywords | user sets `TMDB_API_KEY` in `.env.local` (see `.env.example`), then `npm run enrich && npm run analyze` |
 | Faster Wikidata tier | user sets `CINEMA_DNA_CONTACT` (their URL or email) in `.env.local` |
