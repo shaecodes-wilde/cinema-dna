@@ -69,6 +69,8 @@ export function buildNarrative(x: NarrativeInput): { identity: AppData['identity
   const evolution = ins('evolution')
   const hidden = insights.filter((i) => i.category === 'hidden-favourite')
   const crew = ins('below-the-line')
+  const driftUp = drift ? Number(drift.stats.find((s) => s.label === 'Up on rewatch')?.value ?? 0) : 0
+  const driftDown = drift ? Number(drift.stats.find((s) => s.label === 'Down on rewatch')?.value ?? 0) : 0
 
   const subtitle =
     noun === 'Maximalist'
@@ -91,7 +93,7 @@ export function buildNarrative(x: NarrativeInput): { identity: AppData['identity
   }
   intro.push(
     `The grading is ${base.mean >= 3.25 ? 'generous' : base.mean >= 2.75 ? 'measured' : 'tough'} — a ${star(base.mean)} average${fives.length <= Math.max(1, rated.length * 0.08) ? ` — and perfection is rationed: only ${fives.length} ${fives.length === 1 ? 'film holds' : 'films hold'} 5★` : `, with ${fives.length} films at 5★`}${fives.length === 1 ? `: ${fives[0].film.title}` : fives.length ? `, among them ${list(fives.slice(0, 4).map((r) => r.film.title))}` : ''}.` +
-      `${drift && /up on the later viewing/.test(drift.finding) ? ' And the stars move: rewatches tend to raise them; second thoughts tend to lower them.' : ''}`,
+      `${driftUp > driftDown ? ' And rewatches tend to raise your stars.' : driftDown > driftUp ? ' And rewatches tend to lower your stars.' : ''}`,
   )
 
   const standouts: Stat[] = [
@@ -112,8 +114,6 @@ export function buildNarrative(x: NarrativeInput): { identity: AppData['identity
   const timeLift = time?.affinity ?? null
   const worldLift = world?.affinity ?? null
   const franchiseDim = d('franchise')
-  const driftUp = drift ? Number(drift.stats.find((s) => s.label === 'Up on rewatch')?.value ?? 0) : 0
-  const driftDown = drift ? Number(drift.stats.find((s) => s.label === 'Down on rewatch')?.value ?? 0) : 0
 
   // ── Report ───────────────────────────────────────────────────────────────
   const sections: ReportSection[] = []
@@ -122,7 +122,7 @@ export function buildNarrative(x: NarrativeInput): { identity: AppData['identity
     heading: 'The identity',
     paragraphs: [
       `${identityTitle}. The phrase is not a horoscope; it is distilled from ${t.ratedFilms} ratings and ${t.reviews} reviews. ${intro[0]}`,
-      `${rubric ? `Your profile spells out a scale — "${rubric}". ` : ''}In practice your average is ${star(base.mean)}, which makes a 3★ a below-average grade: ${ins('generosity')?.finding.match(/(\d+%) of your films sit at 3★ or lower/)?.[1] ?? 'a minority'} of your films sit there or lower, and anything at 4★ is a genuine recommendation.`,
+      `${rubric ? `Your profile spells out a scale — "${rubric}". ` : ''}In practice your average is ${star(base.mean)}${base.mean > 3 ? ', which makes a 3★ a below-average grade' : ''}: ${Math.round(rated.filter((r) => r.rating! <= 3).length / rated.length * 100)}% of your films sit at 3★ or lower, and anything at 4★ is a genuine recommendation.`,
     ],
   })
   const prefParas: string[] = []
@@ -190,7 +190,7 @@ export function buildNarrative(x: NarrativeInput): { identity: AppData['identity
     [
       'Put together, the evidence describes someone for whom cinema is an event.',
       present && present.score >= 40 ? 'You meet films close to their release,' : 'You seek films out,',
-      'grade them warmly but honestly, and save your highest praise for films that are big in every sense',
+      `grade them ${base.mean >= 3.25 ? 'warmly but honestly' : 'on your own scale'}, and save your highest praise for films that are big in every sense`,
       `— ${[longRow && longRow.delta >= 0.15 ? 'long' : null, prestigeGap >= 0.3 ? 'acclaimed' : null, 'ambitious', pairs.length ? 'willing to mix registers' : null].filter(Boolean).join(', ')}.`,
       franchiseDim && franchiseDim.score >= 30 && (franchiseDim.affinity ?? 0) <= -0.05
         ? `Franchise instalments make up ${Math.round(franchiseDim.score)}% of your films and return less than the rest.`

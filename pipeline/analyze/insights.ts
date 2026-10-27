@@ -78,12 +78,17 @@ export function buildInsights(ctx: AnalysisContext): { insights: Insight[]; five
   const rewatched = watched.filter((r) => r.viewings.some((v) => v.rewatch))
   const rewatchedMean = mean(rewatched.filter((r) => r.rating !== null).map((r) => r.rating!))
   if (drift.length >= 4) {
+    const warm = ups.length > dropped.length
+    const cool = dropped.length > ups.length
+    const revDown = revisions.length >= 2 && downs.length > revisions.length / 2
     add({
       id: 'rewatch-drift',
       category: 'rewatch',
-      title: ups.length > dropped.length && downs.length >= dropped.length ? 'Rewatches warm you up; hindsight cools you down' : 'How your ratings move on a second look',
+      title: warm && revDown ? 'Rewatches warm you up; hindsight cools you down' : warm ? 'Rewatches warm you up' : cool ? 'Rewatches cool you down' : 'How your ratings move on a second look',
       finding: `Of ${drift.length} films you've rated more than once in your diary, ${ups.length} went up on the later viewing, ${flat.length} held and ${dropped.length} went down. ${revisions.length ? `Meanwhile, the ${revisions.length} ratings you changed without logging a new viewing moved ${downs.length === revisions.length ? 'only downward' : `downward ${downs.length} times`}.` : ''}`,
-      explanation: 'Selection plays a role — you rewatch what you already liked — but the asymmetry is still telling: returning to a film tends to deepen your appreciation, while thinking about it from a distance tends to deflate early enthusiasm.',
+      explanation: warm
+        ? 'Selection plays a role — you rewatch what you already liked — but a second viewing tends to raise your rating.' + (revDown ? ' Changing a rating without a rewatch tends to lower it.' : '')
+        : cool ? 'Selection plays a role, but a second viewing tends to lower your rating.' : 'Rewatches move your ratings both ways about equally.',
       stats: [
         { label: 'Up on rewatch', value: String(ups.length) },
         { label: 'Unchanged', value: String(flat.length) },
@@ -103,7 +108,9 @@ export function buildInsights(ctx: AnalysisContext): { insights: Insight[]; five
       category: 'rewatch',
       title: 'What you return to',
       finding: `${rewatched.length} films carry a rewatch in your diary, averaging ${star(rewatchedMean)} — ${signed(rewatchedMean - base.mean)} versus your baseline. ${comfort.length ? `You've logged ${titled(comfort.map((r) => r.film.id), 4)} three or more times.` : ''}`,
-      explanation: 'Your rewatches are not comfort-food filler; they are almost entirely your top-tier films. Returning is how you confirm a favourite.',
+      explanation: rewatchedMean - base.mean >= 0.1
+        ? 'Your rewatches are not comfort-food filler; they are almost entirely your top-tier films. Returning is how you confirm a favourite.'
+        : 'Your rewatches average about the same as, or below, your other films.',
       stats: [
         { label: 'Rewatched films', value: String(rewatched.length) },
         { label: 'Rewatch entries', value: String(ctx.dataset.viewings.filter((v) => v.rewatch).length) },
@@ -119,7 +126,7 @@ export function buildInsights(ctx: AnalysisContext): { insights: Insight[]; five
   // ── Scale & ambition: runtime / notability / awards ────────────────────
   const longRow = affinities.runtime.find((r) => r.key === '150+ min')
   const shortRows = affinities.runtime.filter((r) => r.key !== '150+ min').sort((a, b) => a.delta - b.delta)
-  if (longRow && longRow.n >= 5 && longRow.delta >= 0.15) {
+  if (longRow && longRow.n >= 5 && longRow.delta >= 0.15 && shortRows.length) {
     const lowest = shortRows[0]
     add({
       id: 'runtime',
@@ -331,17 +338,17 @@ export function buildInsights(ctx: AnalysisContext): { insights: Insight[]; five
   const dirs = affinities.director.filter((d) => d.n >= 3)
   if (dirs.length) {
     const mostLoved = [...dirs].sort((a, b) => b.shrunk - a.shrunk)[0]
-    const mostWatched = [...dirs].sort((a, b) => b.n - a.n || b.shrunk - a.shrunk)[0]
+    const mostRated = [...dirs].sort((a, b) => b.n - a.n || b.shrunk - a.shrunk)[0]
     const uneven = [...dirs].sort((a, b) => b.sd - a.sd)[0]
     const weakest = [...dirs].sort((a, b) => a.shrunk - b.shrunk)[0]
     add({
       id: 'director-loyalty',
       category: 'loyalty',
-      title: mostLoved.key === mostWatched.key ? `${mostLoved.key}: most-watched and most-loved` : `Loyal to ${mostWatched.key}, devoted to ${mostLoved.key}`,
-      finding: `${mostWatched.key} is your most-watched director (${mostWatched.n} films, ${star(mostWatched.mean)} average)${mostLoved.key !== mostWatched.key ? `, but ${mostLoved.key} is your most rewarding (${mostLoved.n} films, ${star(mostLoved.mean)})` : ''}. ${uneven.sd >= 0.5 && uneven.key !== mostLoved.key ? `${uneven.key} is your most uneven (${uneven.n} films ranging widely, SD ${uneven.sd}).` : ''} ${weakest.delta < -0.1 ? `${weakest.key} consistently underperforms for you (${star(weakest.mean)} across ${weakest.n}).` : ''}`,
+      title: mostLoved.key === mostRated.key ? `${mostLoved.key}: most-rated and most-loved` : `Loyal to ${mostRated.key}, devoted to ${mostLoved.key}`,
+      finding: `${mostRated.key} is your most-rated director (${mostRated.n} rated films, ${star(mostRated.mean)} average)${mostLoved.key !== mostRated.key ? `, but ${mostLoved.key} is your most rewarding (${mostLoved.n} films, ${star(mostLoved.mean)})` : ''}. ${uneven.sd >= 0.5 && uneven.key !== mostLoved.key ? `${uneven.key} is your most uneven (${uneven.n} films ranging widely, SD ${uneven.sd}).` : ''} ${weakest.delta < -0.1 ? `${weakest.key} consistently underperforms for you (${star(weakest.mean)} across ${weakest.n}).` : ''}`,
       explanation: 'Watching a director a lot and loving them are different things. Loyalty can be habit; a consistently high average across several films is a much stronger signal of genuine affinity.',
       stats: dirs.sort((a, b) => b.shrunk - a.shrunk).slice(0, 6).map((d) => ({ label: d.key, value: `${star(d.mean)} · n=${d.n} · SD ${d.sd}` })),
-      filmIds: [...new Set([...mostLoved.filmIds, ...mostWatched.filmIds])],
+      filmIds: [...new Set([...mostLoved.filmIds, ...mostRated.filmIds])],
       n: dirs.reduce((a, d) => a + d.n, 0),
       confidence: mostLoved.confidence === 'low' ? 'low' : 'medium',
       evidence: 'ratings',
@@ -381,7 +388,7 @@ export function buildInsights(ctx: AnalysisContext): { insights: Insight[]; five
   }))
   const pos = traits.filter((t) => t.z >= 1.5).slice(0, 3)
   const neg = traits.filter((t) => t.z <= -1.5).slice(0, 2)
-  if (topSet.length >= 5) {
+  if (topSet.length >= 5 && midSet.length >= 5) {
     add({
       id: 'five-star-formula',
       category: 'formula',

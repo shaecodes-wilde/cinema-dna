@@ -192,18 +192,18 @@ export function scoreCandidate(
   }
   // Generic attribute reasons only fill in when there's little specific (people) evidence.
   const genericSlots = strong.length >= 2 ? 1 : 2
-  for (const con of p.contributions.filter((x) => x.value > 0.04 && !x.name.startsWith('people:')).sort((a, b) => b.value - a.value).slice(0, genericSlots)) {
-    reasons.push(`${con.label}: +${con.value.toFixed(2)}★ in your taste model`)
+  for (const con of p.contributions.filter((x) => x.present && x.value > 0.04 && !x.name.startsWith('people:')).sort((a, b) => b.value - a.value).slice(0, genericSlots)) {
+    reasons.push(`Selected supporting factor — ${con.label}: +${con.value.toFixed(2)}★ in your taste model`)
   }
   for (const b of because.slice(0, 2)) {
     reasons.push(`Like ${filmTitle(b.filmId)} (${ratingOf(b.filmId)}★)${b.reasons.length ? ' — ' + b.reasons.slice(0, 2).join(', ') : ''}`)
   }
-  const negatives = p.contributions.filter((x) => x.value < -0.08).sort((a, b) => a.value - b.value).slice(0, 1)
+  const negatives = p.contributions.filter((x) => x.present && x.value < -0.08).sort((a, b) => a.value - b.value).slice(0, 1)
   for (const n of negatives) reasons.push(`Caveat — ${n.label.toLowerCase()} tends to pull your ratings down (${n.value.toFixed(2)}★)`)
 
   const uncertainty: string[] = []
   const conf = c.meta?.match.confidence ?? null
-  if (!c.meta) uncertainty.push('no metadata match — prediction uses your average only')
+  if (!c.meta) uncertainty.push('no metadata match — the estimate uses the release year where possible, and missing details can still shift the score')
   else if (conf !== 'high') uncertainty.push(`metadata match is ${conf} confidence`)
   if (c.meta && !c.genres.length) uncertainty.push('no genre data')
   if (c.meta && !c.directors.length) uncertainty.push('no director data')

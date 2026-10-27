@@ -235,7 +235,7 @@ const clamp = (x: number) => Math.max(0.5, Math.min(5, x))
 
 export interface Prediction {
   value: number
-  contributions: { name: string; label: string; value: number }[]
+  contributions: { name: string; label: string; value: number; present: boolean }[]
   signals: PersonSignal[]
 }
 
@@ -245,6 +245,7 @@ export function predict(model: TrainedModel, r: FilmRecord, excludeSelf = false)
   const contributions = model.space.names.map((name, j) => ({
     name,
     label: model.space.labels[j],
+    present: x[j] !== 0,
     value: model.weights[j] * (x[j] - model.colMeans[j]),
   }))
   const value = clamp(model.intercept + contributions.reduce((a, c) => a + c.value, 0))
