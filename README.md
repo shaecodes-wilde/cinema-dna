@@ -30,7 +30,7 @@ Don't have an export yet? Letterboxd → **Settings → Data → Export your dat
 
 ## Quick start (by hand)
 
-Requires Node ≥ 22.
+Requires Node 22.22.2+ (22.x), 24.15.0+ (24.x) or 26+ (CI uses 24).
 
 ```bash
 git clone https://github.com/shaecodes-wilde/cinema-dna && cd cinema-dna
