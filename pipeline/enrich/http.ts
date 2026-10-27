@@ -1,6 +1,8 @@
 import { createHash } from 'node:crypto'
-import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { writeAtomic } from '../paths.ts'
+export { writeAtomic } from '../paths.ts'
 
 /** Wikimedia asks for contact info in the UA; set CINEMA_DNA_CONTACT (URL or email) to get the higher rate tier. */
 export const USER_AGENT = `CinemaDNA/1.0 (personal film-taste analysis, low volume${process.env.CINEMA_DNA_CONTACT ? '; ' + process.env.CINEMA_DNA_CONTACT : ''})`
@@ -98,13 +100,6 @@ function readCache<T>(path: string): T | undefined {
   } catch {
     return undefined
   }
-}
-
-/** Write-then-rename so an interrupted run never leaves a half-written cache file. */
-export function writeAtomic(path: string, text: string): void {
-  const tmp = `${path}.${process.pid}.tmp`
-  writeFileSync(tmp, text)
-  renameSync(tmp, path)
 }
 
 export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))

@@ -1,6 +1,7 @@
 import { copyFileSync, existsSync, mkdirSync, statSync } from 'node:fs'
 import { basename, join, resolve } from 'node:path'
 import type { Dataset } from '../shared/types.ts'
+import { runEnrichStep } from './enrich/step.ts'
 import { readExport } from './ingest/archive.ts'
 import { normalize } from './ingest/normalize.ts'
 import { PATHS, ROOT, latestExport, readJson, writeJson } from './paths.ts'
@@ -49,14 +50,7 @@ async function main() {
   if (command === 'ingest' || all) await ingest(command === 'import' ? importExport() : undefined)
   if (command === 'enrich' || all) {
     const { enrich } = await import('./enrich/index.ts')
-    try {
-      await enrich(readJson<Dataset>(PATHS.dataset), { offline: rest.includes('--offline') })
-    } catch (err) {
-      // Metadata is optional: keep going with whatever is cached rather than losing the whole import.
-      console.warn(`  ⚠ enrichment stopped: ${(err as Error).message}`)
-      console.warn('  continuing with cached/partial metadata — re-run `npm run enrich` later to fill gaps')
-      if (command !== 'enrich') rest.push('--no-discover')
-    }
+    await runEnrichStep(command, rest, () => enrich(readJson<Dataset>(PATHS.dataset), { offline: rest.includes('--offline') }))
   }
   if (command === 'analyze' || all) {
     if (!existsSync(PATHS.dataset)) throw new Error('Run `npm run ingest` first.')
