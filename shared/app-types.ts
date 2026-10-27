@@ -147,7 +147,7 @@ export interface GenrePair {
   n: number
   mean: number
   shrunk: number
-  /** shrunk(A∩B) − max(shrunk(A), shrunk(B)) */
+  /** Joint-tag lift vs your average; legacy name; not an interaction. */
   synergy: number
   filmIds: string[]
 }

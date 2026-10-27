@@ -5,9 +5,9 @@ import { deltaColor } from '../dna/scales.ts'
 import { onActivate, useWidth } from '../../lib/useSize.ts'
 
 /**
- * Lower-triangle matrix of genre pairs. Cell colour = synergy (pair's shrunk mean minus the
- * better parent genre), faded for small samples; cells with <3 films are left empty. A small "n" in each cell is the
- * non-colour encoding of sample size.
+ * Genre overlap matrix. Cell colour = shrunk joint-tag mean minus your average, faded for small
+ * samples; cells with <3 films are left empty. Pair-specific saturation at 0.35 keeps smaller lifts
+ * visible. A small "n" in each cell is the non-colour encoding of sample size.
  */
 export function PairMatrix({
   genres,
@@ -31,7 +31,7 @@ export function PairMatrix({
 
   return (
     <div ref={ref} className="w-full overflow-x-auto scroll-thin">
-      <svg width={labelW + (n - 1) * cell + 70} height={height} role="grid" aria-label="Genre pair synergy matrix">
+      <svg width={labelW + (n - 1) * cell + 70} height={height} role="grid" aria-label="Genre overlap matrix">
         {genres.slice(1).map((row, i) => (
           <g key={row} role="row" transform={`translate(0,${i * cell})`}>
             <text x={labelW - 8} y={cell / 2 + 4} textAnchor="end" className="fill-ink-2 text-[11px]">
@@ -49,7 +49,7 @@ export function PairMatrix({
                   key={col}
                   role="gridcell"
                   tabIndex={0}
-                  aria-label={`${p.a} and ${p.b}: ${p.n} films, average ${fmtRating(p.mean)}, synergy ${signed(p.synergy)} stars`}
+                  aria-label={`${p.a} and ${p.b}: ${p.n} films, average ${fmtRating(p.mean)}, ${signed(p.synergy)} stars vs your average`}
                   onClick={select}
                   onKeyDown={onActivate(select)}
                   onMouseMove={(e) =>
@@ -61,7 +61,7 @@ export function PairMatrix({
                         <div className="num">
                           {p.n} films · {fmtRating(p.mean)} raw · {fmtRating(p.shrunk)} shrunk
                         </div>
-                        <div className="num">synergy {signed(p.synergy)}★ vs the better parent</div>
+                        <div className="num">{signed(p.synergy)}★ vs your average</div>
                       </div>,
                       e,
                     )

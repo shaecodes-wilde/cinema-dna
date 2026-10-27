@@ -52,7 +52,7 @@ export function Genres() {
             <>
               {' '}
               Among genres with 10+ films the shrunk averages run from <span className="text-ink">{lo.key}</span> ({fmtRating(lo.shrunk)}) to{' '}
-              <span className="text-ink">{hi.key}</span> ({fmtRating(hi.shrunk)}) — a narrow band. The interesting action is in the combinations.
+              <span className="text-ink">{hi.key}</span> ({fmtRating(hi.shrunk)}) — a narrow band. The overlaps below show which genre combinations you rate highest.
             </>
           )}
         </>
@@ -138,13 +138,13 @@ export function Genres() {
       <div className="mt-20 grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]">
         <div>
           <div className="label mb-2">Genre intersections</div>
-          <h3 className="display mb-3 text-4xl">When two genres meet</h3>
+          <h3 className="display mb-3 text-4xl">Where two genres overlap</h3>
           <p className="mb-5 max-w-2xl text-[14px] text-ink-2">
-            Each cell is a pair of genres. Amber means films carrying both score higher than either genre does alone; blue means the pairing does worse than its better half.
+            Each cell is a pair of genres. Amber means films carrying both rate above your overall average; blue means below.
             Numbers are film counts; empty cells have fewer than 3 films.
             <InfoTip>
-              Synergy = shrunk average of films with both genres − the higher of the two genres' own shrunk averages. It answers "does the combination add something?", not "is
-              it good?".
+              Shrunk average of films with both genres minus your overall average, the same measure as the genre bars. Each genre's own average includes these films, so this
+              shows which overlaps you rate highly, not whether combining them adds anything.
             </InfoTip>
           </p>
           <div className="panel p-4">
@@ -160,14 +160,14 @@ export function Genres() {
               </h4>
               <div className="num text-[13px] text-ink-2">
                 {pair.n} films · {fmtRating(pair.mean)} raw · {fmtRating(pair.shrunk)} shrunk ·{' '}
-                <span style={{ color: deltaColor(pair.synergy, 0.35) }}>{signed(pair.synergy)}★ synergy</span>
+                <span style={{ color: deltaColor(pair.synergy, 0.35) }}>{signed(pair.synergy)}★ vs your average</span>
               </div>
               <FilmList ids={pair.filmIds} max={15} />
             </div>
           ) : (
             <>
-              <PairList title="Best combinations" pairs={topPairs} onSelect={setPair} />
-              <PairList title="Combinations that underdeliver" pairs={worstPairs} onSelect={setPair} />
+              <PairList title="Highest-rated overlaps" pairs={topPairs} onSelect={setPair} />
+              <PairList title="Lowest-rated overlaps" pairs={worstPairs} onSelect={setPair} />
             </>
           )}
         </div>
@@ -244,8 +244,8 @@ function PairList({ title, pairs, onSelect }: { title: string; pairs: GenrePair[
               <span>
                 {p.a} × {p.b} <span className="num text-[11px] text-muted">n={p.n}</span>
               </span>
-              <span className="num" style={{ color: deltaColor(p.synergy, 0.35) }}>
-                {signed(p.synergy)}★
+              <span className="num" style={{ color: deltaColor(p.synergy, 0.35) }} aria-label={`${signed(p.synergy)} stars vs your average`}>
+                {signed(p.synergy)}★ vs avg
               </span>
             </button>
           </li>
