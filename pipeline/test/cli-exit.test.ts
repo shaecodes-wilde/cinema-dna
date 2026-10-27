@@ -30,7 +30,7 @@ describe('CLI enrichment failure policy without importing cli.ts', () => {
     const args = ['--offline']
     await expect(runEnrichStep(command, args, async () => { throw error })).resolves.toBeUndefined()
     expect(args).toEqual(['--offline', '--no-discover'])
-    expect(console.warn).toHaveBeenCalledWith(expect.stringContaining('previous metadata file (unchanged)'))
+    expect(console.warn).toHaveBeenCalledWith(expect.stringContaining('continuing '))
   })
 
   it('leaves successful commands and an existing no-discover flag alone', async () => {

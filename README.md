@@ -48,8 +48,8 @@ analysis bundle (copied from `public/data/`), so treat it as private — don't d
 ## Refreshing with a newer export
 
 Run `npm run import -- <new zip>` (or drop it into `data/raw/` — the newest file wins — and run
-`npm run refresh`). Metadata lookups are cached in `data/cache/`, so only films you haven't seen
-before trigger network requests. Original files are never modified.
+`npm run refresh`). Metadata lookups are cached in `data/cache/`; offline refreshes keep previous
+matches, while online refreshes may re-query existing films. Original files are never modified.
 
 | Command | What it does |
 |---|---|
@@ -104,7 +104,7 @@ proxy (number of Wikipedia editions). TV series that Letterboxd lists are flagge
   confidence labels.
 - *Cinematic DNA* — 12 transparent dimensions (definitions in the UI), each with exposure and rating lift.
 - *Insights* — the Phase-3 investigations (hidden favourites, contradictions, five-star formula,
-  disappointments, evolution, director loyalty, rewatch drift, below-the-line crew, genre synergies,
+  disappointments, evolution, director loyalty, rewatch drift, below-the-line crew, genre overlaps (lift vs your average),
   watchlist psychology, review language, model exceptions, defining films), each with sample size,
   confidence, evidence type and the films behind it. Insights are emitted only when the data supports them.
 - *Taste model* — ridge regression over film attributes plus leave-one-out "track record" of the film's
@@ -113,7 +113,8 @@ proxy (number of Wikipedia editions). TV series that Letterboxd lists are flagge
   over-represented traits. Proximity means shared verified attributes only.
 - *Recommendations* — your released watchlist plus a discovery pool of real films from Wikidata (other work by
   people you rate above baseline, plus major-award nominees), scored by the taste model, with reasons,
-  "because you liked" films, novelty, moods and uncertainty flags. Watched films are excluded by QID and title.
+  "because you liked" films, novelty, moods and uncertainty flags. Watchlist picks exclude films watched
+  under another record with the same Wikidata ID; discovery also skips known titles.
 - *Narrative* — the identity title, opening editorial and identity report are generated from the computed
   evidence; every sentence is conditional on the numbers that justify it.
 

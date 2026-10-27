@@ -91,12 +91,13 @@ describe('evidence-backed claims', () => {
     expect(drift.explanation.includes('without a rewatch tends to lower')).toBe(down >= 2)
   })
 
-  it.each([1, 3, 5])('gates top-tier rewatch prose on the mean (rewatch rating = %i)', async (rating) => {
+  it.each([1, 3, 5])('describes the measured rewatch mean (rewatch rating = %i)', async (rating) => {
     const ds = rewatches(Array(6).fill(rating), Array(6).fill(rating))
     const other = library(Array(6).fill(3)).films.map((f, i) => ({ ...f, id: `lb:Other${i}` }))
     ds.films.push(...other)
     const comfort = (await run(ds)).insights.find((i) => i.id === 'rewatch-comfort')!
-    expect(comfort.explanation.includes('top-tier')).toBe(rating === 5)
+    expect(comfort.explanation).not.toContain('top-tier')
+    expect(comfort.explanation.includes('above your overall average')).toBe(rating === 5)
     expect(comfort.explanation.includes('same as, or below')).toBe(rating !== 5)
   })
 

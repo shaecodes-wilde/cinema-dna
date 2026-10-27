@@ -103,13 +103,13 @@ describe('ingest validation', () => {
   it('caps diagnostic row lists and CSV errors at five entries per file and kind', () => {
     const rows = Array.from({ length: 7 }, (_, i) => `2026-02-30,Film ${i},1999,https://boxd.it/F${i},extra`)
     const dataset = normalize(fixtureArchive({
-      'watched.csv': 'Date,Name,Year,Letterboxd URI\n' + rows.join('\n'),
+      'watched.csv': 'Date,Name,Year,Letterboxd URI\n' + [...rows, ...Array(7).fill('2024-01-01')].join('\n'),
     }))
     expect(dataset.audit.notes).toContain('watched.csv: 7 impossible dates ignored (rows 2, 3, 4, 5, 6, …)')
     expect(dataset.audit.notes).toContain('watched.csv: 7 rows with extra unnamed columns (rows 2, 3, 4, 5, 6, …)')
     const parseNotes = dataset.audit.notes.filter((n) => n.startsWith('watched.csv: CSV parse issue'))
     expect(parseNotes).toHaveLength(1)
-    expect(parseNotes[0].match(/row \d+/g)).toEqual(['row 2', 'row 3', 'row 4', 'row 5', 'row 6'])
+    expect(parseNotes[0].match(/row \d+/g)).toEqual(['row 9', 'row 10', 'row 11', 'row 12', 'row 13'])
     expect(parseNotes[0].endsWith('; …')).toBe(true)
   })
 

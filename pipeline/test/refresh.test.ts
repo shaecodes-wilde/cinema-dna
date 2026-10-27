@@ -80,12 +80,13 @@ describe('previous metadata and publication', () => {
     const paths = pathsForTest()
     const log = vi.fn()
     expect(readPreviousMetadata(paths.metadata, log)).toBeNull()
+    expect(log).not.toHaveBeenCalled()
     for (const content of ['{broken', 'null', '{}', '{"films":[]}', '{"films":"bad"}']) {
       writeJson(paths.metadata, {})
       writeFileSync(paths.metadata, content)
       expect(readPreviousMetadata(paths.metadata, log)).toBeNull()
     }
-    expect(log).toHaveBeenCalledTimes(6)
+    expect(log).toHaveBeenCalledTimes(5)
     writeJson(paths.metadata, metadata())
     expect(readPreviousMetadata(paths.metadata, log)).toEqual(metadata())
   })

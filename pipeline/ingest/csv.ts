@@ -18,7 +18,9 @@ export function parseCsvDetailed(text: string): { rows: Row[]; errors: { row: nu
     return clean
   })
   // Field mismatches count data rows; quote errors count the header too.
-  const errors = out.errors.map((e) => ({ row: e.row === undefined ? 1 : e.row + (e.type === 'FieldMismatch' ? 2 : 1), message: e.message }))
+  const errors = out.errors
+    .filter((e) => !(e.code === 'TooManyFields' && e.row !== undefined && extraColumnRows.includes(e.row + 2)))
+    .map((e) => ({ row: e.row === undefined ? 1 : e.row + (e.type === 'FieldMismatch' ? 2 : 1), message: e.message }))
   return { rows, errors, extraColumnRows }
 }
 
