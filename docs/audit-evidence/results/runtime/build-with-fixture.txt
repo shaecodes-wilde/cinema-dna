@@ -1,0 +1,35 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> cinema-dna@1.0.0 build
+> tsc -b && vite build
+
+vite v8.3.5 building client environment for production...
+transforming...
+✓ 1042 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                                     0.73 kB │ gzip:   0.43 kB
+dist/assets/jetbrains-mono-vietnamese-wght-normal-Bt-aOZkq.woff2    7.50 kB
+dist/assets/jetbrains-mono-greek-wght-normal-Bw9x6K1M.woff2         9.00 kB
+dist/assets/instrument-serif-latin-ext-400-normal-CFCUzsTy.woff     9.86 kB
+dist/assets/inter-tight-vietnamese-wght-normal-TKKdAiBA.woff2      10.48 kB
+dist/assets/instrument-serif-latin-ext-400-italic-D7-lnxEk.woff    10.50 kB
+dist/assets/instrument-serif-latin-ext-400-normal-C2je3j2s.woff2   11.60 kB
+dist/assets/inter-tight-greek-ext-wght-normal-DQgQPNk4.woff2       11.70 kB
+dist/assets/jetbrains-mono-cyrillic-wght-normal-D73BlboJ.woff2     12.10 kB
+dist/assets/instrument-serif-latin-ext-400-italic-C9HzH3YL.woff2   12.38 kB
+dist/assets/jetbrains-mono-latin-ext-wght-normal-DBQx-q_a.woff2    15.19 kB
+dist/assets/inter-tight-cyrillic-wght-normal-BS41q_Tv.woff2        16.99 kB
+dist/assets/instrument-serif-latin-400-normal-BVbkICAY.woff        18.33 kB
+dist/assets/instrument-serif-latin-400-italic-u__WvvIK.woff        19.26 kB
+dist/assets/instrument-serif-latin-400-normal-DnYpCC2O.woff2       21.03 kB
+dist/assets/instrument-serif-latin-400-italic-DKMiL14s.woff2       22.12 kB
+dist/assets/inter-tight-greek-wght-normal-sS1B39LI.woff2           22.19 kB
+dist/assets/inter-tight-cyrillic-ext-wght-normal-okcGN4Nq.woff2    26.66 kB
+dist/assets/jetbrains-mono-latin-wght-normal-B9CIFXIH.woff2        40.40 kB
+dist/assets/inter-tight-latin-wght-normal-DX-nOvPD.woff2           44.87 kB
+dist/assets/inter-tight-latin-ext-wght-normal-B4u9PlvR.woff2       89.80 kB
+dist/assets/index-D9jy96nC.css                                     55.09 kB │ gzip:  12.72 kB
+dist/assets/index-CLTrxj3C.js                                     623.03 kB │ gzip: 191.43 kB
+
+✓ built in 411ms

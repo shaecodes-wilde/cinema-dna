@@ -1,0 +1,27 @@
+{
+  "scope": "Synthetic replicated attribute records; offline map only, single run per size, warm shared process; no inference about real-device latency.",
+  "node": "v24.22.1",
+  "cpu": "AMD EPYC 9V74 80-Core Processor",
+  "logicalCpus": 9,
+  "hostMemoryGiB": 10,
+  "results": [
+    {
+      "n": 1000,
+      "milliseconds": 2382,
+      "positions": 1000,
+      "clusters": 7,
+      "rssMiB": 149,
+      "maxRssKiB": 163672,
+      "allFinite": true
+    },
+    {
+      "n": 4000,
+      "milliseconds": 10518,
+      "positions": 4000,
+      "clusters": 8,
+      "rssMiB": 311,
+      "maxRssKiB": 331152,
+      "allFinite": true
+    }
+  ]
+}

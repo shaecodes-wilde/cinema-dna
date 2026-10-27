@@ -1,0 +1,28 @@
+{
+  "initialMatched": [
+    "lb:F1"
+  ],
+  "initialMockedCalls": 3,
+  "cachedEntities": [
+    "Q1.json"
+  ],
+  "expandedOfflineMatched": [],
+  "expandedOfflineUnmatched": [
+    {
+      "filmId": "lb:F1",
+      "title": "Alpha",
+      "year": 2020,
+      "reason": "no confident Wikidata match"
+    },
+    {
+      "filmId": "lb:F2",
+      "title": "Beta",
+      "year": 2021,
+      "reason": "no confident Wikidata match"
+    }
+  ],
+  "writtenOfflineMatched": [],
+  "originalDatasetOfflineMatched": [
+    "lb:F1"
+  ]
+}

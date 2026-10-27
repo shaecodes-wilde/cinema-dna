@@ -1,0 +1,234 @@
+{
+  "synthetic": true,
+  "analysisMilliseconds": 633.97872,
+  "appDataBytes": 572121,
+  "totals": {
+    "watchedFilms": 240,
+    "ratedFilms": 210,
+    "diaryViewings": 240,
+    "rewatchViewings": 20,
+    "reviewedFilms": 74,
+    "reviews": 74,
+    "likedFilms": 35,
+    "watchlist": 36,
+    "hoursWatched": 502,
+    "hoursCoverage": 0.95,
+    "firstLog": "2023-01-10",
+    "lastLog": "2026-01-09",
+    "meanRating": 3.36,
+    "sdRating": 1.19,
+    "medianRating": 3.5
+  },
+  "metadata": {
+    "matched": 262,
+    "total": 276,
+    "byConfidence": {
+      "high": 262
+    },
+    "watchedMatched": 228,
+    "watchedTotal": 240,
+    "fieldCoverage": [
+      {
+        "field": "Genres",
+        "watched": 228,
+        "share": 0.95
+      },
+      {
+        "field": "Director",
+        "watched": 228,
+        "share": 0.95
+      },
+      {
+        "field": "Writer",
+        "watched": 228,
+        "share": 0.95
+      },
+      {
+        "field": "Cast",
+        "watched": 228,
+        "share": 0.95
+      },
+      {
+        "field": "Cinematographer",
+        "watched": 228,
+        "share": 0.95
+      },
+      {
+        "field": "Composer",
+        "watched": 228,
+        "share": 0.95
+      },
+      {
+        "field": "Runtime",
+        "watched": 228,
+        "share": 0.95
+      },
+      {
+        "field": "Country",
+        "watched": 228,
+        "share": 0.95
+      },
+      {
+        "field": "Language",
+        "watched": 228,
+        "share": 0.95
+      },
+      {
+        "field": "Poster",
+        "watched": 0,
+        "share": 0
+      }
+    ],
+    "unmatched": [
+      {
+        "title": "Amber Tide 12",
+        "year": 1974,
+        "reason": "Deliberately missing synthetic metadata"
+      },
+      {
+        "title": "Blue Horizons 19",
+        "year": 1989,
+        "reason": "Deliberately missing synthetic metadata"
+      },
+      {
+        "title": "Clouds in Reverse 16",
+        "year": 1983,
+        "reason": "Deliberately missing synthetic metadata"
+      },
+      {
+        "title": "Electric Rain 10",
+        "year": 1971,
+        "reason": "Deliberately missing synthetic metadata"
+      },
+      {
+        "title": "Glass Orchard 18",
+        "year": 1986,
+        "reason": "Deliberately missing synthetic metadata"
+      },
+      {
+        "title": "Midnight Atlas 05",
+        "year": 1962,
+        "reason": "Deliberately missing synthetic metadata"
+      },
+      {
+        "title": "Quiet Signals 07",
+        "year": 1965,
+        "reason": "Deliberately missing synthetic metadata"
+      },
+      {
+        "title": "Silver Rooms 13",
+        "year": 1977,
+        "reason": "Deliberately missing synthetic metadata"
+      },
+      {
+        "title": "The Last Lantern 08",
+        "year": 1968,
+        "reason": "Deliberately missing synthetic metadata"
+      },
+      {
+        "title": "The Long Return 02",
+        "year": 2021,
+        "reason": "Deliberately missing synthetic metadata"
+      },
+      {
+        "title": "The Long Return 21",
+        "year": 1992,
+        "reason": "Deliberately missing synthetic metadata"
+      },
+      {
+        "title": "The Paper Moon 15",
+        "year": 1980,
+        "reason": "Deliberately missing synthetic metadata"
+      },
+      {
+        "title": "Velvet Orbit 04",
+        "year": 2024,
+        "reason": "Deliberately missing synthetic metadata"
+      },
+      {
+        "title": "Velvet Orbit 23",
+        "year": 1995,
+        "reason": "Deliberately missing synthetic metadata"
+      }
+    ]
+  },
+  "model": {
+    "available": true,
+    "n": 210,
+    "features": 43,
+    "lambda": 4,
+    "cvRmse": 0.283,
+    "baselineRmse": 1.19,
+    "cvMae": 0.084,
+    "correlation": 0.971,
+    "topPositive": [
+      {
+        "feature": "Track record of its composers",
+        "weight": 1.049
+      },
+      {
+        "feature": "Released in the 2020s",
+        "weight": 0.035
+      },
+      {
+        "feature": "Released in the 1980s",
+        "weight": 0.009
+      }
+    ],
+    "topNegative": [
+      {
+        "feature": "Track record of its directors",
+        "weight": -0.043
+      },
+      {
+        "feature": "Track record of its cinematographers",
+        "weight": -0.029
+      },
+      {
+        "feature": "Released in the 1970s",
+        "weight": -0.027
+      },
+      {
+        "feature": "Track record of its writers",
+        "weight": -0.027
+      },
+      {
+        "feature": "Track record of its cast",
+        "weight": -0.027
+      },
+      {
+        "feature": "Mid-profile",
+        "weight": -0.011
+      },
+      {
+        "feature": "Released in the 2000s",
+        "weight": -0.01
+      },
+      {
+        "feature": "Runtime 130–149 min",
+        "weight": -0.008
+      }
+    ]
+  },
+  "insights": [
+    "generosity",
+    "rewatch-drift",
+    "rewatch-comfort",
+    "canon",
+    "genre-agnostic",
+    "disappoint-franchise-Synthetic Sequence",
+    "disappoint-genre-Animation",
+    "disappoint-genre-Adventure",
+    "contradiction-Action",
+    "acclaimed-misses",
+    "below-the-line",
+    "director-loyalty",
+    "five-star-formula",
+    "evolution",
+    "watchlist",
+    "exceptions",
+    "defining"
+  ],
+  "recommendations": 36,
+  "clusters": 8
+}

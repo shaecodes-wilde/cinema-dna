@@ -1,0 +1,261 @@
+{
+  "scope": "Independent Python recomputation from generated synthetic CSV files; not personal Letterboxd metrics.",
+  "totals": [
+    {
+      "metric": "watchedFilms",
+      "independent": 240,
+      "app": 240,
+      "agrees": true
+    },
+    {
+      "metric": "ratedFilms",
+      "independent": 210,
+      "app": 210,
+      "agrees": true
+    },
+    {
+      "metric": "diaryViewings",
+      "independent": 240,
+      "app": 240,
+      "agrees": true
+    },
+    {
+      "metric": "rewatchViewings",
+      "independent": 20,
+      "app": 20,
+      "agrees": true
+    },
+    {
+      "metric": "reviewedFilms",
+      "independent": 74,
+      "app": 74,
+      "agrees": true
+    },
+    {
+      "metric": "reviews",
+      "independent": 74,
+      "app": 74,
+      "agrees": true
+    },
+    {
+      "metric": "likedFilms",
+      "independent": 35,
+      "app": 35,
+      "agrees": true
+    },
+    {
+      "metric": "watchlist",
+      "independent": 36,
+      "app": 36,
+      "agrees": true
+    },
+    {
+      "metric": "meanRating",
+      "independent": 3.36,
+      "app": 3.36,
+      "agrees": true
+    },
+    {
+      "metric": "sdRating",
+      "independent": 1.19,
+      "app": 1.19,
+      "agrees": true
+    },
+    {
+      "metric": "medianRating",
+      "independent": 3.5,
+      "app": 3.5,
+      "agrees": true
+    }
+  ],
+  "affinities": [
+    {
+      "genre": "Drama",
+      "n": 57,
+      "rawMean": 3.41,
+      "shrunk": 3.41,
+      "ci": [
+        3.16,
+        3.65
+      ],
+      "matchesImplementation": true
+    },
+    {
+      "genre": "Crime",
+      "n": 29,
+      "rawMean": 3.41,
+      "shrunk": 3.4,
+      "ci": [
+        3.07,
+        3.73
+      ],
+      "matchesImplementation": true
+    },
+    {
+      "genre": "Science Fiction",
+      "n": 28,
+      "rawMean": 3.41,
+      "shrunk": 3.4,
+      "ci": [
+        3.07,
+        3.74
+      ],
+      "matchesImplementation": true
+    },
+    {
+      "genre": "Documentary",
+      "n": 29,
+      "rawMean": 3.4,
+      "shrunk": 3.39,
+      "ci": [
+        3.06,
+        3.72
+      ],
+      "matchesImplementation": true
+    },
+    {
+      "genre": "History",
+      "n": 29,
+      "rawMean": 3.4,
+      "shrunk": 3.39,
+      "ci": [
+        3.06,
+        3.72
+      ],
+      "matchesImplementation": true
+    },
+    {
+      "genre": "Comedy",
+      "n": 29,
+      "rawMean": 3.38,
+      "shrunk": 3.38,
+      "ci": [
+        3.04,
+        3.71
+      ],
+      "matchesImplementation": true
+    },
+    {
+      "genre": "Romance",
+      "n": 29,
+      "rawMean": 3.38,
+      "shrunk": 3.38,
+      "ci": [
+        3.04,
+        3.71
+      ],
+      "matchesImplementation": true
+    },
+    {
+      "genre": "Horror",
+      "n": 28,
+      "rawMean": 3.38,
+      "shrunk": 3.37,
+      "ci": [
+        3.04,
+        3.71
+      ],
+      "matchesImplementation": true
+    },
+    {
+      "genre": "Mystery",
+      "n": 28,
+      "rawMean": 3.38,
+      "shrunk": 3.37,
+      "ci": [
+        3.04,
+        3.71
+      ],
+      "matchesImplementation": true
+    },
+    {
+      "genre": "Action",
+      "n": 28,
+      "rawMean": 3.3,
+      "shrunk": 3.31,
+      "ci": [
+        2.98,
+        3.65
+      ],
+      "matchesImplementation": true
+    },
+    {
+      "genre": "Thriller",
+      "n": 28,
+      "rawMean": 3.3,
+      "shrunk": 3.31,
+      "ci": [
+        2.98,
+        3.65
+      ],
+      "matchesImplementation": true
+    },
+    {
+      "genre": "Animation",
+      "n": 28,
+      "rawMean": 3.2,
+      "shrunk": 3.22,
+      "ci": [
+        2.89,
+        3.56
+      ],
+      "matchesImplementation": true
+    },
+    {
+      "genre": "Adventure",
+      "n": 28,
+      "rawMean": 3.2,
+      "shrunk": 3.22,
+      "ci": [
+        2.89,
+        3.56
+      ],
+      "matchesImplementation": true
+    }
+  ],
+  "ratingDistribution": [
+    {
+      "rating": 0.5,
+      "count": 0
+    },
+    {
+      "rating": 1.0,
+      "count": 0
+    },
+    {
+      "rating": 1.5,
+      "count": 30
+    },
+    {
+      "rating": 2.0,
+      "count": 30
+    },
+    {
+      "rating": 2.5,
+      "count": 0
+    },
+    {
+      "rating": 3.0,
+      "count": 30
+    },
+    {
+      "rating": 3.5,
+      "count": 30
+    },
+    {
+      "rating": 4.0,
+      "count": 30
+    },
+    {
+      "rating": 4.5,
+      "count": 30
+    },
+    {
+      "rating": 5.0,
+      "count": 30
+    }
+  ],
+  "everyTotalsCheckAgrees": true,
+  "everyGenreCheckAgrees": true,
+  "warning": "Matching implementation formula confirms arithmetic only; it does not validate empirical Bayes calibration, inference, metadata matching, or personal recommendations."
+}

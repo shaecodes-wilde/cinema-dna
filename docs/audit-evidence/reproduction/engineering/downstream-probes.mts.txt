@@ -1,0 +1,32 @@
+// Documentation-only, synthetic audit reproduction. Never run against personal data.
+import { join as auditJoin, resolve as auditResolve } from 'node:path'
+import { mkdirSync as auditMkdir, existsSync as auditExists } from 'node:fs'
+import { pathToFileURL as auditFileUrl } from 'node:url'
+const auditRepoEnv=process.env.CINEMA_DNA_AUDIT_ROOT
+const auditOutputEnv=process.env.CINEMA_DNA_AUDIT_OUTPUT
+if(!auditRepoEnv || !auditOutputEnv) throw new Error('Set CINEMA_DNA_AUDIT_ROOT and CINEMA_DNA_AUDIT_OUTPUT as documented in README.md')
+const auditRepo=auditResolve(auditRepoEnv)
+const auditOutput=auditResolve(auditOutputEnv)
+if(!auditExists(auditJoin(auditRepo,'pipeline/ingest/normalize.ts'))) throw new Error('CINEMA_DNA_AUDIT_ROOT is not the isolated audit source copy')
+auditMkdir(auditOutput,{recursive:true})
+const auditImport=(path:string)=>import(auditFileUrl(auditJoin(auditRepo,path)).href)
+const auditFile=(name:string)=>auditJoin(auditOutput,name)
+const { normalize } = await auditImport('pipeline/ingest/normalize.ts')
+const { analyze } = await auditImport('pipeline/analyze/index.ts')
+const { renderReportHtml, renderTasteAnalysisMarkdown } = await auditImport('pipeline/analyze/report.ts')
+import { writeFileSync } from 'node:fs'
+const films=Array.from({length:5},(_,i)=>({id:`F${i}`,title:`Synthetic ${i}`,rating:i?4:99}))
+const d=normalize({path:'synthetic.zip',sha256:'fixture',files:new Map([
+ ['watched.csv','Date,Name,Year,Letterboxd URI\n'+films.map(f=>`2024-01-01,${f.title},2020,https://boxd.it/${f.id}`).join('\n')],
+ ['ratings.csv','Date,Name,Year,Letterboxd URI,Rating\n'+films.map(f=>`2024-01-01,${f.title},2020,https://boxd.it/${f.id},${f.rating}`).join('\n')],
+ ['diary.csv','Date,Name,Year,Letterboxd URI,Rating,Rewatch,Tags,Watched Date\n2024-99-99,Synthetic 1,2020,https://boxd.it/D1,4,,,2024-99-99\n'],
+])})
+const a=await analyze(d,null,{discover:false,offline:true})
+const md=renderTasteAnalysisMarkdown(a)
+const out:any={invalidRating:{rated:a.totals.ratedFilms,mean:a.totals.meanRating,histogramTotal:a.critical.distribution.reduce((n,r)=>n+r.count,0),inputRatings:films.map(f=>f.rating)},invalidDate:{viewings:a.viewings,months:a.timeline.months},unavailableModelReport:{available:a.model.available,line:md.split('\n').find(s=>s.includes('Cross-validated RMSE'))}}
+a.report.title='<script>globalThis.pwned=true</script>'
+a.report.sections=[{heading:'<img src=x onerror=alert(1)>',paragraphs:['<script>bad()</script> & "quote"']}]
+const html=renderReportHtml(a)
+out.reportEscaping={rawScript:html.includes('<script>'),escapedTitle:html.includes('&lt;script&gt;globalThis.pwned=true&lt;/script&gt;'),rawImg:html.includes('<img src=x')}
+writeFileSync(auditFile('downstream-results.json'),JSON.stringify(out,null,2)+'\n')
+console.log(JSON.stringify(out,null,2))

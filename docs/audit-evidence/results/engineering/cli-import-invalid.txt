@@ -1,0 +1,3 @@
+▸ import  copied letterboxd-synthetic-invalid-2026-10-26-12-01-utc.zip → data/raw/
+▸ ingest  /workspace/scratch/a3dcaaa33ee6/audit-work/engineering/cli-fixture/data/raw/letterboxd-synthetic-invalid-2026-10-26-12-01-utc.zip
+(v ?? "").trim is not a function

@@ -1,0 +1,19 @@
+{
+  "symlinkTraversal": {
+    "files": [
+      "linked.csv",
+      "watched.csv"
+    ],
+    "outsideContentRead": true
+  },
+  "nonCsvExpansion": {
+    "zipBytes": 16634,
+    "nonCsvUncompressedBytes": 16777216,
+    "files": [
+      "watched.csv"
+    ],
+    "arrayBuffersDelta": 16796176,
+    "externalDelta": 16796216,
+    "rssDelta": 20709376
+  }
+}

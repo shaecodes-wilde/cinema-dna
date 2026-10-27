@@ -1,0 +1,14 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> cinema-dna@1.0.0 test
+> vitest run --maxWorkers=2
+
+
+ RUN  v5.0.5 /workspace/scratch/a3dcaaa33ee6/cinema-dna
+
+
+ Test Files  4 passed (4)
+      Tests  47 passed (47)
+   Start at  15:42:36
+   Duration  1.03s (transform 55%, tests 25%, import 18%, worker 2%)
+

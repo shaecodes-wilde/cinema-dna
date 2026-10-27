@@ -1,0 +1,82 @@
+"""Read-only independent checks for the preserved synthetic audit fixture.
+
+Usage: python recompute.py.txt /path/to/docs/audit-evidence/results/runtime
+This intentionally handles the known, unambiguous synthetic fixture only.
+It is not a replacement Letterboxd importer and imports no application code.
+"""
+import collections
+import csv
+import io
+import json
+import math
+import statistics
+import sys
+from pathlib import Path
+
+root = Path(sys.argv[1])
+sources = json.loads((root / 'synthetic-source-files.json').read_text())
+app = json.loads((root / 'synthetic-app-data.json').read_text())
+metadata = json.loads((root / 'synthetic-metadata.json').read_text())
+assert 'synthetic-audit' in sources['profile.csv'], 'Only the controlled audit fixture is supported'
+
+def rows(name):
+    return list(csv.DictReader(io.StringIO(sources[name])))
+
+def identity(row):
+    return 'lb:' + row['Letterboxd URI'].rstrip('/').rsplit('/', 1)[-1]
+
+def display_round(value):
+    return math.floor(value * 100 + 0.5) / 100
+
+watched = {identity(row) for row in rows('watched.csv')}
+ratings = {identity(row): float(row['Rating']) for row in rows('ratings.csv')}
+assert set(ratings) <= watched
+values = list(ratings.values())
+diary = rows('diary.csv')
+reviews = rows('reviews.csv')
+mean = statistics.mean(values)
+sd = statistics.stdev(values)
+observed = {
+    'watchedFilms': len(watched),
+    'ratedFilms': len(values),
+    'diaryViewings': len(diary),
+    'rewatchViewings': sum(row['Rewatch'].lower() == 'yes' for row in diary),
+    'reviewedFilms': len({(row['Name'], row['Year']) for row in reviews if row['Review'].strip()}),
+    'reviews': len(reviews),
+    'likedFilms': len({identity(row) for row in rows('likes/films.csv')}),
+    'watchlist': len({identity(row) for row in rows('watchlist.csv')} - watched),
+    'meanRating': display_round(mean),
+    'sdRating': display_round(sd),
+    'medianRating': display_round(statistics.median(values)),
+}
+totals = [dict(metric=key, independent=value, app=app['totals'][key],
+               agrees=value == app['totals'][key]) for key, value in observed.items()]
+
+groups = collections.defaultdict(list)
+for film_id, rating in ratings.items():
+    meta = metadata['films'].get(film_id)
+    if not meta or meta['match']['confidence'] == 'low':
+        continue
+    for genre in set(meta['genres']):
+        groups[genre].append(rating)
+affinities = []
+for genre, group in sorted(groups.items()):
+    n = len(group)
+    shrunk = (sum(group) + 6 * mean) / (n + 6)
+    interval = [display_round(shrunk - 1.645 * sd / math.sqrt(n + 6)),
+                display_round(shrunk + 1.645 * sd / math.sqrt(n + 6))]
+    actual = next(row for row in app['affinities']['genre'] if row['key'] == genre)
+    expected = dict(n=n, mean=display_round(statistics.mean(group)),
+                    shrunk=display_round(shrunk), ci=interval)
+    affinities.append(dict(genre=genre, independent=expected,
+                          agrees=all(actual[key] == value for key, value in expected.items())))
+
+histogram = [dict(rating=half / 2, count=values.count(half / 2)) for half in range(1, 11)]
+histogram_agrees = histogram == app['critical']['distribution']
+result = dict(scope='Independent arithmetic on synthetic source CSV and invented metadata only',
+              totals=totals, genres=affinities, ratingDistribution=histogram,
+              ratingDistributionMatches=histogram_agrees,
+              allChecksAgree=all(row['agrees'] for row in totals + affinities) and histogram_agrees,
+              warning='Agreement validates arithmetic, not inference, matching or personal recommendations')
+print(json.dumps(result, indent=2))
+assert result['allChecksAgree'], 'A preserved dashboard metric differs from independent arithmetic'
