@@ -3,6 +3,7 @@ import type { DateQuality } from '../../shared/types.ts'
 import { useData } from '../lib/data.tsx'
 import { pct } from '../lib/format.ts'
 import { Chapter, InfoTip, Reveal } from '../ui/primitives.tsx'
+import { dataHandlingText } from './quality/dataHandling.ts'
 
 const QUALITY_LABEL: Record<DateQuality, { label: string; hint: string }> = {
   live: { label: 'Logged live', hint: 'Logged within 7 days of the watch date.' },
@@ -202,7 +203,7 @@ export function Quality() {
               <p className="text-[13px] leading-relaxed text-ink-2">
                 Source archive <span className="num text-ink">{data.source.archive}</span>
                 {data.source.exportedAt && <> exported {data.source.exportedAt.slice(0, 10)}</>}. Read in place (zip or folder) and never modified. Normalized records with per-row provenance live in{' '}
-                <span className="num">data/normalized/</span>; nothing is uploaded anywhere.
+                <span className="num">data/normalized/</span>. {dataHandlingText(data.source.metadataSources)}
               </p>
               {data.quality.social && (
                 <p className="mt-3 text-[12px] text-muted">
@@ -215,7 +216,7 @@ export function Quality() {
               <div className="label mb-2">Film metadata</div>
               <p className="text-[13px] leading-relaxed text-ink-2">
                 {data.source.metadataSources.includes('wikidata') ? 'Wikidata (CC0 public domain), ' : ''}matched first by Letterboxd film ID (property P6127), then by exact title and year. Responses are cached
-                under <span className="num">data/cache/</span>, so refreshes only fetch what's new. Pin or block a match in <span className="num">data/overrides.json</span>.
+                under <span className="num">data/cache/</span>; online refreshes can re-query existing films. Pin or block a match in <span className="num">data/overrides.json</span>.
               </p>
             </div>
             <div>

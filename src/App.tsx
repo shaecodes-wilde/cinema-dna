@@ -148,6 +148,7 @@ function Nav({ username }: { username: string }) {
             <li key={c.id}>
               <a
                 href={`#${c.id}`}
+                aria-label={c.nav}
                 aria-current={active === c.id ? 'true' : undefined}
                 className={`flex items-baseline gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1 text-[12px] transition ${active === c.id ? 'bg-night-3 text-ink' : 'text-muted hover:text-ink'}`}
               >

@@ -1,8 +1,10 @@
 import { AnimatePresence, motion } from 'motion/react'
+import { createPortal } from 'react-dom'
 import { useEffect, useMemo, useRef } from 'react'
 import { useData, useReducedMotion } from '../lib/data.tsx'
 import { fmtDate, fmtRating, fmtStars, ratingColor, signed } from '../lib/format.ts'
 import { FilmChip, Poster } from './primitives.tsx'
+import { trapTab } from './focusTrap.ts'
 
 /** Global side panel with everything known about one film. Opened from any chart or chip. */
 export function FilmDrawer() {
@@ -10,19 +12,33 @@ export function FilmDrawer() {
   const f = openFilmId ? film(openFilmId) : undefined
   const reduced = useReducedMotion()
   const closeRef = useRef<HTMLButtonElement>(null)
-  const returnFocus = useRef<Element | null>(null)
+  const drawerRef = useRef<HTMLElement>(null)
+  const overlayRef = useRef<HTMLDivElement>(null)
+  const isOpen = !!f
 
   useEffect(() => {
-    if (!f) return
-    returnFocus.current = document.activeElement
-    closeRef.current?.focus()
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && openFilm(null)
+    if (!isOpen) return
+    const returnFocus = document.activeElement as HTMLElement | null
+    const background = [...document.body.children].filter((el) => el !== overlayRef.current && !el.hasAttribute('inert'))
+    background.forEach((el) => el.setAttribute('inert', ''))
+    const bodyOverflow = document.body.style.overflow
+    const htmlOverflow = document.documentElement.style.overflow
+    document.body.style.overflow = 'hidden'
+    document.documentElement.style.overflow = 'hidden'
+    closeRef.current?.focus({ preventScroll: true })
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') openFilm(null)
+      if (drawerRef.current) trapTab(drawerRef.current, e)
+    }
     window.addEventListener('keydown', onKey)
     return () => {
       window.removeEventListener('keydown', onKey)
-      ;(returnFocus.current as HTMLElement | null)?.focus?.({ preventScroll: true }) // don't undo drill-down scrolls
+      background.forEach((el) => el.removeAttribute('inert'))
+      document.body.style.overflow = bodyOverflow
+      document.documentElement.style.overflow = htmlOverflow
+      returnFocus?.focus?.({ preventScroll: true }) // don't undo drill-down scrolls
     }
-  }, [f, openFilm])
+  }, [isOpen, openFilm])
 
   const viewings = useMemo(() => (f ? data.viewings.filter((v) => v.filmId === f.id).sort((a, b) => (a.date ?? a.logged).localeCompare(b.date ?? b.logged)) : []), [f, data.viewings])
   const neighbours = useMemo(() => {
@@ -52,7 +68,8 @@ export function FilmDrawer() {
       ]
     : []
 
-  return (
+  return createPortal(
+    <div ref={overlayRef}>
     <AnimatePresence>
       {f && (
         <>
@@ -66,6 +83,8 @@ export function FilmDrawer() {
           />
           <motion.aside
             key="drawer"
+            ref={drawerRef}
+            tabIndex={-1}
             role="dialog"
             aria-modal="true"
             aria-label={`${f.title} details`}
@@ -226,5 +245,7 @@ export function FilmDrawer() {
         </>
       )}
     </AnimatePresence>
+    </div>,
+    document.body,
   )
 }

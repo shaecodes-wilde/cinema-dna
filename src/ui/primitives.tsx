@@ -1,8 +1,24 @@
 import { motion } from 'motion/react'
+import { flushSync } from 'react-dom'
 import { createContext, useCallback, useContext, useEffect, useId, useRef, useState, type ReactNode } from 'react'
 import type { AppFilm, Confidence, EvidenceKind } from '../../shared/app-types.ts'
 import { useData, useReducedMotion } from '../lib/data.tsx'
 import { fmtStars, posterTone, ratingColor } from '../lib/format.ts'
+
+function usePrinting(): boolean {
+  const [printing, setPrinting] = useState(false)
+  useEffect(() => {
+    const before = () => flushSync(() => setPrinting(true))
+    const after = () => setPrinting(false)
+    window.addEventListener('beforeprint', before)
+    window.addEventListener('afterprint', after)
+    return () => {
+      window.removeEventListener('beforeprint', before)
+      window.removeEventListener('afterprint', after)
+    }
+  }, [])
+  return printing
+}
 
 // ─── Chapter shell ─────────────────────────────────────────────────────────
 
@@ -23,6 +39,7 @@ export function Chapter({
   children: ReactNode
 }) {
   const ref = useRef<HTMLElement>(null)
+  const printing = usePrinting()
   // Deep links (#chapter) mount immediately so the browser can scroll to real content.
   const [visible, setVisible] = useState(() => window.location.hash === `#${id}`)
   useEffect(() => {
@@ -47,7 +64,7 @@ export function Chapter({
         </div>
         {intro && <div className="max-w-2xl text-[17px] leading-relaxed text-ink-2">{intro}</div>}
       </header>
-      <div className="mx-auto max-w-7xl">{visible ? children : <div className="h-[60vh]" aria-hidden />}</div>
+      <div className="mx-auto max-w-7xl">{visible || printing ? children : <div className="h-[60vh]" aria-hidden />}</div>
     </section>
   )
 }
@@ -55,10 +72,12 @@ export function Chapter({
 /** Fade/slide-in on first view; static when reduced motion is requested. */
 export function Reveal({ children, delay = 0, className }: { children: ReactNode; delay?: number; className?: string }) {
   const reduced = useReducedMotion()
-  if (reduced) return <div className={className}>{children}</div>
+  const printing = usePrinting()
+  const revealClass = `reveal ${className ?? ''}`
+  if (reduced || printing) return <div className={revealClass}>{children}</div>
   return (
     <motion.div
-      className={className}
+      className={revealClass}
       initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-60px' }}
@@ -226,6 +245,7 @@ export function Poster({
   interactive?: boolean
 }) {
   const { openFilm } = useData()
+  const [failedPoster, setFailedPoster] = useState<string | null>(null)
   const tone = posterTone(film.id)
   const w = size === 'sm' ? 'w-24' : size === 'lg' ? 'w-56' : 'w-36'
   const Tag = interactive ? 'button' : 'div'
@@ -237,8 +257,8 @@ export function Poster({
       style={{ background: tone.bg, color: tone.ink }}
       aria-label={`${film.title}${film.year ? `, ${film.year}` : ''}${film.rating ? `, rated ${film.rating} stars` : ''}`}
     >
-      {film.poster ? (
-        <img src={film.poster} alt="" loading="lazy" className="h-full w-full object-cover" />
+      {film.poster && film.poster !== failedPoster ? (
+        <img src={film.poster} onError={() => setFailedPoster(film.poster)} alt="" loading="lazy" className="h-full w-full object-cover" />
       ) : (
         <span className="grain absolute inset-0 flex flex-col justify-between p-3">
           <span className={`${size === 'sm' ? 'text-[8px] tracking-[0.15em]' : 'text-[9px] tracking-[0.25em]'} line-clamp-2 uppercase opacity-60`}>{film.directors[0] ?? (film.year ?? '')}</span>

@@ -152,13 +152,13 @@ export function ModelPanel() {
     <div className="grid gap-8 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
       <div className="space-y-5">
         <p className="text-[15px] leading-relaxed text-ink-2">
-          A ridge regression over {m.features} film attributes, fit on {m.n} rated films and scored by 10-fold cross-validation. It predicts your stars{' '}
+          A ridge regression over {m.features} film attributes, fit on {m.n} rated films and scored by 10-fold cross-validation (a development estimate: the ridge penalty λ was tuned on the same folds, so it is optimistic; magnitude unknown). The feature vocabulary is built before the folds; its effect is unmeasured. It predicts your stars{' '}
           {gain > 0.005 ? (
             <>
               <span className="text-ink">{Math.round(gain * 100)}% better</span> than always guessing your average —{' '}
               {gain < 0.15
                 ? 'a modest signal, which is the honest answer: most of what makes you love a film is not in its metadata.'
-                : 'a strong signal: the attributes of a film genuinely predict how you will rate it.'}
+                : 'a strong association on this data: film attributes track your ratings closely, though this estimate is optimistic.'}
             </>
           ) : (
             <>
