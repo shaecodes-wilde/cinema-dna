@@ -128,16 +128,22 @@ export function renderTasteAnalysisMarkdown(data: AppData): string {
   }
   out.push('## Taste model', '')
   const m = data.model
-  out.push(
-    `A ridge regression over ${m.features} film attributes (genres, sub-genres, decade, runtime, region, notability, awards, franchise, and leave-one-out "track record" of the film's director, writers, cast, cinematographer and composer), fit on ${m.n} rated films with λ = ${m.lambda} chosen by 10-fold cross-validation.`,
-    '',
-    `Cross-validated RMSE **${m.cvRmse}★** vs **${m.baselineRmse}★** for always guessing your average (${Math.round((1 - m.cvRmse / m.baselineRmse) * 100)}% better); correlation with your actual ratings r = ${m.correlation}. That is a modest but real signal — your taste is only partly predictable from metadata, which is exactly why the exceptions are interesting.`,
-    '',
-    `Strongest positive weights: ${m.topPositive.map((w) => `${w.feature} (${w.weight >= 0 ? '+' : ''}${w.weight})`).join(', ')}.`,
-    '',
-    `Strongest negative weights: ${m.topNegative.map((w) => `${w.feature} (${w.weight})`).join(', ')}.`,
-    '',
-  )
+  if (m.available && Number.isFinite(m.cvRmse) && Number.isFinite(m.baselineRmse) && m.baselineRmse > 0 && m.cvRmse < m.baselineRmse) {
+    out.push(
+      'Development cross-validation estimate; λ tuned on the same folds (selection optimism, magnitude unknown). The feature vocabulary is built before the folds; effect unmeasured.',
+      '',
+      `A ridge regression over ${m.features} film attributes (genres, sub-genres, decade, runtime, region, notability, awards, franchise, and leave-one-out "track record" of the film's director, writers, cast, cinematographer and composer), fit on ${m.n} rated films with λ = ${m.lambda} chosen by 10-fold cross-validation.`,
+      '',
+      `Development cross-validation RMSE **${m.cvRmse}★** vs **${m.baselineRmse}★** for always guessing your average (${Math.round((1 - m.cvRmse / m.baselineRmse) * 100)}% lower error); correlation with your actual ratings r = ${m.correlation}.`,
+      '',
+      `Strongest positive weights: ${m.topPositive.map((w) => `${w.feature} (${w.weight >= 0 ? '+' : ''}${w.weight})`).join(', ')}.`,
+      '',
+      `Strongest negative weights: ${m.topNegative.map((w) => `${w.feature} (${w.weight})`).join(', ')}.`,
+      '',
+    )
+  } else {
+    out.push('The taste model does not beat guessing your average, or there is not enough rating variation to estimate its performance.', '')
+  }
   out.push('## Top recommendations', '')
   for (const rec of data.recommendations.slice(0, 15))
     out.push(`- **${rec.title}** (${rec.year ?? '?'}) — predicted ${rec.predicted.toFixed(2)}★ · ${rec.source === 'watchlist' ? 'on your watchlist' : 'new discovery'}${rec.uncertain ? ' · ⚠ ' + rec.uncertainty.join('; ') : ''}  \n  ${rec.reasons.slice(0, 2).join(' · ')}`)
@@ -148,7 +154,7 @@ export function renderTasteAnalysisMarkdown(data: AppData): string {
     '- **Shrinkage**: group averages are empirical-Bayes estimates pulled toward your overall mean by k pseudo-films (k = 6 for genres/decades, 3 for people). A single 5★ film moves a group only a little.',
     '- **Confidence**: "high" requires ≥ 8 films and a deviation ≥ 2 standard errors; "medium" ≥ 4 films and ≥ 1.2 SE; otherwise "low".',
     '- **Dates**: viewing timelines use diary watch dates on/after your join date. Earlier dates were logged retroactively and are flagged as backfilled; `watched.csv` dates are never treated as viewing dates.',
-    `- **Metadata**: Wikidata (CC0), matched primarily by Letterboxd film ID (P6127), else exact title + year. ${q.unmatched.length} titles (mostly documentaries, TV and shorts) are unmatched and excluded from metadata-driven analysis.`,
+    `- **Metadata**: Wikidata (CC0), matched primarily by Letterboxd film ID (P6127), else exact title + year. ${q.unmatched.length} titles are unmatched and excluded from metadata-driven analysis.`,
     '- **Review language**: transparent keyword lexicons; reviews are short, so these are tendencies, not diagnoses.',
     '- **Correlation, not causation**: every pattern describes your history; none claims a film attribute *causes* your rating.',
     '',

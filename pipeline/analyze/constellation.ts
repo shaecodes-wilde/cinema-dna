@@ -134,7 +134,7 @@ export function buildConstellation(records: FilmRecord[], seed = 42): Constellat
       .map((x) => ({ ...x, lift: x.inC * Math.log((x.inC + 0.01) / (x.all + 0.01)) }))
       .sort((a, b) => b.lift - a.lift)
       .filter((x) => {
-        const name = x.t.split(':')[1]
+        const name = x.t.split(':')[1].toLowerCase()
         return seenNames.has(name) ? false : (seenNames.add(name), true)
       })
       .slice(0, 4)

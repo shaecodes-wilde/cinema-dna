@@ -147,7 +147,7 @@ export function analyzeLanguage(reviews: Review[], snippetFor: (r: Review, re: (
       warmerThanRating: gaps.filter((g) => g.gap > 1.6).sort((a, b) => b.gap - a.gap).slice(0, 6).map(({ filmId, sentiment, rating }) => ({ filmId, sentiment, rating })),
       coolerThanRating: gaps.filter((g) => g.gap < -1.6).sort((a, b) => a.gap - b.gap).slice(0, 6).map(({ filmId, sentiment, rating }) => ({ filmId, sentiment, rating })),
     },
-    meanWords: round(mean(rated.map((r) => r.wordCount)), 1),
+    meanWords: rated.length ? round(mean(rated.map((r) => r.wordCount)), 1) : 0,
     shortShare: round(rated.filter((r) => r.wordCount <= 12).length / Math.max(rated.length, 1), 3),
   }
 }

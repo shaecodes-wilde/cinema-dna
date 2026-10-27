@@ -12,6 +12,7 @@ import { evenness, mean, proportionConfidence, round, shrink } from './stats.ts'
 export function buildDna(ctx: AnalysisContext): DnaDimension[] {
   const { watched, rated, base, dataset } = ctx
   const withMeta = watched.filter((r) => r.meta)
+  const withGenres = withMeta.filter((r) => r.genres.length > 0)
   const ratedMeta = rated.filter((r) => r.meta)
   const pct = (x: number) => Math.round(x * 100)
 
@@ -68,7 +69,7 @@ export function buildDna(ctx: AnalysisContext): DnaDimension[] {
 
   // 3. Genre range
   const genreCounts = new Map<string, number>()
-  for (const r of withMeta) for (const g of r.genres) genreCounts.set(g, (genreCounts.get(g) ?? 0) + 1)
+  for (const r of withGenres) for (const g of r.genres) genreCounts.set(g, (genreCounts.get(g) ?? 0) + 1)
   const even = evenness([...genreCounts.values(), ...new Array(Math.max(0, 18 - genreCounts.size)).fill(0)])
   const topGenres = [...genreCounts].sort((a, b) => b[1] - a[1])
   push({
@@ -77,9 +78,9 @@ export function buildDna(ctx: AnalysisContext): DnaDimension[] {
     headline: `${genreCounts.size} of 18 genres visited; ${topGenres.slice(0, 3).map(([g]) => g).join(', ')} dominate`,
     definition: 'Normalised Shannon entropy of your watched films across the 18 canonical genres (100 = perfectly even spread).',
     value: `Evenness ${even.toFixed(2)}`,
-    n: withMeta.length, confidence: proportionConfidence(withMeta.length), evidence: 'metadata',
+    n: withGenres.length, confidence: proportionConfidence(withGenres.length), evidence: 'metadata',
     filmIds: [],
-    stats: topGenres.slice(0, 6).map(([g, n]) => ({ label: g, value: `${pct(n / withMeta.length)}%` })),
+    stats: topGenres.slice(0, 6).map(([g, n]) => ({ label: g, value: `${pct(n / withGenres.length)}%` })),
     affinity: null,
   })
 
@@ -166,13 +167,13 @@ export function buildDna(ctx: AnalysisContext): DnaDimension[] {
   const isDark = (r: FilmRecord) => r.genres.some((g) => ['Horror', 'Thriller', 'Crime'].includes(g))
   push({
     id: 'dark', name: 'Dark Matter', axis: 'Dark',
-    score: share(withMeta, isDark) * 100,
-    headline: `${pct(share(withMeta, isDark))}% of films are horror, thriller or crime`,
+    score: share(withGenres, isDark) * 100,
+    headline: `${pct(share(withGenres, isDark))}% of films are horror, thriller or crime`,
     definition: 'Share of films tagged Horror, Thriller or Crime.',
-    value: `${withMeta.filter(isDark).length} of ${withMeta.length} films`,
-    n: withMeta.length, confidence: proportionConfidence(withMeta.length), evidence: 'metadata',
-    filmIds: top(withMeta.filter(isDark)),
-    stats: ['Horror', 'Thriller', 'Crime'].map((g) => ({ label: g, value: `${pct(share(withMeta, (r) => r.genres.includes(g)))}%` })),
+    value: `${withGenres.filter(isDark).length} of ${withGenres.length} films`,
+    n: withGenres.length, confidence: proportionConfidence(withGenres.length), evidence: 'metadata',
+    filmIds: top(withGenres.filter(isDark)),
+    stats: ['Horror', 'Thriller', 'Crime'].map((g) => ({ label: g, value: `${pct(share(withGenres, (r) => r.genres.includes(g)))}%` })),
     affinity: lift(isDark),
   })
 
