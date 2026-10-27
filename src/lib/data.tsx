@@ -104,6 +104,22 @@ export function useReducedMotion(): boolean {
 
 export type LoadState = { status: 'loading' } | { status: 'missing'; message: string } | { status: 'ready'; data: AppData }
 
+const isObject = (x: unknown): x is Record<string, unknown> => typeof x === 'object' && x !== null && !Array.isArray(x)
+
+/** Only checks the bundle's outer shape; detailed schema validation is deferred. */
+export function isAppData(x: unknown): x is AppData {
+  return isObject(x)
+    && typeof x.generatedAt === 'string'
+    && isObject(x.profile) && typeof x.profile.username === 'string'
+    && isObject(x.source) && Array.isArray(x.source.metadataSources)
+    && isObject(x.totals) && typeof x.totals.ratedFilms === 'number' && typeof x.totals.watchedFilms === 'number'
+    && isObject(x.identity) && Array.isArray(x.identity.intro)
+    && ['films', 'insights', 'dna', 'genrePairs', 'recommendations'].every((key) => Array.isArray(x[key]))
+    && isObject(x.model)
+    && isObject(x.report) && Array.isArray(x.report.sections)
+    && isObject(x.quality) && isObject(x.quality.audit) && isObject(x.quality.metadata) && Array.isArray(x.quality.notes)
+}
+
 export function useAppData(): LoadState {
   const [state, setState] = useState<LoadState>({ status: 'loading' })
   useEffect(() => {
@@ -112,7 +128,9 @@ export function useAppData(): LoadState {
         if (!res.ok) throw new Error(`HTTP ${res.status}`)
         // Dev servers answer a missing file with index.html; treat anything non-JSON as "not generated yet".
         if (!(res.headers.get('content-type') ?? '').includes('json')) throw new Error('public/data/cinema-dna.json not found')
-        setState({ status: 'ready', data: (await res.json()) as AppData })
+        const data: unknown = await res.json()
+        if (!isAppData(data)) throw new Error('public/data/cinema-dna.json is not a CINEMA DNA bundle; rerun npm run analyze')
+        setState({ status: 'ready', data })
       })
       .catch((err: Error) => setState({ status: 'missing', message: err.message }))
   }, [])

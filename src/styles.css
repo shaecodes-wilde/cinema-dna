@@ -25,7 +25,7 @@
   --color-ink: #efe8dc;
   --color-ink-2: #c9c1b4;
   --color-muted: #8d877d;
-  --color-faint: #5d5850;
+  --color-faint: #918a80;
   --color-amber: #e0a43a;
   --color-amber-deep: #c98500;
   --color-ember: #d95926;
@@ -69,4 +69,8 @@
   .chip[aria-pressed='true'] { background: var(--color-amber); border-color: var(--color-amber); color: #1a1408; }
   .panel { background: var(--color-night-2); border: 1px solid var(--color-line); border-radius: 4px; }
   .scroll-thin { scrollbar-width: thin; scrollbar-color: var(--color-line-2) transparent; }
+}
+
+@media print {
+  .reveal { opacity: 1 !important; transform: none !important; }
 }
