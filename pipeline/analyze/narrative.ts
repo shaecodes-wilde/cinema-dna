@@ -197,7 +197,7 @@ export function buildNarrative(x: NarrativeInput): { identity: AppData['identity
     [
       'Put together, the evidence describes someone for whom cinema is an event.',
       present && present.score >= 40 ? 'You meet films close to their release,' : 'You seek films out,',
-      `grade them ${base.mean >= 3.25 ? 'warmly but honestly' : 'on your own scale'}${scaleTerms.length ? `, and save your highest praise for films that are big in every sense — ${scaleTerms.join(', ')}` : ''}.`,
+      `grade them ${base.mean >= 3.25 ? 'warmly but honestly' : 'on your own scale'}${scaleTerms.length ? `, and save your highest praise for films that are ${list(scaleTerms)}` : ''}.`,
       franchiseDim && franchiseDim.score >= 30 && (franchiseDim.affinity ?? 0) <= -0.05
         ? `Franchise instalments make up ${Math.round(franchiseDim.score)}% of your films and return less than the rest.`
         : '',

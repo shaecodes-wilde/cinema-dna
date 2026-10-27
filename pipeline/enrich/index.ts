@@ -228,7 +228,8 @@ export async function enrich(dataset: Dataset, opts: EnrichOptions = {}): Promis
   })
   if (degraded.length) {
     const ids = degraded.slice(0, 5).map(([id]) => id).join(', ') + (degraded.length > 5 ? ', …' : '')
-    const failures = [...new Set(degraded.map(([, failure]) => failure))].join('; ')
+    const unique = [...new Set(degraded.map(([, failure]) => failure))]
+    const failures = unique.slice(0, 3).join('; ') + (unique.length > 3 ? '; …' : '')
     throw new Error(`degraded refresh: ${ids} (${failures}); previous metadata.json kept unchanged (replacement not published)`)
   }
   if (existsSync(paths.metadata)) {

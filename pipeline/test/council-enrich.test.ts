@@ -72,3 +72,18 @@ it('names at most five affected films and the source failure in a refused refres
     .rejects.toThrow(/degraded refresh: lb:alpha, lb:beta, lb:gamma, lb:delta, lb:epsilon, ….*HTTP 401/)
   expect(readFileSync(paths.metadata)).toEqual(before)
 })
+
+it('caps the distinct failure messages listed in a refused refresh', async () => {
+  vi.stubEnv('TMDB_API_KEY', 'test')
+  const paths = pathsForTest()
+  const films = ['Alpha', 'Beta', 'Gamma', 'Delta', 'Epsilon', 'Zeta'].map(film)
+  const prev = metadata(films)
+  for (const meta of Object.values(prev.films)) meta.posterUrl = 'https://images.test/poster.jpg'
+  writeJson(paths.metadata, prev)
+  const error = await refresh(films, { paths, fetchImpl: sourceFetch({ tmdbStatus: 404 }), log: vi.fn() }).catch((e: Error) => e)
+  expect(error).toBeInstanceOf(Error)
+  const message = (error as Error).message
+  expect(message).toMatch(/degraded refresh/)
+  expect((message.match(/HTTP 404/g) ?? []).length).toBeLessThanOrEqual(3)
+})
+
